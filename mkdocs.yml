@@ -1,0 +1,8 @@
+site_name: Compooler Docs
+theme: readthedocs
+nav:
+  - Welcome: index.md
+  - Initial design document: initial.md
+plugins:
+  - search
+  - mermaid2
