@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
+<title>Initial design document - Compooler Docs</title>
+<link href="../css/theme.css" rel="stylesheet"/>
+<link href="../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Initial design document";
+        var mkdocs_page_input_path = "initial.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href=".."> Compooler Docs
+        </a><div role="search">
+<form action="../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="..">Welcome</a>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal current" href="#">Initial design document</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#quick-pitch">Quick pitch</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#pros">Pros</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#cons">Cons</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#important-points">Important points</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#actors">Actors</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#functional-requirements">Functional requirements</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#initial-technical-architecture">Initial technical architecture</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="..">Compooler Docs</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href=".."></a></li>
+<li class="breadcrumb-item active">Initial design document</li>
+<li class="wy-breadcrumbs-aside">
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="initial-draft">Initial draft</h1>
+<h2 id="quick-pitch">Quick pitch</h2>
+<ul>
+<li>An application that allows you to find people with similar commute routes as you
+  and carpool with them</li>
+<li>Users that commute using a car can post their route (create a "commute group")
+  and other users (with similar starting point) can join that route.</li>
+<li>Main goal: help people <em>connect</em> with other people to form car pool groups for their
+  commutes</li>
+<li>Side goal: help people <em>facilitate</em> commute carpooling rides</li>
+</ul>
+<h3 id="pros">Pros</h3>
+<ul>
+<li>For drivers, economic benefit - split on fuel cost</li>
+<li>For passengers - more transportation options</li>
+<li>Ecological perspective - carpooling is encouraged, less cars</li>
+</ul>
+<h3 id="cons">Cons</h3>
+<ul>
+<li>Hard to ensure user safety</li>
+<li>Hard to monetize?</li>
+</ul>
+<h2 id="important-points">Important points</h2>
+<ul>
+<li>Safety</li>
+<li>Good commute route matching algorithm</li>
+</ul>
+<h2 id="actors">Actors</h2>
+<ul>
+<li>Passengers - users that are looking to join someone for their commute</li>
+<li>Drivers - users that are looking for other users to join them in their commute</li>
+</ul>
+<h2 id="functional-requirements">Functional requirements</h2>
+<ul>
+<li>Create commute groups</li>
+<li>Find commute groups matching a user's preference</li>
+<li>Communication between commute group members about upcoming rides for a commute group</li>
+<li>Live rides (information about a currently happening ride)</li>
+</ul>
+<h2 id="initial-technical-architecture">Initial technical architecture</h2>
+<div class="mermaid">graph LR;
+    A["Mobile App
+    (React Native)"]--&gt;C["Compooler API
+    (.NET)"];
+    B[Web App]-.-&gt;C;
+    style B stroke-dasharray: 5
+    C --&gt; D[(SQL)]
+</div>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href=".." title="Welcome"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span><a href=".." style="color: #fcfcfc">« Previous</a></span>
+</span>
+</div>
+<script src="../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "..";</script>
+<script src="../js/theme_extra.js"></script>
+<script src="../js/theme.js"></script>
+<script src="../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>
