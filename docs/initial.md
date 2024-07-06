@@ -42,9 +42,7 @@
 
 ```mermaid
 graph LR;
-    A["Mobile App
-    (React Native)"]-->C["Compooler API
-    (.NET)"];
+    A["Mobile App (React Native)"]-->C["Compooler API (.NET)"];
     B[Web App]-.->C;
     style B stroke-dasharray: 5
     C --> D[(SQL)]
