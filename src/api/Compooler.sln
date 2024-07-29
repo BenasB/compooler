@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compooler.Application", "Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compooler.Persistence", "Compooler.Persistence\Compooler.Persistence.csproj", "{0B271073-4D1C-4CCD-A558-195345C58691}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compooler.API", "Compooler.API\Compooler.API.csproj", "{32A64714-0B1F-478D-B62F-7642005E499C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{0B271073-4D1C-4CCD-A558-195345C58691}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B271073-4D1C-4CCD-A558-195345C58691}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B271073-4D1C-4CCD-A558-195345C58691}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32A64714-0B1F-478D-B62F-7642005E499C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32A64714-0B1F-478D-B62F-7642005E499C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32A64714-0B1F-478D-B62F-7642005E499C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32A64714-0B1F-478D-B62F-7642005E499C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
