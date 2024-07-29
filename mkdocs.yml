@@ -3,6 +3,9 @@ theme: readthedocs
 nav:
   - Welcome: index.md
   - Initial design document: initial.md
+  - Domain model: model.md
 plugins:
   - search
   - mermaid2
+markdown_extensions:
+  - mdx_truly_sane_lists

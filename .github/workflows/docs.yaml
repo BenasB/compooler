@@ -31,7 +31,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
       - name: Install MkDocs
-        run: pip install mkdocs mkdocs-mermaid2-plugin
+        run: pip install mkdocs mkdocs-mermaid2-plugin mdx_truly_sane_lists
       - name: Buikd MkDocs
         run: mkdocs build
       - name: Upload artifact
