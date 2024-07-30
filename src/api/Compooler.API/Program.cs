@@ -23,13 +23,28 @@ using (var scope = app.Services.CreateScope())
     await dbContext.Database.EnsureDeletedAsync();
     await dbContext.Database.EnsureCreatedAsync();
 
-    var user = new Compooler.Domain.Entities.UserEntity.User
-    {
-        Id = 0,
-        FirstName = "Benas",
-        LastName = "Bud"
-    };
-    dbContext.Users.Add(user);
+    Compooler.Domain.Entities.UserEntity.User[] users =
+    [
+        new Compooler.Domain.Entities.UserEntity.User
+        {
+            Id = 0,
+            FirstName = "Benas",
+            LastName = "Bud"
+        },
+        new Compooler.Domain.Entities.UserEntity.User
+        {
+            Id = 0,
+            FirstName = "John",
+            LastName = "Doe"
+        },
+        new Compooler.Domain.Entities.UserEntity.User
+        {
+            Id = 0,
+            FirstName = "Jermaine",
+            LastName = "Cole"
+        }
+    ];
+    dbContext.Users.AddRange(users);
     await dbContext.SaveChangesAsync();
 
     var group = new Compooler.Domain.Entities.CommuteGroupEntity.CommuteGroup
@@ -44,9 +59,12 @@ using (var scope = app.Services.CreateScope())
                 .Domain.Entities.CommuteGroupEntity.GeographicCoordinates.Create(42, 42)
                 .Value!
         },
-        DriverId = user.Id,
+        DriverId = users[0].Id,
         MaxPassengers = 2
     };
+
+    group.AddPassenger(users[1].Id);
+    group.AddPassenger(users[2].Id);
 
     dbContext.CommuteGroups.Add(group);
     await dbContext.SaveChangesAsync();

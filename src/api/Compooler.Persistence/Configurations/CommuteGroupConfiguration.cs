@@ -24,5 +24,20 @@ public class CommuteGroupConfiguration : IEntityTypeConfiguration<CommuteGroup>
             .WithMany()
             .HasPrincipalKey(user => user.Id)
             .HasForeignKey(group => group.DriverId);
+
+        builder.OwnsMany(
+            x => x.Passengers,
+            passengersBuilder =>
+            {
+                passengersBuilder
+                    .Property<DateTimeOffset>("JoinedAt")
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                const string ownerId = "CommuteGroupId";
+                passengersBuilder.Property(p => p.UserId).ValueGeneratedNever();
+                passengersBuilder.HasKey(ownerId, nameof(GroupPassenger.UserId));
+                passengersBuilder.WithOwner().HasForeignKey(ownerId);
+            }
+        );
     }
 }

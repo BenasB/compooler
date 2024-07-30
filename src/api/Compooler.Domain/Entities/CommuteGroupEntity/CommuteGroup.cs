@@ -7,25 +7,27 @@ public sealed class CommuteGroup
 
     public required int DriverId { get; init; }
 
-    private readonly List<int> _passengerIds = [];
-    public IReadOnlyList<int> PassengerIds => _passengerIds.AsReadOnly();
+    private readonly List<GroupPassenger> _passengers = [];
+    public IReadOnlyList<GroupPassenger> Passengers => _passengers.AsReadOnly();
     public required int MaxPassengers { get; init; }
 
     public Result AddPassenger(int userId)
     {
-        if (_passengerIds.Count >= MaxPassengers)
+        if (_passengers.Count >= MaxPassengers)
             return Result.Failure(CommuteGroupErrors.PassengerLimitReached(this));
 
-        _passengerIds.Add(userId);
+        _passengers.Add(new GroupPassenger { UserId = userId });
         return Result.Success();
     }
 
     public Result RemovePassenger(int userId)
     {
-        if (!_passengerIds.Contains(userId))
+        var passenger = _passengers.Find(p => p.UserId == userId);
+
+        if (passenger == null)
             return Result.Failure(CommuteGroupErrors.PassengerNotFound(userId));
 
-        _passengerIds.Remove(userId);
+        _passengers.Remove(passenger);
         return Result.Success();
     }
 }
