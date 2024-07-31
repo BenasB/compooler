@@ -5,10 +5,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Compooler.Persistence.Configurations;
 
-public class CommuteGroupConfiguration : IEntityTypeConfiguration<CommuteGroup>
+public class CommuteGroupConfiguration
+    : IEntityTypeConfiguration<CommuteGroup>,
+        IEntityTypeConfiguration<CommuteGroupPassenger>
 {
     public void Configure(EntityTypeBuilder<CommuteGroup> builder)
     {
+        builder.HasKey(x => x.Id);
+
         builder.OwnsOne(
             x => x.Route,
             routeBuilder =>
@@ -19,25 +23,21 @@ public class CommuteGroupConfiguration : IEntityTypeConfiguration<CommuteGroup>
             }
         );
 
+        builder.Navigation(x => x.Passengers).AutoInclude();
+
+        // TODO: Get rid of this FK, since we'll prefer eventual consistency
         builder
             .HasOne<User>()
             .WithMany()
             .HasPrincipalKey(user => user.Id)
             .HasForeignKey(group => group.DriverId);
+    }
 
-        builder.OwnsMany(
-            x => x.Passengers,
-            passengersBuilder =>
-            {
-                passengersBuilder
-                    .Property<DateTimeOffset>("JoinedAt")
-                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+    public void Configure(EntityTypeBuilder<CommuteGroupPassenger> builder)
+    {
+        builder.Property(x => x.JoinedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                const string ownerId = "CommuteGroupId";
-                passengersBuilder.Property(p => p.UserId).ValueGeneratedNever();
-                passengersBuilder.HasKey(ownerId, nameof(GroupPassenger.UserId));
-                passengersBuilder.WithOwner().HasForeignKey(ownerId);
-            }
-        );
+        const string groupIdColumn = "CommuteGroupId";
+        builder.HasKey(groupIdColumn, nameof(CommuteGroupPassenger.UserId));
     }
 }

@@ -19,13 +19,11 @@ public class CommuteGroupTests
                 )
         };
 
-        _commuteGroup = new CommuteGroup
-        {
-            Id = 0,
-            Route = new Route { Start = coords, Finish = coords },
-            DriverId = 0,
-            MaxPassengers = MaxPassengers
-        };
+        _commuteGroup = CommuteGroup.Create(
+            route: Route.Create(start: coords, finish: coords),
+            driverId: 0,
+            maxPassengers: MaxPassengers
+        );
     }
 
     [Fact]

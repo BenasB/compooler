@@ -2,21 +2,30 @@ namespace Compooler.Domain.Entities.CommuteGroupEntity;
 
 public sealed class CommuteGroup
 {
-    public required int Id { get; init; }
+    public int Id { get; }
     public required Route Route { get; init; }
-
     public required int DriverId { get; init; }
 
-    private readonly List<GroupPassenger> _passengers = [];
-    public IReadOnlyList<GroupPassenger> Passengers => _passengers.AsReadOnly();
+    private readonly List<CommuteGroupPassenger> _passengers = [];
+    public IReadOnlyList<CommuteGroupPassenger> Passengers => _passengers.AsReadOnly();
     public required int MaxPassengers { get; init; }
+
+    private CommuteGroup() { }
+
+    public static CommuteGroup Create(Route route, int driverId, int maxPassengers) =>
+        new()
+        {
+            Route = route,
+            DriverId = driverId,
+            MaxPassengers = maxPassengers
+        };
 
     public Result AddPassenger(int userId)
     {
         if (_passengers.Count >= MaxPassengers)
             return Result.Failure(CommuteGroupErrors.PassengerLimitReached(this));
 
-        _passengers.Add(new GroupPassenger { UserId = userId });
+        _passengers.Add(CommuteGroupPassenger.Create(userId: userId));
         return Result.Success();
     }
 

@@ -25,43 +25,25 @@ using (var scope = app.Services.CreateScope())
 
     Compooler.Domain.Entities.UserEntity.User[] users =
     [
-        new Compooler.Domain.Entities.UserEntity.User
-        {
-            Id = 0,
-            FirstName = "Benas",
-            LastName = "Bud"
-        },
-        new Compooler.Domain.Entities.UserEntity.User
-        {
-            Id = 0,
-            FirstName = "John",
-            LastName = "Doe"
-        },
-        new Compooler.Domain.Entities.UserEntity.User
-        {
-            Id = 0,
-            FirstName = "Jermaine",
-            LastName = "Cole"
-        }
+        Compooler.Domain.Entities.UserEntity.User.Create(firstName: "Benas", lastName: "Bud"),
+        Compooler.Domain.Entities.UserEntity.User.Create(firstName: "John", lastName: "Doe"),
+        Compooler.Domain.Entities.UserEntity.User.Create(firstName: "Jermaine", lastName: "Cole")
     ];
     dbContext.Users.AddRange(users);
     await dbContext.SaveChangesAsync();
 
-    var group = new Compooler.Domain.Entities.CommuteGroupEntity.CommuteGroup
-    {
-        Id = 0,
-        Route = new Compooler.Domain.Entities.CommuteGroupEntity.Route
-        {
-            Start = Compooler
+    var group = Compooler.Domain.Entities.CommuteGroupEntity.CommuteGroup.Create(
+        route: Compooler.Domain.Entities.CommuteGroupEntity.Route.Create(
+            start: Compooler
                 .Domain.Entities.CommuteGroupEntity.GeographicCoordinates.Create(-43, 112)
                 .Value!,
-            Finish = Compooler
+            finish: Compooler
                 .Domain.Entities.CommuteGroupEntity.GeographicCoordinates.Create(42, 42)
                 .Value!
-        },
-        DriverId = users[0].Id,
-        MaxPassengers = 2
-    };
+        ),
+        driverId: users[0].Id,
+        maxPassengers: 2
+    );
 
     group.AddPassenger(users[1].Id);
     group.AddPassenger(users[2].Id);
@@ -74,8 +56,17 @@ app.MapGet("/", () => "Hello World!");
 
 using (var scope = app.Services.CreateScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<ICompoolerDbContext>();
+    var dbContext = scope.ServiceProvider.GetRequiredService<CompoolerDbContext>();
     var groups = await dbContext.CommuteGroups.ToListAsync();
+
+    var groupsOnUser = await dbContext
+        .CommuteGroupsPassengers.Where(x => x.UserId == 3)
+        .Select(x => EF.Property<int>(x, "CommuteGroupId"))
+        .ToListAsync();
+
+    var fullGroupsOnUser = await dbContext
+        .CommuteGroups.Where(x => groupsOnUser.Contains(x.Id))
+        .ToListAsync();
 }
 
 app.Run();

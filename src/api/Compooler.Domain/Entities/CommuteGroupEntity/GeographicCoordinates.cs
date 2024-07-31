@@ -2,8 +2,8 @@ namespace Compooler.Domain.Entities.CommuteGroupEntity;
 
 public sealed class GeographicCoordinates
 {
-    public double Latitude { get; private init; }
-    public double Longitude { get; private init; }
+    public required double Latitude { get; init; }
+    public required double Longitude { get; init; }
 
     private GeographicCoordinates() { }
 

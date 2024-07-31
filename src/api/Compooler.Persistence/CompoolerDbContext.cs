@@ -10,6 +10,7 @@ public class CompoolerDbContext(DbContextOptions options) : DbContext(options), 
 {
     public DbSet<CommuteGroup> CommuteGroups => Set<CommuteGroup>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<CommuteGroupPassenger> CommuteGroupsPassengers => Set<CommuteGroupPassenger>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
