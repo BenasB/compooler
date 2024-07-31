@@ -24,13 +24,6 @@ public class CommuteGroupConfiguration
         );
 
         builder.Navigation(x => x.Passengers).AutoInclude();
-
-        // TODO: Get rid of this FK, since we'll prefer eventual consistency
-        builder
-            .HasOne<User>()
-            .WithMany()
-            .HasPrincipalKey(user => user.Id)
-            .HasForeignKey(group => group.DriverId);
     }
 
     public void Configure(EntityTypeBuilder<CommuteGroupPassenger> builder)
