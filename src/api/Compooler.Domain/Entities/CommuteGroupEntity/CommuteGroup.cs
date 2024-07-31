@@ -2,30 +2,41 @@ namespace Compooler.Domain.Entities.CommuteGroupEntity;
 
 public sealed class CommuteGroup
 {
-    public required int Id { get; init; }
+    public int Id { get; }
     public required Route Route { get; init; }
-
     public required int DriverId { get; init; }
 
-    private readonly List<int> _passengerIds = [];
-    public IReadOnlyList<int> PassengerIds => _passengerIds.AsReadOnly();
+    private readonly List<CommuteGroupPassenger> _passengers = [];
+    public IReadOnlyList<CommuteGroupPassenger> Passengers => _passengers.AsReadOnly();
     public required int MaxPassengers { get; init; }
+
+    private CommuteGroup() { }
+
+    public static CommuteGroup Create(Route route, int driverId, int maxPassengers) =>
+        new()
+        {
+            Route = route,
+            DriverId = driverId,
+            MaxPassengers = maxPassengers
+        };
 
     public Result AddPassenger(int userId)
     {
-        if (_passengerIds.Count >= MaxPassengers)
+        if (_passengers.Count >= MaxPassengers)
             return Result.Failure(CommuteGroupErrors.PassengerLimitReached(this));
 
-        _passengerIds.Add(userId);
+        _passengers.Add(CommuteGroupPassenger.Create(userId: userId));
         return Result.Success();
     }
 
     public Result RemovePassenger(int userId)
     {
-        if (!_passengerIds.Contains(userId))
+        var passenger = _passengers.Find(p => p.UserId == userId);
+
+        if (passenger == null)
             return Result.Failure(CommuteGroupErrors.PassengerNotFound(userId));
 
-        _passengerIds.Remove(userId);
+        _passengers.Remove(passenger);
         return Result.Success();
     }
 }

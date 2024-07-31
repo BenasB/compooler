@@ -19,13 +19,11 @@ public class CommuteGroupTests
                 )
         };
 
-        _commuteGroup = new CommuteGroup
-        {
-            Id = 0,
-            Route = new Route { Start = coords, Finish = coords },
-            DriverId = 0,
-            MaxPassengers = MaxPassengers
-        };
+        _commuteGroup = CommuteGroup.Create(
+            route: Route.Create(start: coords, finish: coords),
+            driverId: 0,
+            maxPassengers: MaxPassengers
+        );
     }
 
     [Fact]
@@ -46,6 +44,7 @@ public class CommuteGroupTests
     {
         var result = _commuteGroup.AddPassenger(0);
         Assert.False(result.IsFailed);
+        Assert.Equal(1, _commuteGroup.Passengers.Count);
     }
 
     [Fact]
@@ -72,5 +71,6 @@ public class CommuteGroupTests
         result = _commuteGroup.RemovePassenger(userId);
 
         Assert.False(result.IsFailed);
+        Assert.Equal(0, _commuteGroup.Passengers.Count);
     }
 }

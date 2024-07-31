@@ -2,14 +2,10 @@ namespace Compooler.Domain.Entities.CommuteGroupEntity;
 
 public sealed class GeographicCoordinates
 {
-    public double Latitude { get; }
-    public double Longitude { get; }
+    public required double Latitude { get; init; }
+    public required double Longitude { get; init; }
 
-    private GeographicCoordinates(double latitude, double longitude)
-    {
-        Latitude = latitude;
-        Longitude = longitude;
-    }
+    private GeographicCoordinates() { }
 
     public static Result<GeographicCoordinates> Create(double latitude, double longitude)
     {
@@ -24,7 +20,7 @@ public sealed class GeographicCoordinates
             );
 
         return Result<GeographicCoordinates>.Success(
-            new GeographicCoordinates(latitude: latitude, longitude: longitude)
+            new GeographicCoordinates { Latitude = latitude, Longitude = longitude }
         );
     }
 }
