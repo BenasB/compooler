@@ -16,29 +16,39 @@ namespace Compooler.Persistence.Migrations
                 name: "CommuteGroups",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table
+                        .Column<int>(type: "integer", nullable: false)
+                        .Annotation(
+                            "Npgsql:ValueGenerationStrategy",
+                            NpgsqlValueGenerationStrategy.IdentityByDefaultColumn
+                        ),
                     DriverId = table.Column<int>(type: "integer", nullable: false),
                     MaxPassengers = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CommuteGroups", x => x.Id);
-                });
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table
+                        .Column<int>(type: "integer", nullable: false)
+                        .Annotation(
+                            "Npgsql:ValueGenerationStrategy",
+                            NpgsqlValueGenerationStrategy.IdentityByDefaultColumn
+                        ),
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                });
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "CommuteGroupsPassengers",
@@ -46,28 +56,49 @@ namespace Compooler.Persistence.Migrations
                 {
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     CommuteGroupId = table.Column<int>(type: "integer", nullable: false),
-                    JoinedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
+                    JoinedAt = table.Column<DateTimeOffset>(
+                        type: "timestamp with time zone",
+                        nullable: false,
+                        defaultValueSql: "CURRENT_TIMESTAMP"
+                    )
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CommuteGroupsPassengers", x => new { x.CommuteGroupId, x.UserId });
+                    table.PrimaryKey(
+                        "PK_CommuteGroupsPassengers",
+                        x => new { x.CommuteGroupId, x.UserId }
+                    );
                     table.ForeignKey(
                         name: "FK_CommuteGroupsPassengers_CommuteGroups_CommuteGroupId",
                         column: x => x.CommuteGroupId,
                         principalTable: "CommuteGroups",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+                        onDelete: ReferentialAction.Cascade
+                    );
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "Routes",
                 columns: table => new
                 {
                     CommuteGroupId = table.Column<int>(type: "integer", nullable: false),
-                    Start_Latitude = table.Column<double>(type: "double precision", nullable: false),
-                    Start_Longitude = table.Column<double>(type: "double precision", nullable: false),
-                    Finish_Latitude = table.Column<double>(type: "double precision", nullable: false),
-                    Finish_Longitude = table.Column<double>(type: "double precision", nullable: false)
+                    Start_Latitude = table.Column<double>(
+                        type: "double precision",
+                        nullable: false
+                    ),
+                    Start_Longitude = table.Column<double>(
+                        type: "double precision",
+                        nullable: false
+                    ),
+                    Finish_Latitude = table.Column<double>(
+                        type: "double precision",
+                        nullable: false
+                    ),
+                    Finish_Longitude = table.Column<double>(
+                        type: "double precision",
+                        nullable: false
+                    )
                 },
                 constraints: table =>
                 {
@@ -77,24 +108,22 @@ namespace Compooler.Persistence.Migrations
                         column: x => x.CommuteGroupId,
                         principalTable: "CommuteGroups",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+                        onDelete: ReferentialAction.Cascade
+                    );
+                }
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "CommuteGroupsPassengers");
+            migrationBuilder.DropTable(name: "CommuteGroupsPassengers");
 
-            migrationBuilder.DropTable(
-                name: "Routes");
+            migrationBuilder.DropTable(name: "Routes");
 
-            migrationBuilder.DropTable(
-                name: "Users");
+            migrationBuilder.DropTable(name: "Users");
 
-            migrationBuilder.DropTable(
-                name: "CommuteGroups");
+            migrationBuilder.DropTable(name: "CommuteGroups");
         }
     }
 }
