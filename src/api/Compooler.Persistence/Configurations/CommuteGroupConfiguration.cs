@@ -9,6 +9,8 @@ public class CommuteGroupConfiguration
     : IEntityTypeConfiguration<CommuteGroup>,
         IEntityTypeConfiguration<CommuteGroupPassenger>
 {
+    public const string CommuteGroupIdColumnName = "CommuteGroupId";
+
     public void Configure(EntityTypeBuilder<CommuteGroup> builder)
     {
         builder.HasKey(x => x.Id);
@@ -30,7 +32,6 @@ public class CommuteGroupConfiguration
     {
         builder.Property(x => x.JoinedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-        const string groupIdColumn = "CommuteGroupId";
-        builder.HasKey(groupIdColumn, nameof(CommuteGroupPassenger.UserId));
+        builder.HasKey(CommuteGroupIdColumnName, nameof(CommuteGroupPassenger.UserId));
     }
 }

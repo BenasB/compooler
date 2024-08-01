@@ -1,7 +1,6 @@
+using Compooler.API.DataLoaders;
 using Compooler.Domain.Entities.CommuteGroupEntity;
 using Compooler.Domain.Entities.UserEntity;
-using Compooler.Persistence;
-using Microsoft.EntityFrameworkCore;
 using Route = Compooler.Domain.Entities.CommuteGroupEntity.Route;
 
 namespace Compooler.API.Types;
@@ -22,13 +21,9 @@ public class CommuteGroupNode : ObjectType<CommuteGroup>
             .Type<NonNullType<ObjectType<User>>>()
             .Resolve(async ctx =>
             {
-                // TODO: this is naive now, use data loader here
-                var dbContext = ctx.Services.GetRequiredService<CompoolerDbContext>();
+                var dataLoader = ctx.Services.GetRequiredService<IUserByIdDataLoader>();
                 var group = ctx.Parent<CommuteGroup>();
-
-                return await dbContext
-                    .Users.AsNoTracking()
-                    .FirstAsync(x => x.Id == group.DriverId, ctx.RequestAborted);
+                return await dataLoader.LoadAsync(group.DriverId, ctx.RequestAborted);
             });
     }
 }
@@ -51,6 +46,15 @@ public class CommuteGroupPassengerNode : ObjectType<CommuteGroupPassenger>
         descriptor.BindFieldsExplicitly();
 
         descriptor.Field(x => x.JoinedAt);
-        // TODO: implement 'user' field
+
+        descriptor
+            .Field("user")
+            .Type<NonNullType<ObjectType<User>>>()
+            .Resolve(async ctx =>
+            {
+                var dataLoader = ctx.Services.GetRequiredService<IUserByIdDataLoader>();
+                var groupPassenger = ctx.Parent<CommuteGroupPassenger>();
+                return await dataLoader.LoadAsync(groupPassenger.UserId, ctx.RequestAborted);
+            });
     }
 }
