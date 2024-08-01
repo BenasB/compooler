@@ -18,20 +18,21 @@ public class UserNode : ObjectType<User>
             .Type<NonNullType<ListType<NonNullType<ObjectType<CommuteGroup>>>>>()
             .Resolve(async ctx =>
             {
-                var commuteGroupPassengersDataLoader =
-                    ctx.Services.GetRequiredService<ICommuteGroupPassengersByUserIdDataLoader>();
-                var commuteGroupDataLoader =
+                var commuteGroupIdsByUserIdDataLoader =
+                    ctx.Services.GetRequiredService<ICommuteGroupIdsByUserIdDataLoader>();
+                var commuteGroupDataLoaderById =
                     ctx.Services.GetRequiredService<ICommuteGroupByIdDataLoader>();
                 var user = ctx.Parent<User>();
 
-                var commuteGroupPassengers = await commuteGroupPassengersDataLoader.LoadAsync(
+                var commuteGroupPassengers = await commuteGroupIdsByUserIdDataLoader.LoadAsync(
                     user.Id,
                     ctx.RequestAborted
                 );
 
-                var commuteGroupIds = commuteGroupPassengers.Select(x => x.CommuteGroupId).ToList();
-
-                return await commuteGroupDataLoader.LoadAsync(commuteGroupIds, ctx.RequestAborted);
+                return await commuteGroupDataLoaderById.LoadAsync(
+                    commuteGroupPassengers,
+                    ctx.RequestAborted
+                );
             });
     }
 }

@@ -1,5 +1,4 @@
 using Compooler.Domain.Entities.CommuteGroupEntity;
-using Compooler.Domain.Entities.UserEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -26,6 +25,8 @@ public class CommuteGroupConfiguration
         );
 
         builder.Navigation(x => x.Passengers).AutoInclude();
+
+        builder.HasMany(x => x.Passengers).WithOne().HasForeignKey(CommuteGroupIdColumnName);
     }
 
     public void Configure(EntityTypeBuilder<CommuteGroupPassenger> builder)
