@@ -1,3 +1,4 @@
+using Compooler.API.Extensions;
 using Compooler.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);

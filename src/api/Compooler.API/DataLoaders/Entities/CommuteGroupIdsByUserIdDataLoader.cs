@@ -1,27 +1,21 @@
-using Compooler.Domain.Entities.CommuteGroupEntity;
 using Compooler.Persistence;
 using Compooler.Persistence.Configurations;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace Compooler.API.DataLoaders;
+namespace Compooler.API.DataLoaders.Entities;
 
-internal static class CommuteGroupDataLoader
+[UsedImplicitly]
+public class CommuteGroupIdsByUserIdDataLoader(
+    IServiceProvider serviceProvider,
+    IBatchScheduler batchScheduler,
+    DataLoaderOptions options
+) : CompoolerDbContextGroupedDataLoader<int, int>(serviceProvider, batchScheduler, options)
 {
-    [DataLoader]
-    internal static async Task<IReadOnlyDictionary<int, CommuteGroup>> GetCommuteGroupByIdAsync(
+    protected override async Task<ILookup<int, int>> LoadGroupedBatchAsync(
         IReadOnlyList<int> keys,
         CompoolerDbContext dbContext,
-        CancellationToken ct
-    ) =>
-        await dbContext
-            .CommuteGroups.Where(cg => keys.Contains(cg.Id))
-            .ToDictionaryAsync(cg => cg.Id, ct);
-
-    [DataLoader]
-    internal static async Task<ILookup<int, int>> GetCommuteGroupIdsByUserIdAsync(
-        IReadOnlyList<int> keys,
-        CompoolerDbContext dbContext,
-        CancellationToken ct
+        CancellationToken cancellationToken
     )
     {
         var commuteGroupPassengers = await dbContext
@@ -34,7 +28,7 @@ internal static class CommuteGroupDataLoader
                     CommuteGroupConfiguration.CommuteGroupIdColumnName
                 )
             })
-            .ToListAsync(ct);
+            .ToListAsync(cancellationToken);
 
         return commuteGroupPassengers.ToLookup(x => x.UserId, x => x.CommuteGroupId);
     }

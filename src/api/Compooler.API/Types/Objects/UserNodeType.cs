@@ -1,10 +1,11 @@
 using Compooler.API.DataLoaders;
+using Compooler.API.DataLoaders.Entities;
 using Compooler.Domain.Entities.CommuteGroupEntity;
 using Compooler.Domain.Entities.UserEntity;
 
-namespace Compooler.API.Types;
+namespace Compooler.API.Types.Objects;
 
-public class UserNode : ObjectType<User>
+public class UserNodeType : ObjectType<User>
 {
     protected override void Configure(IObjectTypeDescriptor<User> descriptor)
     {
@@ -19,9 +20,9 @@ public class UserNode : ObjectType<User>
             .Resolve(async ctx =>
             {
                 var commuteGroupIdsByUserIdDataLoader =
-                    ctx.Services.GetRequiredService<ICommuteGroupIdsByUserIdDataLoader>();
+                    ctx.Services.GetRequiredService<CommuteGroupIdsByUserIdDataLoader>();
                 var commuteGroupDataLoaderById =
-                    ctx.Services.GetRequiredService<ICommuteGroupByIdDataLoader>();
+                    ctx.Services.GetRequiredService<CommuteGroupByIdDataLoader>();
                 var user = ctx.Parent<User>();
 
                 var commuteGroupPassengers = await commuteGroupIdsByUserIdDataLoader.LoadAsync(
