@@ -44,7 +44,7 @@ public class CommuteGroupTests
     {
         var result = _commuteGroup.AddPassenger(0);
         Assert.False(result.IsFailed);
-        Assert.Equal(1, _commuteGroup.Passengers.Count);
+        Assert.Single(_commuteGroup.Passengers);
     }
 
     [Fact]
@@ -71,6 +71,6 @@ public class CommuteGroupTests
         result = _commuteGroup.RemovePassenger(userId);
 
         Assert.False(result.IsFailed);
-        Assert.Equal(0, _commuteGroup.Passengers.Count);
+        Assert.Empty(_commuteGroup.Passengers);
     }
 }

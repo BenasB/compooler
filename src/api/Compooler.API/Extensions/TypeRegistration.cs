@@ -5,11 +5,10 @@ using HotChocolate.Execution.Configuration;
 
 namespace Compooler.API.Extensions;
 
-internal static class TypeRegistration
+public static class TypeRegistration
 {
-    internal static IRequestExecutorBuilder AddCompoolerTypes(
-        this IRequestExecutorBuilder builder
-    ) => builder.AddQueries().AddObjectTypes().AddDataLoaders();
+    public static IRequestExecutorBuilder AddCompoolerTypes(this IRequestExecutorBuilder builder) =>
+        builder.AddQueries().AddObjectTypes().AddDataLoaders();
 
     private static IRequestExecutorBuilder AddQueries(this IRequestExecutorBuilder builder) =>
         builder.AddQueryType<CommuteGroupQueries>().AddTypeExtension<UserQueries>();
