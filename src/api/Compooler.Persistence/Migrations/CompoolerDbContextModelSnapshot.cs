@@ -43,7 +43,7 @@ namespace Compooler.Persistence.Migrations
 
             modelBuilder.Entity("Compooler.Domain.Entities.CommuteGroupEntity.CommuteGroupPassenger", b =>
                 {
-                    b.Property<int?>("CommuteGroupId")
+                    b.Property<int>("CommuteGroupId")
                         .HasColumnType("integer");
 
                     b.Property<int>("UserId")

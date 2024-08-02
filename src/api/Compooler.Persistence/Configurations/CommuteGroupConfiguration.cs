@@ -1,5 +1,4 @@
 using Compooler.Domain.Entities.CommuteGroupEntity;
-using Compooler.Domain.Entities.UserEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,6 +8,8 @@ public class CommuteGroupConfiguration
     : IEntityTypeConfiguration<CommuteGroup>,
         IEntityTypeConfiguration<CommuteGroupPassenger>
 {
+    public const string CommuteGroupIdColumnName = "CommuteGroupId";
+
     public void Configure(EntityTypeBuilder<CommuteGroup> builder)
     {
         builder.HasKey(x => x.Id);
@@ -24,13 +25,14 @@ public class CommuteGroupConfiguration
         );
 
         builder.Navigation(x => x.Passengers).AutoInclude();
+
+        builder.HasMany(x => x.Passengers).WithOne().HasForeignKey(CommuteGroupIdColumnName);
     }
 
     public void Configure(EntityTypeBuilder<CommuteGroupPassenger> builder)
     {
         builder.Property(x => x.JoinedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-        const string groupIdColumn = "CommuteGroupId";
-        builder.HasKey(groupIdColumn, nameof(CommuteGroupPassenger.UserId));
+        builder.HasKey(CommuteGroupIdColumnName, nameof(CommuteGroupPassenger.UserId));
     }
 }
