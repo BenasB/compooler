@@ -1,10 +1,11 @@
-using Compooler.API.DataLoaders;
 using Compooler.API.DataLoaders.Entities;
 using Compooler.Domain.Entities.CommuteGroupEntity;
 using Compooler.Domain.Entities.UserEntity;
+using JetBrains.Annotations;
 
 namespace Compooler.API.Types.Objects;
 
+[PublicAPI]
 public class CommuteGroupNodeType : ObjectType<CommuteGroup>
 {
     protected override void Configure(IObjectTypeDescriptor<CommuteGroup> descriptor)

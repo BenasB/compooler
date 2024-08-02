@@ -1,10 +1,11 @@
-using Compooler.API.DataLoaders;
 using Compooler.API.DataLoaders.Entities;
 using Compooler.Domain.Entities.CommuteGroupEntity;
 using Compooler.Domain.Entities.UserEntity;
+using JetBrains.Annotations;
 
 namespace Compooler.API.Types.Objects;
 
+[PublicAPI]
 public class UserNodeType : ObjectType<User>
 {
     protected override void Configure(IObjectTypeDescriptor<User> descriptor)

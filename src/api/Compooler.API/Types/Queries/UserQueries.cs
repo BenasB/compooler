@@ -1,9 +1,11 @@
 using Compooler.Domain.Entities.UserEntity;
 using Compooler.Persistence;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Compooler.API.Types.Queries;
 
+[PublicAPI]
 public class UserQueries : ObjectTypeExtension
 {
     protected override void Configure(IObjectTypeDescriptor descriptor)

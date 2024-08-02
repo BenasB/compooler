@@ -1,9 +1,11 @@
 using Compooler.Domain.Entities.CommuteGroupEntity;
 using Compooler.Persistence;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Compooler.API.Types.Queries;
 
+[PublicAPI]
 public class CommuteGroupQueries : ObjectType
 {
     protected override void Configure(IObjectTypeDescriptor descriptor)

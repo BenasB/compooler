@@ -1,6 +1,4 @@
-using Compooler.API.DataLoaders;
 using Compooler.API.DataLoaders.Entities;
-using Compooler.API.Types;
 using Compooler.API.Types.Objects;
 using Compooler.API.Types.Queries;
 using HotChocolate.Execution.Configuration;
