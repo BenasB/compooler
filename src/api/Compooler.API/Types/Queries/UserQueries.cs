@@ -15,10 +15,10 @@ public class UserQueries : ObjectTypeExtension
         descriptor
             .Field("users")
             .Type<NonNullType<ListType<NonNullType<ObjectType<User>>>>>()
-            .Resolve(ctx =>
+            .Resolve<IReadOnlyList<User>>(async ctx =>
             {
                 var dbContext = ctx.Services.GetRequiredService<CompoolerDbContext>();
-                return dbContext.Users.AsNoTracking().ToListAsync(ctx.RequestAborted);
+                return await dbContext.Users.AsNoTracking().ToListAsync(ctx.RequestAborted);
             });
     }
 }

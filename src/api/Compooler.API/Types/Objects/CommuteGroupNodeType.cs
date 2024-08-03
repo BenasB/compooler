@@ -10,8 +10,6 @@ public class CommuteGroupNodeType : ObjectType<CommuteGroup>
 {
     protected override void Configure(IObjectTypeDescriptor<CommuteGroup> descriptor)
     {
-        descriptor.BindFieldsExplicitly();
-
         descriptor.Field(x => x.Id);
         descriptor.Field(x => x.MaxPassengers);
         descriptor.Field(x => x.Route);
@@ -20,7 +18,7 @@ public class CommuteGroupNodeType : ObjectType<CommuteGroup>
         descriptor
             .Field("driver")
             .Type<NonNullType<ObjectType<User>>>()
-            .Resolve(async ctx =>
+            .Resolve<User>(async ctx =>
             {
                 var dataLoader = ctx.Services.GetRequiredService<UserByIdDataLoader>();
                 var commuteGroup = ctx.Parent<CommuteGroup>();

@@ -10,14 +10,12 @@ public class CommuteGroupPassengerObjectType : ObjectType<CommuteGroupPassenger>
 {
     protected override void Configure(IObjectTypeDescriptor<CommuteGroupPassenger> descriptor)
     {
-        descriptor.BindFieldsExplicitly();
-
         descriptor.Field(x => x.JoinedAt);
 
         descriptor
             .Field("user")
             .Type<NonNullType<ObjectType<User>>>()
-            .Resolve(async ctx =>
+            .Resolve<User>(async ctx =>
             {
                 var dataLoader = ctx.Services.GetRequiredService<UserByIdDataLoader>();
                 var groupPassenger = ctx.Parent<CommuteGroupPassenger>();

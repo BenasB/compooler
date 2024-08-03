@@ -12,6 +12,7 @@ public class SchemaTests
     {
         var schema = await new ServiceCollection()
             .AddGraphQL()
+            .AddCompoolerConventions()
             .AddCompoolerTypes()
             .BuildSchemaAsync();
 

@@ -15,10 +15,10 @@ public class CommuteGroupQueries : ObjectType
         descriptor
             .Field("commuteGroups")
             .Type<NonNullType<ListType<NonNullType<ObjectType<CommuteGroup>>>>>()
-            .Resolve(ctx =>
+            .Resolve<IReadOnlyList<CommuteGroup>>(async ctx =>
             {
                 var dbContext = ctx.Services.GetRequiredService<CompoolerDbContext>();
-                return dbContext.CommuteGroups.AsNoTracking().ToListAsync(ctx.RequestAborted);
+                return await dbContext.CommuteGroups.AsNoTracking().ToListAsync(ctx.RequestAborted);
             });
     }
 }
