@@ -4,7 +4,7 @@ using Compooler.Persistence;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCompoolerDbContext(builder.Configuration);
-builder.Services.AddGraphQLServer().AddCompoolerTypes();
+builder.Services.AddGraphQLServer().AddCompoolerTypes().AddCompoolerConventions();
 
 var app = builder.Build();
 
