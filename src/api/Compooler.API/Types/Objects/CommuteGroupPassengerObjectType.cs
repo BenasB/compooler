@@ -17,7 +17,7 @@ public class CommuteGroupPassengerObjectType : ObjectType<CommuteGroupPassenger>
         descriptor
             .Field("user")
             .Type<NonNullType<ObjectType<User>>>()
-            .Resolve(async ctx =>
+            .Resolve<User>(async ctx =>
             {
                 var dataLoader = ctx.Services.GetRequiredService<UserByIdDataLoader>();
                 var groupPassenger = ctx.Parent<CommuteGroupPassenger>();

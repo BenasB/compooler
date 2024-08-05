@@ -1,7 +1,9 @@
+using Compooler.API.Extensions;
 using Compooler.Domain.Entities.UserEntity;
 using Compooler.Persistence;
+using HotChocolate.Pagination;
+using HotChocolate.Types.Pagination;
 using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore;
 
 namespace Compooler.API.Types.Queries;
 
@@ -14,11 +16,16 @@ public class UserQueries : ObjectTypeExtension
 
         descriptor
             .Field("users")
+            .UsePaging()
             .Type<NonNullType<ListType<NonNullType<ObjectType<User>>>>>()
-            .Resolve(ctx =>
+            .Resolve<Connection<User>>(async ctx =>
             {
+                var pagingArguments = ctx.GetPagingArguments();
                 var dbContext = ctx.Services.GetRequiredService<CompoolerDbContext>();
-                return dbContext.Users.AsNoTracking().ToListAsync(ctx.RequestAborted);
+                return await dbContext
+                    .Users.OrderBy(x => x.Id)
+                    .ToPageAsync(pagingArguments, ctx.RequestAborted)
+                    .ToConnectionAsync();
             });
     }
 }

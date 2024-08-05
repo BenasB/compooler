@@ -20,7 +20,7 @@ public class CommuteGroupNodeType : ObjectType<CommuteGroup>
         descriptor
             .Field("driver")
             .Type<NonNullType<ObjectType<User>>>()
-            .Resolve(async ctx =>
+            .Resolve<User>(async ctx =>
             {
                 var dataLoader = ctx.Services.GetRequiredService<UserByIdDataLoader>();
                 var commuteGroup = ctx.Parent<CommuteGroup>();

@@ -11,6 +11,7 @@ public class UserNodeType : ObjectType<User>
     protected override void Configure(IObjectTypeDescriptor<User> descriptor)
     {
         descriptor.BindFieldsExplicitly();
+
         descriptor.Field(x => x.Id);
         descriptor.Field(x => x.FirstName);
         descriptor.Field(x => x.LastName);
@@ -18,7 +19,7 @@ public class UserNodeType : ObjectType<User>
         descriptor
             .Field("commuteGroups")
             .Type<NonNullType<ListType<NonNullType<ObjectType<CommuteGroup>>>>>()
-            .Resolve(async ctx =>
+            .Resolve<IReadOnlyList<CommuteGroup>>(async ctx =>
             {
                 var commuteGroupIdsByUserIdDataLoader =
                     ctx.Services.GetRequiredService<CommuteGroupIdsByUserIdDataLoader>();

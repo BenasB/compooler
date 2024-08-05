@@ -18,6 +18,7 @@ public static class TypeRegistration
             .AddType<CommuteGroupNodeType>()
             .AddType<RouteObjectType>()
             .AddType<CommuteGroupPassengerObjectType>()
+            .AddType<GeographicCoordinatesObjectType>()
             .AddType<UserNodeType>();
 
     private static IRequestExecutorBuilder AddDataLoaders(this IRequestExecutorBuilder builder) =>
