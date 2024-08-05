@@ -27,5 +27,16 @@ public class CommuteGroupNodeType : ObjectType<CommuteGroup>
 
                 return await dataLoader.LoadAsync(commuteGroup.DriverId, ctx.RequestAborted);
             });
+
+        descriptor
+            .ImplementsNode()
+            .IdField(x => x.Id)
+            .ResolveNode(
+                async (ctx, id) =>
+                {
+                    var dataLoader = ctx.Services.GetRequiredService<CommuteGroupByIdDataLoader>();
+                    return await dataLoader.LoadAsync(id, ctx.RequestAborted);
+                }
+            );
     }
 }
