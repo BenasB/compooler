@@ -37,5 +37,16 @@ public class UserNodeType : ObjectType<User>
                     ctx.RequestAborted
                 );
             });
+
+        descriptor
+            .ImplementsNode()
+            .IdField(x => x.Id)
+            .ResolveNode(
+                async (ctx, id) =>
+                {
+                    var dataLoader = ctx.Services.GetRequiredService<UserByIdDataLoader>();
+                    return await dataLoader.LoadAsync(id, ctx.RequestAborted);
+                }
+            );
     }
 }
