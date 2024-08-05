@@ -15,14 +15,44 @@ type CommuteGroupPassenger {
   user: User!
 }
 
+"A connection to a list of items."
+type CommuteGroupsConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [CommuteGroupsEdge!]
+  "A flattened list of the nodes."
+  nodes: [CommuteGroup!]
+}
+
+"An edge in a connection."
+type CommuteGroupsEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: CommuteGroup!
+}
+
 type GeographicCoordinates {
   latitude: Float!
   longitude: Float!
 }
 
+"Information about pagination in a connection."
+type PageInfo {
+  "Indicates whether more edges exist following the set defined by the clients arguments."
+  hasNextPage: Boolean!
+  "Indicates whether more edges exist prior the set defined by the clients arguments."
+  hasPreviousPage: Boolean!
+  "When paginating backwards, the cursor to continue."
+  startCursor: String
+  "When paginating forwards, the cursor to continue."
+  endCursor: String
+}
+
 type Query {
-  commuteGroups: [CommuteGroup!]!
-  users: [User!]!
+  commuteGroups("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): CommuteGroupsConnection
+  users("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): UsersConnection
 }
 
 type Route {
@@ -35,6 +65,24 @@ type User {
   firstName: String!
   lastName: String!
   commuteGroups: [CommuteGroup!]!
+}
+
+"A connection to a list of items."
+type UsersConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [UsersEdge!]
+  "A flattened list of the nodes."
+  nodes: [User!]
+}
+
+"An edge in a connection."
+type UsersEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: User!
 }
 
 "The `@specifiedBy` directive is used within the type system definition language to provide a URL for specifying the behavior of custom scalar definitions."

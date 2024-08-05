@@ -7,8 +7,9 @@ public static class HotChocolateConventions
     public static IRequestExecutorBuilder AddCompoolerConventions(
         this IRequestExecutorBuilder builder
     ) =>
-        builder.ModifyOptions(options =>
+        builder.ModifyPagingOptions(options =>
         {
-            options.DefaultBindingBehavior = BindingBehavior.Explicit;
+            options.AllowBackwardPagination = false;
+            options.RequirePagingBoundaries = false;
         });
 }

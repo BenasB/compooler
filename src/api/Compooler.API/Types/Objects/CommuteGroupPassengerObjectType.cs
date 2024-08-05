@@ -10,6 +10,8 @@ public class CommuteGroupPassengerObjectType : ObjectType<CommuteGroupPassenger>
 {
     protected override void Configure(IObjectTypeDescriptor<CommuteGroupPassenger> descriptor)
     {
+        descriptor.BindFieldsExplicitly();
+
         descriptor.Field(x => x.JoinedAt);
 
         descriptor

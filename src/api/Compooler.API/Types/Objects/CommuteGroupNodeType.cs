@@ -10,6 +10,8 @@ public class CommuteGroupNodeType : ObjectType<CommuteGroup>
 {
     protected override void Configure(IObjectTypeDescriptor<CommuteGroup> descriptor)
     {
+        descriptor.BindFieldsExplicitly();
+
         descriptor.Field(x => x.Id);
         descriptor.Field(x => x.MaxPassengers);
         descriptor.Field(x => x.Route);

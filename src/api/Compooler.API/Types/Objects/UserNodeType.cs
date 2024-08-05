@@ -10,6 +10,8 @@ public class UserNodeType : ObjectType<User>
 {
     protected override void Configure(IObjectTypeDescriptor<User> descriptor)
     {
+        descriptor.BindFieldsExplicitly();
+
         descriptor.Field(x => x.Id);
         descriptor.Field(x => x.FirstName);
         descriptor.Field(x => x.LastName);
