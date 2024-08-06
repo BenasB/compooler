@@ -1,5 +1,11 @@
 schema {
   query: Query
+  mutation: Mutation
+}
+
+interface Error {
+  code: String!
+  message: String!
 }
 
 "The node interface is implemented by entities that have a global unique identifier."
@@ -38,9 +44,34 @@ type CommuteGroupsEdge {
   node: CommuteGroup!
 }
 
+type CreateCommuteGroupPayload {
+  commuteGroup: CommuteGroup
+  errors: [CreateCommuteGroupError!]
+}
+
+type CreateUserPayload {
+  user: User
+}
+
 type GeographicCoordinates {
   latitude: Float!
   longitude: Float!
+}
+
+type InvalidLatitudeError implements Error {
+  code: String!
+  message: String!
+}
+
+type InvalidLongitudeError implements Error {
+  code: String!
+  message: String!
+}
+
+type Mutation {
+  createCommuteGroup(input: CreateCommuteGroupInput): CreateCommuteGroupPayload!
+  createUser(input: CreateUserInput): CreateUserPayload!
+  removeUser(input: RemoveUserInput): RemoveUserPayload!
 }
 
 "Information about pagination in a connection."
@@ -64,6 +95,11 @@ type Query {
   users("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): UsersConnection
 }
 
+type RemoveUserPayload {
+  user: User
+  errors: [RemoveUserError!]
+}
+
 type Route {
   start: GeographicCoordinates!
   finish: GeographicCoordinates!
@@ -74,6 +110,12 @@ type User implements Node {
   firstName: String!
   lastName: String!
   commuteGroups: [CommuteGroup!]!
+}
+
+type UserNotFoundError implements Error {
+  id: ID!
+  code: String!
+  message: String!
 }
 
 "A connection to a list of items."
@@ -92,6 +134,28 @@ type UsersEdge {
   cursor: String!
   "The item at the end of the edge."
   node: User!
+}
+
+union CreateCommuteGroupError = InvalidLatitudeError | InvalidLongitudeError | UserNotFoundError
+
+union RemoveUserError = UserNotFoundError
+
+input CreateCommuteGroupInput {
+  driverId: ID!
+  maxPassengers: Int!
+  startLatitude: Float!
+  startLongitude: Float!
+  finishLatitude: Float!
+  finishLongitude: Float!
+}
+
+input CreateUserInput {
+  firstName: String!
+  lastName: String!
+}
+
+input RemoveUserInput {
+  id: ID!
 }
 
 "The `@specifiedBy` directive is used within the type system definition language to provide a URL for specifying the behavior of custom scalar definitions."

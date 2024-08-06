@@ -13,5 +13,6 @@ public static class HotChocolateConventions
                 options.AllowBackwardPagination = false;
                 options.RequirePagingBoundaries = false;
             })
-            .AddGlobalObjectIdentification();
+            .AddGlobalObjectIdentification()
+            .AddMutationConventions(applyToAllMutations: true);
 }

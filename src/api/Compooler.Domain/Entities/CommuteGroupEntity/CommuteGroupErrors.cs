@@ -2,15 +2,12 @@ namespace Compooler.Domain.Entities.CommuteGroupEntity;
 
 public static class CommuteGroupErrors
 {
-    public static Error PassengerLimitReached(CommuteGroup group) =>
-        new(
-            "CommuteGroup.AddPassenger.PassengerLimitReached",
-            $"Reached passenger limit '{group.MaxPassengers}'"
-        );
+    public record PassengerLimitReachedError(int MaxPassengers)
+        : Error("CommuteGroup.AddPassenger.PassengerLimitReached", "Reached passenger limit");
 
-    public static Error PassengerNotFound(int userId) =>
-        new(
-            "CommuteGroup.RemovePassenger.PassengerNotFound",
-            $"User '{userId}' not found in the group's passengers"
+    public record PassengerNotFoundError(int UserId)
+        : Error(
+            "CommuteGroup.AddPassenger.PassengerNotFound",
+            "User not found in the group's passengers"
         );
 }

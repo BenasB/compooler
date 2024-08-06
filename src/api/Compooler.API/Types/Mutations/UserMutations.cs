@@ -1,0 +1,31 @@
+using Compooler.API.Types.Mutations.Inputs;
+using Compooler.Application;
+using Compooler.Application.Commands;
+using Compooler.Domain.Entities.UserEntity;
+using JetBrains.Annotations;
+
+namespace Compooler.API.Types.Mutations;
+
+[PublicAPI]
+public class UserMutations : ObjectTypeExtension
+{
+    protected override void Configure(IObjectTypeDescriptor descriptor)
+    {
+        descriptor.Name(OperationTypeNames.Mutation);
+
+        descriptor
+            .Field("createUser")
+            .ResolveCompoolerMutation<CreateUserInput, CreateUserCommand, User>(
+                input => new CreateUserCommand(FirstName: input.FirstName, LastName: input.LastName)
+            );
+
+        descriptor
+            .Field("removeUser")
+            .ResolveCompoolerMutation<
+                RemoveUserInput,
+                RemoveUserCommand,
+                User,
+                EntityNotFoundError<User>
+            >(input => new RemoveUserCommand(Id: input.Id));
+    }
+}
