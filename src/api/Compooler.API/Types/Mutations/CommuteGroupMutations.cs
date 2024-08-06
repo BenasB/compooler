@@ -1,6 +1,8 @@
+using Compooler.API.Types.Mutations.Inputs;
 using Compooler.Application;
 using Compooler.Application.Commands;
 using Compooler.Domain.Entities.CommuteGroupEntity;
+using Compooler.Domain.Entities.UserEntity;
 using JetBrains.Annotations;
 
 namespace Compooler.API.Types.Mutations;
@@ -14,20 +16,20 @@ public class CommuteGroupMutations : ObjectType
 
         descriptor
             .Field("createCommuteGroup")
-            .Argument("input", x => x.Type<InputObjectType<CreateCommuteGroupInput>>())
-            .Type<NonNullType<ObjectType<CommuteGroup>>>()
-            .Resolve<CommuteGroup>(async ctx =>
-            {
-                var handler = ctx.Services.GetRequiredService<
-                    ICommandHandler<CreateCommuteGroupCommand, CommuteGroup>
-                >();
-
-                var result = await handler.HandleAsync(new CreateCommuteGroupCommand());
-
-                return result.Value!;
-            });
+            .ResolveCompoolerMutation<
+                CreateCommuteGroupInput,
+                CreateCommuteGroupCommand,
+                CommuteGroup,
+                GeographicCoordinatesErrors.InvalidLatitudeError,
+                GeographicCoordinatesErrors.InvalidLongitudeError,
+                EntityNotFoundError<User>
+            >(input => new CreateCommuteGroupCommand(
+                DriverId: input.DriverId,
+                MaxPassengers: input.MaxPassengers,
+                StartLatitude: input.StartLatitude,
+                StartLongitude: input.StartLongitude,
+                FinishLatitude: input.FinishLatitude,
+                FinishLongitude: input.FinishLongitude
+            ));
     }
 }
-
-[PublicAPI]
-public record CreateCommuteGroupInput(int Id, string Name);

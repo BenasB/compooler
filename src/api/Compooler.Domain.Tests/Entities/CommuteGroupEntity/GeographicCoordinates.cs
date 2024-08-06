@@ -13,7 +13,7 @@ public class GeographicCoordinatesTests
         var coords = GeographicCoordinates.Create(-91, ValidLongitude);
 
         Assert.True(coords.IsFailed);
-        Assert.Equal(GeographicCoordinatesErrors.InvalidLatitude, coords.Error);
+        Assert.Equal(new GeographicCoordinatesErrors.InvalidLatitudeError(), coords.Error);
     }
 
     [Fact]
@@ -22,7 +22,7 @@ public class GeographicCoordinatesTests
         var coords = GeographicCoordinates.Create(91, ValidLongitude);
 
         Assert.True(coords.IsFailed);
-        Assert.Equal(GeographicCoordinatesErrors.InvalidLatitude, coords.Error);
+        Assert.Equal(new GeographicCoordinatesErrors.InvalidLatitudeError(), coords.Error);
     }
 
     [Fact]
@@ -31,7 +31,7 @@ public class GeographicCoordinatesTests
         var coords = GeographicCoordinates.Create(ValidLatitude, -181);
 
         Assert.True(coords.IsFailed);
-        Assert.Equal(GeographicCoordinatesErrors.InvalidLongitude, coords.Error);
+        Assert.Equal(new GeographicCoordinatesErrors.InvalidLongitudeError(), coords.Error);
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public class GeographicCoordinatesTests
         var coords = GeographicCoordinates.Create(ValidLatitude, 181);
 
         Assert.True(coords.IsFailed);
-        Assert.Equal(GeographicCoordinatesErrors.InvalidLongitude, coords.Error);
+        Assert.Equal(new GeographicCoordinatesErrors.InvalidLongitudeError(), coords.Error);
     }
 
     [Fact]

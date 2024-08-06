@@ -4,5 +4,5 @@ namespace Compooler.Application;
 
 public interface ICommandHandler<in TCommand, TResult>
 {
-    Task<Result<TResult>> HandleAsync(TCommand command);
+    Task<Result<TResult>> HandleAsync(TCommand command, CancellationToken ct = default);
 }

@@ -1,6 +1,6 @@
 namespace Compooler.Domain.Entities.UserEntity;
 
-public sealed class User
+public sealed class User : IEntity
 {
     public int Id { get; }
     public required string FirstName { get; init; }

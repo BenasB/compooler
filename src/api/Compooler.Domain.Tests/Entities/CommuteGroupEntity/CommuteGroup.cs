@@ -36,7 +36,10 @@ public class CommuteGroupTests
 
         var result = _commuteGroup.AddPassenger(MaxPassengers);
         Assert.True(result.IsFailed);
-        Assert.Equal(CommuteGroupErrors.PassengerLimitReached(_commuteGroup), result.Error);
+        Assert.Equal(
+            new CommuteGroupErrors.PassengerLimitReachedError(MaxPassengers),
+            result.Error
+        );
     }
 
     [Fact]
@@ -58,7 +61,10 @@ public class CommuteGroupTests
         const int nonExistentUserId = MaxPassengers;
         var result = _commuteGroup.RemovePassenger(nonExistentUserId);
         Assert.True(result.IsFailed);
-        Assert.Equal(CommuteGroupErrors.PassengerNotFound(nonExistentUserId), result.Error);
+        Assert.Equal(
+            new CommuteGroupErrors.PassengerNotFoundError(nonExistentUserId),
+            result.Error
+        );
     }
 
     [Fact]

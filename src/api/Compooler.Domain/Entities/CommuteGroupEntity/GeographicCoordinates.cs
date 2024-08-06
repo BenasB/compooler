@@ -11,12 +11,12 @@ public sealed class GeographicCoordinates
     {
         if (latitude is < -90 or > 90)
             return Result<GeographicCoordinates>.Failure(
-                GeographicCoordinatesErrors.InvalidLatitude
+                new GeographicCoordinatesErrors.InvalidLatitudeError()
             );
 
         if (longitude is < -180 or > 180)
             return Result<GeographicCoordinates>.Failure(
-                GeographicCoordinatesErrors.InvalidLongitude
+                new GeographicCoordinatesErrors.InvalidLongitudeError()
             );
 
         return Result<GeographicCoordinates>.Success(

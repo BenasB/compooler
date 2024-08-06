@@ -1,4 +1,5 @@
 using Compooler.API.DataLoaders.Entities;
+using Compooler.API.Types.Errors;
 using Compooler.API.Types.Mutations;
 using Compooler.API.Types.Objects;
 using Compooler.API.Types.Queries;
@@ -9,7 +10,13 @@ namespace Compooler.API.Extensions;
 public static class TypeRegistration
 {
     public static IRequestExecutorBuilder AddCompoolerTypes(this IRequestExecutorBuilder builder) =>
-        builder.AddQueries().AddMutations().AddObjectTypes().AddDataLoaders();
+        builder
+            .AddQueries()
+            .AddMutations()
+            .AddObjectTypes()
+            .AddDataLoaders()
+            .AddErrorInterfaceType<ErrorInterfaceType>()
+            .TryAddTypeInterceptor<EntityNotFoundErrorTypeInterceptor>();
 
     private static IRequestExecutorBuilder AddQueries(this IRequestExecutorBuilder builder) =>
         builder.AddQueryType<CommuteGroupQueries>().AddTypeExtension<UserQueries>();

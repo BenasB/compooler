@@ -1,6 +1,6 @@
 namespace Compooler.Domain.Entities.CommuteGroupEntity;
 
-public sealed class CommuteGroup
+public sealed class CommuteGroup : IEntity
 {
     public int Id { get; }
     public required Route Route { get; init; }
@@ -23,7 +23,7 @@ public sealed class CommuteGroup
     public Result AddPassenger(int userId)
     {
         if (_passengers.Count >= MaxPassengers)
-            return Result.Failure(CommuteGroupErrors.PassengerLimitReached(this));
+            return Result.Failure(new CommuteGroupErrors.PassengerLimitReachedError(MaxPassengers));
 
         _passengers.Add(CommuteGroupPassenger.Create(userId: userId));
         return Result.Success();
@@ -34,7 +34,7 @@ public sealed class CommuteGroup
         var passenger = _passengers.Find(p => p.UserId == userId);
 
         if (passenger == null)
-            return Result.Failure(CommuteGroupErrors.PassengerNotFound(userId));
+            return Result.Failure(new CommuteGroupErrors.PassengerNotFoundError(userId));
 
         _passengers.Remove(passenger);
         return Result.Success();
