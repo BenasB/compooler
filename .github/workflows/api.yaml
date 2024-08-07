@@ -13,9 +13,6 @@ on:
     paths:
       - src/api/**
 
-permissions:
-  checks: write
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -37,12 +34,12 @@ jobs:
       - name: Build
         run: dotnet build --no-restore
       - name: Test
-        run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage"
       - name: Generate test report
-        uses: dorny/test-reporter@v1
+        uses: bibipkins/dotnet-test-reporter@v1.4.1
         if: success() || failure()
         with:
-          name: .NET API Tests
-          path: "*.Tests/**/test-results.trx"
-          reporter: dotnet-trx
-          working-directory: src/api
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          results-path: "*.Tests/**/*.trx"
+          coverage-path: "*.Tests/**/coverage.cobertura.xml"
+          coverage-threshold: 80
