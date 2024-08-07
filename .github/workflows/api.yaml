@@ -36,12 +36,11 @@ jobs:
       - name: Test
         run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage"
       - name: Install coverage merge tool
-        run: dotnet install --global dotnet-coverage
+        run: dotnet tool install --global dotnet-coverage
       - name: Merge coverage files
         run: dotnet-coverage merge *.cobertura.xml --recursive --output merged.cobertura.xml --output-format cobertura
       - name: Generate test report
         uses: bibipkins/dotnet-test-reporter@v1.4.1
-        if: success() || failure()
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           results-path: "src/api/*.Tests/**/*.trx"
