@@ -40,6 +40,6 @@ jobs:
         if: success() || failure()
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          results-path: "*.Tests/**/*.trx"
-          coverage-path: "*.Tests/**/coverage.cobertura.xml"
+          results-path: "src/api/*.Tests/**/*.trx"
+          coverage-path: "src/api/*.Tests/**/coverage.cobertura.xml"
           coverage-threshold: 80
