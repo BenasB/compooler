@@ -3,7 +3,11 @@ theme: readthedocs
 nav:
   - Welcome: index.md
   - Initial design document: initial.md
-  - Domain model: model.md
+  - Business:
+      - Domain model: business/model.md
+  - Technical:
+      - Back end:
+          - Overview: technical/back_end/overview.md
 plugins:
   - search
   - mermaid2
