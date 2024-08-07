@@ -48,11 +48,13 @@ public class UserCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
     [Fact]
     public async Task RemoveUser_UserDoesNotExist_Fails()
     {
-        var command = new RemoveUserCommand(Id: -1);
+        const int nonExistentId = -1;
+        var command = new RemoveUserCommand(Id: nonExistentId);
         var handler = new RemoveUserCommandHandler(_dbContext);
 
         var result = await handler.HandleAsync(command);
 
         Assert.True(result.IsFailed);
+        Assert.Equal(new EntityNotFoundError<User>(nonExistentId), result.Error);
     }
 }
