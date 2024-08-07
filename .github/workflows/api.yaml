@@ -14,7 +14,7 @@ on:
       - src/api/**
 
 permissions:
-  checks: write
+  pull-requests: write
 
 jobs:
   build:
