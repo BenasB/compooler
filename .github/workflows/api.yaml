@@ -13,6 +13,9 @@ on:
     paths:
       - src/api/**
 
+permissions:
+  checks: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
