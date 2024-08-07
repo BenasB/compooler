@@ -8,7 +8,10 @@ public record CreateUserCommand(string FirstName, string LastName);
 public class CreateUserCommandHandler(ICompoolerDbContext dbContext)
     : ICommandHandler<CreateUserCommand, User>
 {
-    public async Task<Result<User>> HandleAsync(CreateUserCommand command, CancellationToken ct)
+    public async Task<Result<User>> HandleAsync(
+        CreateUserCommand command,
+        CancellationToken ct = default
+    )
     {
         var newUser = User.Create(command.FirstName, command.LastName);
         dbContext.Users.Add(newUser);

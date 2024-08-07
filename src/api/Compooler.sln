@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compooler.API", "Compooler.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compooler.API.Tests", "Compooler.API.Tests\Compooler.API.Tests.csproj", "{4EB0F79E-280A-418F-B465-97F926A96133}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compooler.Application.Tests", "Compooler.Application.Tests\Compooler.Application.Tests.csproj", "{ABB4BC13-BA1E-4DCC-9FFF-0CF8C2AA405B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +50,9 @@ Global
 		{4EB0F79E-280A-418F-B465-97F926A96133}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4EB0F79E-280A-418F-B465-97F926A96133}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4EB0F79E-280A-418F-B465-97F926A96133}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABB4BC13-BA1E-4DCC-9FFF-0CF8C2AA405B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABB4BC13-BA1E-4DCC-9FFF-0CF8C2AA405B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABB4BC13-BA1E-4DCC-9FFF-0CF8C2AA405B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABB4BC13-BA1E-4DCC-9FFF-0CF8C2AA405B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
