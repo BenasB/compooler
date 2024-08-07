@@ -18,7 +18,7 @@ public class CreateCommuteGroupHandler(ICompoolerDbContext dbContext)
 {
     public async Task<Result<CommuteGroup>> HandleAsync(
         CreateCommuteGroupCommand command,
-        CancellationToken ct
+        CancellationToken ct = default
     )
     {
         var startResult = GeographicCoordinates.Create(
