@@ -42,3 +42,4 @@ jobs:
           name: .NET API Tests
           path: "*.Tests/**/test-results.trx"
           reporter: dotnet-trx
+          working-directory: src/api
