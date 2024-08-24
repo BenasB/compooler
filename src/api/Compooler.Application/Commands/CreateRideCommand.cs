@@ -1,10 +1,10 @@
 using Compooler.Domain;
-using Compooler.Domain.Entities.CommuteGroupEntity;
+using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
 
 namespace Compooler.Application.Commands;
 
-public record CreateCommuteGroupCommand(
+public record CreateRideCommand(
     int DriverId,
     int MaxPassengers,
     double StartLatitude,
@@ -13,11 +13,11 @@ public record CreateCommuteGroupCommand(
     double FinishLongitude
 );
 
-public class CreateCommuteGroupHandler(ICompoolerDbContext dbContext)
-    : ICommandHandler<CreateCommuteGroupCommand, CommuteGroup>
+public class CreateRideCommandHandler(ICompoolerDbContext dbContext)
+    : ICommandHandler<CreateRideCommand, Ride>
 {
-    public async Task<Result<CommuteGroup>> HandleAsync(
-        CreateCommuteGroupCommand command,
+    public async Task<Result<Ride>> HandleAsync(
+        CreateRideCommand command,
         CancellationToken ct = default
     )
     {
@@ -27,7 +27,7 @@ public class CreateCommuteGroupHandler(ICompoolerDbContext dbContext)
         );
 
         if (startResult.IsFailed)
-            return Result<CommuteGroup>.Failure(startResult.Error);
+            return Result<Ride>.Failure(startResult.Error);
 
         var finishResult = GeographicCoordinates.Create(
             command.FinishLatitude,
@@ -35,21 +35,21 @@ public class CreateCommuteGroupHandler(ICompoolerDbContext dbContext)
         );
 
         if (finishResult.IsFailed)
-            return Result<CommuteGroup>.Failure(finishResult.Error);
+            return Result<Ride>.Failure(finishResult.Error);
 
         var driver = await dbContext.Users.FindAsync([command.DriverId], cancellationToken: ct);
 
         if (driver is null)
         {
-            return Result<CommuteGroup>.Failure(new EntityNotFoundError<User>(command.DriverId));
+            return Result<Ride>.Failure(new EntityNotFoundError<User>(command.DriverId));
         }
 
         var route = Route.Create(startResult.Value, finishResult.Value);
-        var commuteGroup = CommuteGroup.Create(route, command.DriverId, command.MaxPassengers);
+        var ride = Ride.Create(route, command.DriverId, command.MaxPassengers);
 
-        dbContext.CommuteGroups.Add(commuteGroup);
+        dbContext.Rides.Add(ride);
         await dbContext.SaveChangesAsync(ct);
 
-        return Result<CommuteGroup>.Success(commuteGroup);
+        return Result<Ride>.Success(ride);
     }
 }

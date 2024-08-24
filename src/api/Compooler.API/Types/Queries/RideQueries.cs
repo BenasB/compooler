@@ -1,5 +1,5 @@
 using Compooler.API.Extensions;
-using Compooler.Domain.Entities.CommuteGroupEntity;
+using Compooler.Domain.Entities.RideEntity;
 using Compooler.Persistence;
 using HotChocolate.Pagination;
 using HotChocolate.Types.Pagination;
@@ -9,22 +9,22 @@ using Microsoft.EntityFrameworkCore;
 namespace Compooler.API.Types.Queries;
 
 [PublicAPI]
-public class CommuteGroupQueries : ObjectType
+public class RideQueries : ObjectType
 {
     protected override void Configure(IObjectTypeDescriptor descriptor)
     {
         descriptor.Name(OperationTypeNames.Query);
 
         descriptor
-            .Field("commuteGroups")
+            .Field("rides")
             .UsePaging()
-            .Type<NonNullType<ListType<NonNullType<ObjectType<CommuteGroup>>>>>()
-            .Resolve<Connection<CommuteGroup>>(async ctx =>
+            .Type<NonNullType<ListType<NonNullType<ObjectType<Ride>>>>>()
+            .Resolve<Connection<Ride>>(async ctx =>
             {
                 var pagingArguments = ctx.GetPagingArguments();
                 var dbContext = ctx.Services.GetRequiredService<CompoolerDbContext>();
                 return await dbContext
-                    .CommuteGroups.OrderBy(x => x.Id)
+                    .Rides.OrderBy(x => x.Id)
                     .AsNoTracking()
                     .ToPageAsync(pagingArguments, ctx.RequestAborted)
                     .ToConnectionAsync();

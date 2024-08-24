@@ -1,5 +1,5 @@
 using Compooler.Application;
-using Compooler.Domain.Entities.CommuteGroupEntity;
+using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -34,7 +34,7 @@ public static class CompoolerDbContextSetUp
         {
             await dbContext.Database.MigrateAsync();
 
-            if (!dbContext.Users.Any() && !dbContext.CommuteGroups.Any())
+            if (!dbContext.Users.Any() && !dbContext.Rides.Any())
             {
                 User[] users =
                 [
@@ -45,9 +45,9 @@ public static class CompoolerDbContextSetUp
                 dbContext.Users.AddRange(users);
                 await dbContext.SaveChangesAsync();
 
-                CommuteGroup[] groups =
+                Ride[] rides =
                 [
-                    CommuteGroup.Create(
+                    Ride.Create(
                         Route.Create(
                             GeographicCoordinates.Create(66.21321, 162.321).Value!,
                             GeographicCoordinates.Create(67.3232, 162.121).Value!
@@ -55,7 +55,7 @@ public static class CompoolerDbContextSetUp
                         users[0].Id,
                         2
                     ),
-                    CommuteGroup.Create(
+                    Ride.Create(
                         Route.Create(
                             GeographicCoordinates.Create(-12.5123, 32.421).Value!,
                             GeographicCoordinates.Create(-11.3, -112.441).Value!
@@ -63,7 +63,7 @@ public static class CompoolerDbContextSetUp
                         users[0].Id,
                         3
                     ),
-                    CommuteGroup.Create(
+                    Ride.Create(
                         Route.Create(
                             GeographicCoordinates.Create(-12.5123, 32.421).Value!,
                             GeographicCoordinates.Create(-11.3, -112.441).Value!
@@ -72,12 +72,12 @@ public static class CompoolerDbContextSetUp
                         3
                     )
                 ];
-                groups[0].AddPassenger(users[1].Id);
-                groups[0].AddPassenger(users[2].Id);
+                rides[0].AddPassenger(users[1].Id);
+                rides[0].AddPassenger(users[2].Id);
 
-                groups[1].AddPassenger(users[2].Id);
+                rides[1].AddPassenger(users[2].Id);
 
-                dbContext.CommuteGroups.AddRange(groups);
+                dbContext.Rides.AddRange(rides);
                 await dbContext.SaveChangesAsync();
             }
         }

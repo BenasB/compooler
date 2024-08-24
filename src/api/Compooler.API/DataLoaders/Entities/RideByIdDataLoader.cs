@@ -1,4 +1,4 @@
-using Compooler.Domain.Entities.CommuteGroupEntity;
+using Compooler.Domain.Entities.RideEntity;
 using Compooler.Persistence;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
@@ -6,18 +6,18 @@ using Microsoft.EntityFrameworkCore;
 namespace Compooler.API.DataLoaders.Entities;
 
 [UsedImplicitly]
-public class CommuteGroupByIdDataLoader(
+public class RideByIdDataLoader(
     IServiceProvider serviceProvider,
     IBatchScheduler batchScheduler,
     DataLoaderOptions options
-) : CompoolerDbContextBatchDataLoader<int, CommuteGroup>(serviceProvider, batchScheduler, options)
+) : CompoolerDbContextBatchDataLoader<int, Ride>(serviceProvider, batchScheduler, options)
 {
-    protected override async Task<IReadOnlyDictionary<int, CommuteGroup>> LoadBatchAsync(
+    protected override async Task<IReadOnlyDictionary<int, Ride>> LoadBatchAsync(
         IReadOnlyList<int> keys,
         CompoolerDbContext dbContext,
         CancellationToken cancellationToken
     ) =>
         await dbContext
-            .CommuteGroups.Where(cg => keys.Contains(cg.Id))
+            .Rides.Where(cg => keys.Contains(cg.Id))
             .ToDictionaryAsync(cg => cg.Id, cancellationToken);
 }

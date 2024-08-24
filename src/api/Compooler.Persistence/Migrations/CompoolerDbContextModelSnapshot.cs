@@ -22,7 +22,7 @@ namespace Compooler.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Compooler.Domain.Entities.CommuteGroupEntity.CommuteGroup", b =>
+            modelBuilder.Entity("Compooler.Domain.Entities.RideEntity.Ride", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -38,12 +38,12 @@ namespace Compooler.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CommuteGroups");
+                    b.ToTable("Rides");
                 });
 
-            modelBuilder.Entity("Compooler.Domain.Entities.CommuteGroupEntity.CommuteGroupPassenger", b =>
+            modelBuilder.Entity("Compooler.Domain.Entities.RideEntity.RidePassenger", b =>
                 {
-                    b.Property<int>("CommuteGroupId")
+                    b.Property<int>("RideId")
                         .HasColumnType("integer");
 
                     b.Property<int>("UserId")
@@ -54,9 +54,9 @@ namespace Compooler.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.HasKey("CommuteGroupId", "UserId");
+                    b.HasKey("RideId", "UserId");
 
-                    b.ToTable("CommuteGroupsPassengers");
+                    b.ToTable("RidesPassengers");
                 });
 
             modelBuilder.Entity("Compooler.Domain.Entities.UserEntity.User", b =>
@@ -80,23 +80,23 @@ namespace Compooler.Persistence.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Compooler.Domain.Entities.CommuteGroupEntity.CommuteGroup", b =>
+            modelBuilder.Entity("Compooler.Domain.Entities.RideEntity.Ride", b =>
                 {
-                    b.OwnsOne("Compooler.Domain.Entities.CommuteGroupEntity.Route", "Route", b1 =>
+                    b.OwnsOne("Compooler.Domain.Entities.RideEntity.Route", "Route", b1 =>
                         {
-                            b1.Property<int>("CommuteGroupId")
+                            b1.Property<int>("RideId")
                                 .HasColumnType("integer");
 
-                            b1.HasKey("CommuteGroupId");
+                            b1.HasKey("RideId");
 
                             b1.ToTable("Routes", (string)null);
 
                             b1.WithOwner()
-                                .HasForeignKey("CommuteGroupId");
+                                .HasForeignKey("RideId");
 
-                            b1.OwnsOne("Compooler.Domain.Entities.CommuteGroupEntity.GeographicCoordinates", "Finish", b2 =>
+                            b1.OwnsOne("Compooler.Domain.Entities.RideEntity.GeographicCoordinates", "Finish", b2 =>
                                 {
-                                    b2.Property<int>("RouteCommuteGroupId")
+                                    b2.Property<int>("RouteRideId")
                                         .HasColumnType("integer");
 
                                     b2.Property<double>("Latitude")
@@ -105,17 +105,17 @@ namespace Compooler.Persistence.Migrations
                                     b2.Property<double>("Longitude")
                                         .HasColumnType("double precision");
 
-                                    b2.HasKey("RouteCommuteGroupId");
+                                    b2.HasKey("RouteRideId");
 
                                     b2.ToTable("Routes");
 
                                     b2.WithOwner()
-                                        .HasForeignKey("RouteCommuteGroupId");
+                                        .HasForeignKey("RouteRideId");
                                 });
 
-                            b1.OwnsOne("Compooler.Domain.Entities.CommuteGroupEntity.GeographicCoordinates", "Start", b2 =>
+                            b1.OwnsOne("Compooler.Domain.Entities.RideEntity.GeographicCoordinates", "Start", b2 =>
                                 {
-                                    b2.Property<int>("RouteCommuteGroupId")
+                                    b2.Property<int>("RouteRideId")
                                         .HasColumnType("integer");
 
                                     b2.Property<double>("Latitude")
@@ -124,12 +124,12 @@ namespace Compooler.Persistence.Migrations
                                     b2.Property<double>("Longitude")
                                         .HasColumnType("double precision");
 
-                                    b2.HasKey("RouteCommuteGroupId");
+                                    b2.HasKey("RouteRideId");
 
                                     b2.ToTable("Routes");
 
                                     b2.WithOwner()
-                                        .HasForeignKey("RouteCommuteGroupId");
+                                        .HasForeignKey("RouteRideId");
                                 });
 
                             b1.Navigation("Finish")
@@ -143,16 +143,16 @@ namespace Compooler.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Compooler.Domain.Entities.CommuteGroupEntity.CommuteGroupPassenger", b =>
+            modelBuilder.Entity("Compooler.Domain.Entities.RideEntity.RidePassenger", b =>
                 {
-                    b.HasOne("Compooler.Domain.Entities.CommuteGroupEntity.CommuteGroup", null)
+                    b.HasOne("Compooler.Domain.Entities.RideEntity.Ride", null)
                         .WithMany("Passengers")
-                        .HasForeignKey("CommuteGroupId")
+                        .HasForeignKey("RideId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Compooler.Domain.Entities.CommuteGroupEntity.CommuteGroup", b =>
+            modelBuilder.Entity("Compooler.Domain.Entities.RideEntity.Ride", b =>
                 {
                     b.Navigation("Passengers");
                 });

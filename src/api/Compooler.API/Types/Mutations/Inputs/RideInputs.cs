@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 namespace Compooler.API.Types.Mutations.Inputs;
 
 [PublicAPI]
-public record CreateCommuteGroupInput(
+public record CreateRideInput(
     [property: ID<User>] int DriverId,
     int MaxPassengers,
     double StartLatitude,

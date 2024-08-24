@@ -1,14 +1,14 @@
 using Compooler.API.DataLoaders.Entities;
-using Compooler.Domain.Entities.CommuteGroupEntity;
+using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
 using JetBrains.Annotations;
 
 namespace Compooler.API.Types.Objects;
 
 [PublicAPI]
-public class CommuteGroupPassengerObjectType : ObjectType<CommuteGroupPassenger>
+public class RidePassengerObjectType : ObjectType<RidePassenger>
 {
-    protected override void Configure(IObjectTypeDescriptor<CommuteGroupPassenger> descriptor)
+    protected override void Configure(IObjectTypeDescriptor<RidePassenger> descriptor)
     {
         descriptor.BindFieldsExplicitly();
 
@@ -20,7 +20,7 @@ public class CommuteGroupPassengerObjectType : ObjectType<CommuteGroupPassenger>
             .Resolve<User>(async ctx =>
             {
                 var dataLoader = ctx.Services.GetRequiredService<UserByIdDataLoader>();
-                var groupPassenger = ctx.Parent<CommuteGroupPassenger>();
+                var groupPassenger = ctx.Parent<RidePassenger>();
                 return await dataLoader.LoadAsync(groupPassenger.UserId, ctx.RequestAborted);
             });
     }

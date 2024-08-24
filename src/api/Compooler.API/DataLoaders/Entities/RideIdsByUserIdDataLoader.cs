@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Compooler.API.DataLoaders.Entities;
 
 [UsedImplicitly]
-public class CommuteGroupIdsByUserIdDataLoader(
+public class RideIdsByUserIdDataLoader(
     IServiceProvider serviceProvider,
     IBatchScheduler batchScheduler,
     DataLoaderOptions options
@@ -18,18 +18,15 @@ public class CommuteGroupIdsByUserIdDataLoader(
         CancellationToken cancellationToken
     )
     {
-        var commuteGroupPassengers = await dbContext
-            .CommuteGroupsPassengers.Where(cgp => keys.Contains(cgp.UserId))
+        var ridePassengers = await dbContext
+            .RidesPassengers.Where(cgp => keys.Contains(cgp.UserId))
             .Select(cgp => new
             {
                 cgp.UserId,
-                CommuteGroupId = EF.Property<int>(
-                    cgp,
-                    CommuteGroupConfiguration.CommuteGroupIdColumnName
-                )
+                RideId = EF.Property<int>(cgp, RideConfiguration.RideIdColumnName)
             })
             .ToListAsync(cancellationToken);
 
-        return commuteGroupPassengers.ToLookup(x => x.UserId, x => x.CommuteGroupId);
+        return ridePassengers.ToLookup(x => x.UserId, x => x.RideId);
     }
 }

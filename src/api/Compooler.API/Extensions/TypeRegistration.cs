@@ -19,22 +19,22 @@ public static class TypeRegistration
             .TryAddTypeInterceptor<EntityNotFoundErrorTypeInterceptor>();
 
     private static IRequestExecutorBuilder AddQueries(this IRequestExecutorBuilder builder) =>
-        builder.AddQueryType<CommuteGroupQueries>().AddTypeExtension<UserQueries>();
+        builder.AddQueryType<RideQueries>().AddTypeExtension<UserQueries>();
 
     private static IRequestExecutorBuilder AddMutations(this IRequestExecutorBuilder builder) =>
-        builder.AddMutationType<CommuteGroupMutations>().AddTypeExtension<UserMutations>();
+        builder.AddMutationType<RideMutations>().AddTypeExtension<UserMutations>();
 
     private static IRequestExecutorBuilder AddObjectTypes(this IRequestExecutorBuilder builder) =>
         builder
-            .AddType<CommuteGroupNodeType>()
+            .AddType<RideNodeType>()
             .AddType<RouteObjectType>()
-            .AddType<CommuteGroupPassengerObjectType>()
+            .AddType<RidePassengerObjectType>()
             .AddType<GeographicCoordinatesObjectType>()
             .AddType<UserNodeType>();
 
     private static IRequestExecutorBuilder AddDataLoaders(this IRequestExecutorBuilder builder) =>
         builder
             .AddDataLoader<UserByIdDataLoader>()
-            .AddDataLoader<CommuteGroupByIdDataLoader>()
-            .AddDataLoader<CommuteGroupIdsByUserIdDataLoader>();
+            .AddDataLoader<RideByIdDataLoader>()
+            .AddDataLoader<RideIdsByUserIdDataLoader>();
 }
