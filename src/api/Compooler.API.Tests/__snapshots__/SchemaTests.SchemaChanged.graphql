@@ -13,40 +13,9 @@ interface Node {
   id: ID!
 }
 
-type CommuteGroup implements Node {
-  id: ID!
-  maxPassengers: Int!
-  route: Route!
-  passengers: [CommuteGroupPassenger!]!
-  driver: User!
-}
-
-type CommuteGroupPassenger {
-  joinedAt: DateTime!
-  user: User!
-}
-
-"A connection to a list of items."
-type CommuteGroupsConnection {
-  "Information to aid in pagination."
-  pageInfo: PageInfo!
-  "A list of edges."
-  edges: [CommuteGroupsEdge!]
-  "A flattened list of the nodes."
-  nodes: [CommuteGroup!]
-}
-
-"An edge in a connection."
-type CommuteGroupsEdge {
-  "A cursor for use in pagination."
-  cursor: String!
-  "The item at the end of the edge."
-  node: CommuteGroup!
-}
-
-type CreateCommuteGroupPayload {
-  commuteGroup: CommuteGroup
-  errors: [CreateCommuteGroupError!]
+type CreateRidePayload {
+  ride: Ride
+  errors: [CreateRideError!]
 }
 
 type CreateUserPayload {
@@ -69,7 +38,7 @@ type InvalidLongitudeError implements Error {
 }
 
 type Mutation {
-  createCommuteGroup(input: CreateCommuteGroupInput): CreateCommuteGroupPayload!
+  createRide(input: CreateRideInput): CreateRidePayload!
   createUser(input: CreateUserInput): CreateUserPayload!
   removeUser(input: RemoveUserInput): RemoveUserPayload!
 }
@@ -91,13 +60,44 @@ type Query {
   node("ID of the object." id: ID!): Node
   "Lookup nodes by a list of IDs."
   nodes("The list of node IDs." ids: [ID!]!): [Node]!
-  commuteGroups("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): CommuteGroupsConnection
+  rides("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): RidesConnection
   users("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): UsersConnection
 }
 
 type RemoveUserPayload {
   user: User
   errors: [RemoveUserError!]
+}
+
+type Ride implements Node {
+  id: ID!
+  maxPassengers: Int!
+  route: Route!
+  passengers: [RidePassenger!]!
+  driver: User!
+}
+
+type RidePassenger {
+  joinedAt: DateTime!
+  user: User!
+}
+
+"A connection to a list of items."
+type RidesConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [RidesEdge!]
+  "A flattened list of the nodes."
+  nodes: [Ride!]
+}
+
+"An edge in a connection."
+type RidesEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: Ride!
 }
 
 type Route {
@@ -109,7 +109,7 @@ type User implements Node {
   id: ID!
   firstName: String!
   lastName: String!
-  commuteGroups: [CommuteGroup!]!
+  rides: [Ride!]!
 }
 
 type UserNotFoundError implements Error {
@@ -136,11 +136,11 @@ type UsersEdge {
   node: User!
 }
 
-union CreateCommuteGroupError = InvalidLatitudeError | InvalidLongitudeError | UserNotFoundError
+union CreateRideError = InvalidLatitudeError | InvalidLongitudeError | UserNotFoundError
 
 union RemoveUserError = UserNotFoundError
 
-input CreateCommuteGroupInput {
+input CreateRideInput {
   driverId: ID!
   maxPassengers: Int!
   startLatitude: Float!
