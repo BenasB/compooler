@@ -23,13 +23,6 @@ public class RideMutations : ObjectType
                 GeographicCoordinatesErrors.InvalidLatitudeError,
                 GeographicCoordinatesErrors.InvalidLongitudeError,
                 EntityNotFoundError<User>
-            >(input => new CreateRideCommand(
-                DriverId: input.DriverId,
-                MaxPassengers: input.MaxPassengers,
-                StartLatitude: input.StartLatitude,
-                StartLongitude: input.StartLongitude,
-                FinishLatitude: input.FinishLatitude,
-                FinishLongitude: input.FinishLongitude
-            ));
+            >();
     }
 }

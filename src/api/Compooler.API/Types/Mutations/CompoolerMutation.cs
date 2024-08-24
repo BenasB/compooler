@@ -11,14 +11,14 @@ public static class CompoolerMutation
 {
     /// <inheritdoc cref="CompoolerMutation"/>
     public static IObjectFieldDescriptor ResolveCompoolerMutation<TInput, TCommand, TResult>(
-        this IObjectFieldDescriptor descriptor,
-        Func<TInput, TCommand> inputToCommand
-    ) =>
+        this IObjectFieldDescriptor descriptor
+    )
+        where TInput : IMappableTo<TCommand> =>
         descriptor
             .CommonConfiguration<TInput>()
             .Resolve<FieldResult<TResult>>(async ctx =>
             {
-                var result = await GetResult<TInput, TCommand, TResult>(inputToCommand, ctx);
+                var result = await GetResult<TInput, TCommand, TResult>(ctx);
 
                 if (!result.IsFailed)
                     return result.Value;
@@ -35,12 +35,13 @@ public static class CompoolerMutation
         TCommand,
         TResult,
         TError
-    >(this IObjectFieldDescriptor descriptor, Func<TInput, TCommand> inputToCommand) =>
+    >(this IObjectFieldDescriptor descriptor)
+        where TInput : IMappableTo<TCommand> =>
         descriptor
             .CommonConfiguration<TInput>()
             .Resolve<FieldResult<TResult, TError>>(async ctx =>
             {
-                var result = await GetResult<TInput, TCommand, TResult>(inputToCommand, ctx);
+                var result = await GetResult<TInput, TCommand, TResult>(ctx);
 
                 if (!result.IsFailed)
                     return result.Value;
@@ -59,12 +60,13 @@ public static class CompoolerMutation
         TResult,
         TError1,
         TError2
-    >(this IObjectFieldDescriptor descriptor, Func<TInput, TCommand> inputToCommand) =>
+    >(this IObjectFieldDescriptor descriptor)
+        where TInput : IMappableTo<TCommand> =>
         descriptor
             .CommonConfiguration<TInput>()
             .Resolve<FieldResult<TResult, TError1, TError2>>(async ctx =>
             {
-                var result = await GetResult<TInput, TCommand, TResult>(inputToCommand, ctx);
+                var result = await GetResult<TInput, TCommand, TResult>(ctx);
 
                 if (!result.IsFailed)
                     return result.Value;
@@ -85,12 +87,13 @@ public static class CompoolerMutation
         TError1,
         TError2,
         TError3
-    >(this IObjectFieldDescriptor descriptor, Func<TInput, TCommand> inputToCommand) =>
+    >(this IObjectFieldDescriptor descriptor)
+        where TInput : IMappableTo<TCommand> =>
         descriptor
             .CommonConfiguration<TInput>()
             .Resolve<FieldResult<TResult, TError1, TError2, TError3>>(async ctx =>
             {
-                var result = await GetResult<TInput, TCommand, TResult>(inputToCommand, ctx);
+                var result = await GetResult<TInput, TCommand, TResult>(ctx);
 
                 if (!result.IsFailed)
                     return result.Value;
@@ -113,12 +116,13 @@ public static class CompoolerMutation
         TError2,
         TError3,
         TError4
-    >(this IObjectFieldDescriptor descriptor, Func<TInput, TCommand> inputToCommand) =>
+    >(this IObjectFieldDescriptor descriptor)
+        where TInput : IMappableTo<TCommand> =>
         descriptor
             .CommonConfiguration<TInput>()
             .Resolve<FieldResult<TResult, TError1, TError2, TError3, TError4>>(async ctx =>
             {
-                var result = await GetResult<TInput, TCommand, TResult>(inputToCommand, ctx);
+                var result = await GetResult<TInput, TCommand, TResult>(ctx);
 
                 if (!result.IsFailed)
                     return result.Value;
@@ -143,12 +147,13 @@ public static class CompoolerMutation
         TError3,
         TError4,
         TError5
-    >(this IObjectFieldDescriptor descriptor, Func<TInput, TCommand> inputToCommand) =>
+    >(this IObjectFieldDescriptor descriptor)
+        where TInput : IMappableTo<TCommand> =>
         descriptor
             .CommonConfiguration<TInput>()
             .Resolve<FieldResult<TResult, TError1, TError2, TError3, TError4, TError5>>(async ctx =>
             {
-                var result = await GetResult<TInput, TCommand, TResult>(inputToCommand, ctx);
+                var result = await GetResult<TInput, TCommand, TResult>(ctx);
 
                 if (!result.IsFailed)
                     return result.Value;
@@ -171,13 +176,13 @@ public static class CompoolerMutation
     ) => descriptor.Argument("input", x => x.Type<InputObjectType<TInput>>());
 
     private static Task<Domain.Result<TResult>> GetResult<TInput, TCommand, TResult>(
-        Func<TInput, TCommand> inputToCommand,
         IResolverContext ctx
     )
+        where TInput : IMappableTo<TCommand>
     {
         var input = ctx.ArgumentValue<TInput>("input");
         var handler = ctx.Services.GetRequiredService<ICommandHandler<TCommand, TResult>>();
-        var command = inputToCommand.Invoke(input);
+        var command = input.Map();
         return handler.HandleAsync(command, ctx.RequestAborted);
     }
 }

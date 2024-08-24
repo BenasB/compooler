@@ -1,3 +1,4 @@
+using Compooler.Application.Commands;
 using Compooler.Domain.Entities.UserEntity;
 using JetBrains.Annotations;
 
@@ -11,4 +12,15 @@ public record CreateRideInput(
     double StartLongitude,
     double FinishLatitude,
     double FinishLongitude
-);
+) : IMappableTo<CreateRideCommand>
+{
+    public CreateRideCommand Map() =>
+        new(
+            DriverId: DriverId,
+            MaxPassengers: MaxPassengers,
+            StartLatitude: StartLatitude,
+            StartLongitude: StartLongitude,
+            FinishLatitude: FinishLatitude,
+            FinishLongitude: FinishLongitude
+        );
+}

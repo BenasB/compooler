@@ -15,9 +15,7 @@ public class UserMutations : ObjectTypeExtension
 
         descriptor
             .Field("createUser")
-            .ResolveCompoolerMutation<CreateUserInput, CreateUserCommand, User>(
-                input => new CreateUserCommand(FirstName: input.FirstName, LastName: input.LastName)
-            );
+            .ResolveCompoolerMutation<CreateUserInput, CreateUserCommand, User>();
 
         descriptor
             .Field("removeUser")
@@ -26,6 +24,6 @@ public class UserMutations : ObjectTypeExtension
                 RemoveUserCommand,
                 User,
                 EntityNotFoundError<User>
-            >(input => new RemoveUserCommand(Id: input.Id));
+            >();
     }
 }
