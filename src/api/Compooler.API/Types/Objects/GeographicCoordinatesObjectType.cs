@@ -1,4 +1,4 @@
-using Compooler.Domain.Entities.CommuteGroupEntity;
+using Compooler.Domain.Entities.RideEntity;
 using JetBrains.Annotations;
 
 namespace Compooler.API.Types.Objects;

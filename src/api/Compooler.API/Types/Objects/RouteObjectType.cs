@@ -1,5 +1,5 @@
 using JetBrains.Annotations;
-using Route = Compooler.Domain.Entities.CommuteGroupEntity.Route;
+using Route = Compooler.Domain.Entities.RideEntity.Route;
 
 namespace Compooler.API.Types.Objects;
 

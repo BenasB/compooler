@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Compooler.Application.Tests.Commands;
 
 [Collection(ApplicationTestsCollection.Name)]
-public class CommuteGroupCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
+public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
 {
     private readonly CompoolerDbContext _dbContext = new(fixture.DbContextOptions);
 
@@ -24,10 +24,10 @@ public class CommuteGroupCommandsTests(ApplicationFixture fixture) : IAsyncLifet
     }
 
     [Fact]
-    public async Task CreateCommuteGroup_Succeeds()
+    public async Task CreateRide_Succeeds()
     {
         var driverId = await CreateDriver();
-        var command = new CreateCommuteGroupCommand(
+        var command = new CreateRideCommand(
             DriverId: driverId,
             MaxPassengers: 3,
             StartLatitude: 0,
@@ -35,21 +35,19 @@ public class CommuteGroupCommandsTests(ApplicationFixture fixture) : IAsyncLifet
             FinishLatitude: 0,
             FinishLongitude: 0
         );
-        var handler = new CreateCommuteGroupHandler(_dbContext);
+        var handler = new CreateRideCommandHandler(_dbContext);
 
         var result = await handler.HandleAsync(command);
 
         Assert.False(result.IsFailed);
-        Assert.NotNull(
-            await _dbContext.CommuteGroups.FirstOrDefaultAsync(x => x.Id == result.Value.Id)
-        );
+        Assert.NotNull(await _dbContext.Rides.FirstOrDefaultAsync(x => x.Id == result.Value.Id));
     }
 
     [Fact]
-    public async Task CreateCommuteGroup_DriverDoesNotExist_Fails()
+    public async Task CreateRide_DriverDoesNotExist_Fails()
     {
         const int nonExistentId = -1;
-        var command = new CreateCommuteGroupCommand(
+        var command = new CreateRideCommand(
             DriverId: nonExistentId,
             MaxPassengers: 3,
             StartLatitude: 0,
@@ -58,7 +56,7 @@ public class CommuteGroupCommandsTests(ApplicationFixture fixture) : IAsyncLifet
             FinishLongitude: 0
         );
 
-        var handler = new CreateCommuteGroupHandler(_dbContext);
+        var handler = new CreateRideCommandHandler(_dbContext);
         var result = await handler.HandleAsync(command);
 
         Assert.True(result.IsFailed);
@@ -66,11 +64,11 @@ public class CommuteGroupCommandsTests(ApplicationFixture fixture) : IAsyncLifet
     }
 
     [Fact]
-    public async Task CreateCommuteGroup_InvalidData_Fails()
+    public async Task CreateRide_InvalidData_Fails()
     {
         var driverId = await CreateDriver();
 
-        var command = new CreateCommuteGroupCommand(
+        var command = new CreateRideCommand(
             DriverId: driverId,
             MaxPassengers: 3,
             StartLatitude: -91,
@@ -78,7 +76,7 @@ public class CommuteGroupCommandsTests(ApplicationFixture fixture) : IAsyncLifet
             FinishLatitude: 91,
             FinishLongitude: -181
         );
-        var handler = new CreateCommuteGroupHandler(_dbContext);
+        var handler = new CreateRideCommandHandler(_dbContext);
 
         var result = await handler.HandleAsync(command);
 

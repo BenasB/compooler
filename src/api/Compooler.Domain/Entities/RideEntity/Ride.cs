@@ -1,18 +1,18 @@
-namespace Compooler.Domain.Entities.CommuteGroupEntity;
+namespace Compooler.Domain.Entities.RideEntity;
 
-public sealed class CommuteGroup : IEntity
+public sealed class Ride : IEntity
 {
     public int Id { get; }
     public required Route Route { get; init; }
     public required int DriverId { get; init; }
 
-    private readonly List<CommuteGroupPassenger> _passengers = [];
-    public IReadOnlyList<CommuteGroupPassenger> Passengers => _passengers.AsReadOnly();
+    private readonly List<RidePassenger> _passengers = [];
+    public IReadOnlyList<RidePassenger> Passengers => _passengers.AsReadOnly();
     public required int MaxPassengers { get; init; }
 
-    private CommuteGroup() { }
+    private Ride() { }
 
-    public static CommuteGroup Create(Route route, int driverId, int maxPassengers) =>
+    public static Ride Create(Route route, int driverId, int maxPassengers) =>
         new()
         {
             Route = route,
@@ -23,9 +23,9 @@ public sealed class CommuteGroup : IEntity
     public Result AddPassenger(int userId)
     {
         if (_passengers.Count >= MaxPassengers)
-            return Result.Failure(new CommuteGroupErrors.PassengerLimitReachedError(MaxPassengers));
+            return Result.Failure(new RideErrors.PassengerLimitReachedError(MaxPassengers));
 
-        _passengers.Add(CommuteGroupPassenger.Create(userId: userId));
+        _passengers.Add(RidePassenger.Create(userId: userId));
         return Result.Success();
     }
 
@@ -34,7 +34,7 @@ public sealed class CommuteGroup : IEntity
         var passenger = _passengers.Find(p => p.UserId == userId);
 
         if (passenger == null)
-            return Result.Failure(new CommuteGroupErrors.PassengerNotFoundError(userId));
+            return Result.Failure(new RideErrors.PassengerNotFoundError(userId));
 
         _passengers.Remove(passenger);
         return Result.Success();

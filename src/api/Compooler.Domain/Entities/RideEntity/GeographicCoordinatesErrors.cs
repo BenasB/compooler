@@ -1,4 +1,4 @@
-namespace Compooler.Domain.Entities.CommuteGroupEntity;
+namespace Compooler.Domain.Entities.RideEntity;
 
 public static class GeographicCoordinatesErrors
 {

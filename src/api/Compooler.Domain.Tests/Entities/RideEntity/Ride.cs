@@ -1,13 +1,13 @@
-using Compooler.Domain.Entities.CommuteGroupEntity;
+using Compooler.Domain.Entities.RideEntity;
 
-namespace Compooler.Domain.Tests.Entities.CommuteGroupEntity;
+namespace Compooler.Domain.Tests.Entities.RideEntity;
 
-public class CommuteGroupTests
+public class RideTests
 {
-    private readonly CommuteGroup _commuteGroup;
+    private readonly Ride _ride;
     private const int MaxPassengers = 2;
 
-    public CommuteGroupTests()
+    public RideTests()
     {
         var coordsResult = GeographicCoordinates.Create(0, 0);
         var coords = coordsResult.IsFailed switch
@@ -19,7 +19,7 @@ public class CommuteGroupTests
                 )
         };
 
-        _commuteGroup = CommuteGroup.Create(
+        _ride = Ride.Create(
             route: Route.Create(start: coords, finish: coords),
             driverId: 0,
             maxPassengers: MaxPassengers
@@ -31,23 +31,20 @@ public class CommuteGroupTests
     {
         for (int i = 0; i < MaxPassengers; i++)
         {
-            Assert.False(_commuteGroup.AddPassenger(0).IsFailed);
+            Assert.False(_ride.AddPassenger(0).IsFailed);
         }
 
-        var result = _commuteGroup.AddPassenger(MaxPassengers);
+        var result = _ride.AddPassenger(MaxPassengers);
         Assert.True(result.IsFailed);
-        Assert.Equal(
-            new CommuteGroupErrors.PassengerLimitReachedError(MaxPassengers),
-            result.Error
-        );
+        Assert.Equal(new RideErrors.PassengerLimitReachedError(MaxPassengers), result.Error);
     }
 
     [Fact]
     public void AddPassenger_SpotIsFree_Succeeds()
     {
-        var result = _commuteGroup.AddPassenger(0);
+        var result = _ride.AddPassenger(0);
         Assert.False(result.IsFailed);
-        Assert.Single(_commuteGroup.Passengers);
+        Assert.Single(_ride.Passengers);
     }
 
     [Fact]
@@ -55,28 +52,25 @@ public class CommuteGroupTests
     {
         for (int i = 0; i < MaxPassengers; i++)
         {
-            Assert.False(_commuteGroup.AddPassenger(0).IsFailed);
+            Assert.False(_ride.AddPassenger(0).IsFailed);
         }
 
         const int nonExistentUserId = MaxPassengers;
-        var result = _commuteGroup.RemovePassenger(nonExistentUserId);
+        var result = _ride.RemovePassenger(nonExistentUserId);
         Assert.True(result.IsFailed);
-        Assert.Equal(
-            new CommuteGroupErrors.PassengerNotFoundError(nonExistentUserId),
-            result.Error
-        );
+        Assert.Equal(new RideErrors.PassengerNotFoundError(nonExistentUserId), result.Error);
     }
 
     [Fact]
     public void RemovePassenger_PassengerFound_Succeeds()
     {
         const int userId = 0;
-        var result = _commuteGroup.AddPassenger(userId);
+        var result = _ride.AddPassenger(userId);
         Assert.False(result.IsFailed);
 
-        result = _commuteGroup.RemovePassenger(userId);
+        result = _ride.RemovePassenger(userId);
 
         Assert.False(result.IsFailed);
-        Assert.Empty(_commuteGroup.Passengers);
+        Assert.Empty(_ride.Passengers);
     }
 }

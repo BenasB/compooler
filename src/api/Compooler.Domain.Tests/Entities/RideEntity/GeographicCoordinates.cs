@@ -1,6 +1,6 @@
-using Compooler.Domain.Entities.CommuteGroupEntity;
+using Compooler.Domain.Entities.RideEntity;
 
-namespace Compooler.Domain.Tests.Entities.CommuteGroupEntity;
+namespace Compooler.Domain.Tests.Entities.RideEntity;
 
 public class GeographicCoordinatesTests
 {

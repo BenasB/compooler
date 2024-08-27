@@ -1,5 +1,5 @@
 using Compooler.API.DataLoaders.Entities;
-using Compooler.Domain.Entities.CommuteGroupEntity;
+using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
 using JetBrains.Annotations;
 
@@ -17,25 +17,21 @@ public class UserNodeType : ObjectType<User>
         descriptor.Field(x => x.LastName);
 
         descriptor
-            .Field("commuteGroups")
-            .Type<NonNullType<ListType<NonNullType<ObjectType<CommuteGroup>>>>>()
-            .Resolve<IReadOnlyList<CommuteGroup>>(async ctx =>
+            .Field("rides")
+            .Type<NonNullType<ListType<NonNullType<ObjectType<Ride>>>>>()
+            .Resolve<IReadOnlyList<Ride>>(async ctx =>
             {
-                var commuteGroupIdsByUserIdDataLoader =
-                    ctx.Services.GetRequiredService<CommuteGroupIdsByUserIdDataLoader>();
-                var commuteGroupDataLoaderById =
-                    ctx.Services.GetRequiredService<CommuteGroupByIdDataLoader>();
+                var rideIdsByUserIdDataLoader =
+                    ctx.Services.GetRequiredService<RideIdsByUserIdDataLoader>();
+                var rideDataLoaderById = ctx.Services.GetRequiredService<RideByIdDataLoader>();
                 var user = ctx.Parent<User>();
 
-                var commuteGroupPassengers = await commuteGroupIdsByUserIdDataLoader.LoadAsync(
+                var ridePassengers = await rideIdsByUserIdDataLoader.LoadAsync(
                     user.Id,
                     ctx.RequestAborted
                 );
 
-                return await commuteGroupDataLoaderById.LoadAsync(
-                    commuteGroupPassengers,
-                    ctx.RequestAborted
-                );
+                return await rideDataLoaderById.LoadAsync(ridePassengers, ctx.RequestAborted);
             });
 
         descriptor

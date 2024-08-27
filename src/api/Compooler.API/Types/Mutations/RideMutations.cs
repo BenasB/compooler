@@ -1,28 +1,27 @@
 using Compooler.API.Types.Mutations.Inputs;
 using Compooler.Application;
 using Compooler.Application.Commands;
+using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
 using JetBrains.Annotations;
 
 namespace Compooler.API.Types.Mutations;
 
 [PublicAPI]
-public class UserMutations : ObjectTypeExtension
+public class RideMutations : ObjectType
 {
     protected override void Configure(IObjectTypeDescriptor descriptor)
     {
         descriptor.Name(OperationTypeNames.Mutation);
 
         descriptor
-            .Field("createUser")
-            .ResolveCompoolerMutation<CreateUserInput, CreateUserCommand, User>();
-
-        descriptor
-            .Field("removeUser")
+            .Field("createRide")
             .ResolveCompoolerMutation<
-                RemoveUserInput,
-                RemoveUserCommand,
-                User,
+                CreateRideInput,
+                CreateRideCommand,
+                Ride,
+                GeographicCoordinatesErrors.InvalidLatitudeError,
+                GeographicCoordinatesErrors.InvalidLongitudeError,
                 EntityNotFoundError<User>
             >();
     }

@@ -13,7 +13,7 @@ namespace Compooler.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "CommuteGroups",
+                name: "Rides",
                 columns: table => new
                 {
                     Id = table
@@ -27,7 +27,7 @@ namespace Compooler.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CommuteGroups", x => x.Id);
+                    table.PrimaryKey("PK_Rides", x => x.Id);
                 }
             );
 
@@ -51,11 +51,11 @@ namespace Compooler.Persistence.Migrations
             );
 
             migrationBuilder.CreateTable(
-                name: "CommuteGroupsPassengers",
+                name: "RidesPassengers",
                 columns: table => new
                 {
                     UserId = table.Column<int>(type: "integer", nullable: false),
-                    CommuteGroupId = table.Column<int>(type: "integer", nullable: false),
+                    RideId = table.Column<int>(type: "integer", nullable: false),
                     JoinedAt = table.Column<DateTimeOffset>(
                         type: "timestamp with time zone",
                         nullable: false,
@@ -64,14 +64,11 @@ namespace Compooler.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_CommuteGroupsPassengers",
-                        x => new { x.CommuteGroupId, x.UserId }
-                    );
+                    table.PrimaryKey("PK_RidesPassengers", x => new { x.RideId, x.UserId });
                     table.ForeignKey(
-                        name: "FK_CommuteGroupsPassengers_CommuteGroups_CommuteGroupId",
-                        column: x => x.CommuteGroupId,
-                        principalTable: "CommuteGroups",
+                        name: "FK_RidesPassengers_Rides_RideId",
+                        column: x => x.RideId,
+                        principalTable: "Rides",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade
                     );
@@ -82,7 +79,7 @@ namespace Compooler.Persistence.Migrations
                 name: "Routes",
                 columns: table => new
                 {
-                    CommuteGroupId = table.Column<int>(type: "integer", nullable: false),
+                    RideId = table.Column<int>(type: "integer", nullable: false),
                     Start_Latitude = table.Column<double>(
                         type: "double precision",
                         nullable: false
@@ -102,11 +99,11 @@ namespace Compooler.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Routes", x => x.CommuteGroupId);
+                    table.PrimaryKey("PK_Routes", x => x.RideId);
                     table.ForeignKey(
-                        name: "FK_Routes_CommuteGroups_CommuteGroupId",
-                        column: x => x.CommuteGroupId,
-                        principalTable: "CommuteGroups",
+                        name: "FK_Routes_Rides_RideId",
+                        column: x => x.RideId,
+                        principalTable: "Rides",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade
                     );
@@ -117,13 +114,13 @@ namespace Compooler.Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(name: "CommuteGroupsPassengers");
+            migrationBuilder.DropTable(name: "RidesPassengers");
 
             migrationBuilder.DropTable(name: "Routes");
 
             migrationBuilder.DropTable(name: "Users");
 
-            migrationBuilder.DropTable(name: "CommuteGroups");
+            migrationBuilder.DropTable(name: "Rides");
         }
     }
 }

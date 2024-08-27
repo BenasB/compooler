@@ -1,14 +1,14 @@
 using Compooler.API.DataLoaders.Entities;
-using Compooler.Domain.Entities.CommuteGroupEntity;
+using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
 using JetBrains.Annotations;
 
 namespace Compooler.API.Types.Objects;
 
 [PublicAPI]
-public class CommuteGroupNodeType : ObjectType<CommuteGroup>
+public class RideNodeType : ObjectType<Ride>
 {
-    protected override void Configure(IObjectTypeDescriptor<CommuteGroup> descriptor)
+    protected override void Configure(IObjectTypeDescriptor<Ride> descriptor)
     {
         descriptor.BindFieldsExplicitly();
 
@@ -23,9 +23,9 @@ public class CommuteGroupNodeType : ObjectType<CommuteGroup>
             .Resolve<User>(async ctx =>
             {
                 var dataLoader = ctx.Services.GetRequiredService<UserByIdDataLoader>();
-                var commuteGroup = ctx.Parent<CommuteGroup>();
+                var ride = ctx.Parent<Ride>();
 
-                return await dataLoader.LoadAsync(commuteGroup.DriverId, ctx.RequestAborted);
+                return await dataLoader.LoadAsync(ride.DriverId, ctx.RequestAborted);
             });
 
         descriptor
@@ -34,7 +34,7 @@ public class CommuteGroupNodeType : ObjectType<CommuteGroup>
             .ResolveNode(
                 async (ctx, id) =>
                 {
-                    var dataLoader = ctx.Services.GetRequiredService<CommuteGroupByIdDataLoader>();
+                    var dataLoader = ctx.Services.GetRequiredService<RideByIdDataLoader>();
                     return await dataLoader.LoadAsync(id, ctx.RequestAborted);
                 }
             );

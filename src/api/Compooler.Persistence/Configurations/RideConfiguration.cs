@@ -1,16 +1,16 @@
-using Compooler.Domain.Entities.CommuteGroupEntity;
+using Compooler.Domain.Entities.RideEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Compooler.Persistence.Configurations;
 
-public class CommuteGroupConfiguration
-    : IEntityTypeConfiguration<CommuteGroup>,
-        IEntityTypeConfiguration<CommuteGroupPassenger>
+public class RideConfiguration
+    : IEntityTypeConfiguration<Ride>,
+        IEntityTypeConfiguration<RidePassenger>
 {
-    public const string CommuteGroupIdColumnName = "CommuteGroupId";
+    public const string RideIdColumnName = "RideId";
 
-    public void Configure(EntityTypeBuilder<CommuteGroup> builder)
+    public void Configure(EntityTypeBuilder<Ride> builder)
     {
         builder.HasKey(x => x.Id);
 
@@ -26,13 +26,13 @@ public class CommuteGroupConfiguration
 
         builder.Navigation(x => x.Passengers).AutoInclude();
 
-        builder.HasMany(x => x.Passengers).WithOne().HasForeignKey(CommuteGroupIdColumnName);
+        builder.HasMany(x => x.Passengers).WithOne().HasForeignKey(RideIdColumnName);
     }
 
-    public void Configure(EntityTypeBuilder<CommuteGroupPassenger> builder)
+    public void Configure(EntityTypeBuilder<RidePassenger> builder)
     {
         builder.Property(x => x.JoinedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-        builder.HasKey(CommuteGroupIdColumnName, nameof(CommuteGroupPassenger.UserId));
+        builder.HasKey(RideIdColumnName, nameof(RidePassenger.UserId));
     }
 }
