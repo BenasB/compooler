@@ -39,6 +39,7 @@ type InvalidLongitudeError implements Error {
 
 type Mutation {
   createRide(input: CreateRideInput): CreateRidePayload!
+  removeRide(input: RemoveRideInput): RemoveRidePayload!
   createUser(input: CreateUserInput): CreateUserPayload!
   removeUser(input: RemoveUserInput): RemoveUserPayload!
 }
@@ -64,6 +65,11 @@ type Query {
   users("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): UsersConnection
 }
 
+type RemoveRidePayload {
+  ride: Ride
+  errors: [RemoveRideError!]
+}
+
 type RemoveUserPayload {
   user: User
   errors: [RemoveUserError!]
@@ -75,6 +81,12 @@ type Ride implements Node {
   route: Route!
   passengers: [RidePassenger!]!
   driver: User!
+}
+
+type RideNotFoundError implements Error {
+  id: ID!
+  code: String!
+  message: String!
 }
 
 type RidePassenger {
@@ -138,6 +150,8 @@ type UsersEdge {
 
 union CreateRideError = InvalidLatitudeError | InvalidLongitudeError | UserNotFoundError
 
+union RemoveRideError = RideNotFoundError
+
 union RemoveUserError = UserNotFoundError
 
 input CreateRideInput {
@@ -152,6 +166,10 @@ input CreateRideInput {
 input CreateUserInput {
   firstName: String!
   lastName: String!
+}
+
+input RemoveRideInput {
+  id: ID!
 }
 
 input RemoveUserInput {

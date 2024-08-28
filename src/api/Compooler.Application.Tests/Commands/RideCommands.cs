@@ -1,6 +1,8 @@
 using Compooler.Application.Commands;
+using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
 using Compooler.Persistence;
+using Compooler.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Compooler.Application.Tests.Commands;
@@ -14,7 +16,7 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
 
     public Task DisposeAsync() => _dbContext.DisposeAsync().AsTask();
 
-    private async Task<int> CreateDriver()
+    private async Task<int> CreateUser()
     {
         var firstName = Guid.NewGuid().ToString("N");
         const string lastName = "Driver";
@@ -26,7 +28,7 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
     [Fact]
     public async Task CreateRide_Succeeds()
     {
-        var driverId = await CreateDriver();
+        var driverId = await CreateUser();
         var command = new CreateRideCommand(
             DriverId: driverId,
             MaxPassengers: 3,
@@ -66,7 +68,7 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
     [Fact]
     public async Task CreateRide_InvalidData_Fails()
     {
-        var driverId = await CreateDriver();
+        var driverId = await CreateUser();
 
         var command = new CreateRideCommand(
             DriverId: driverId,
@@ -81,5 +83,53 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
         var result = await handler.HandleAsync(command);
 
         Assert.True(result.IsFailed);
+    }
+
+    [Fact]
+    public async Task RemoveRide_RideExists_Succeeds()
+    {
+        var driverId = await CreateUser();
+        var passengerId = await CreateUser();
+        var startCoordsResult = GeographicCoordinates.Create(0, 0);
+        var finishCoordsResult = GeographicCoordinates.Create(0, 0);
+        if (startCoordsResult.IsFailed || finishCoordsResult.IsFailed)
+            throw new InvalidOperationException("Expected a successful creation of coordinates");
+
+        var newRide = _dbContext.Rides.Add(
+            Ride.Create(
+                Route.Create(startCoordsResult.Value, finishCoordsResult.Value),
+                driverId,
+                1
+            )
+        );
+        newRide.Entity.AddPassenger(passengerId);
+        await _dbContext.SaveChangesAsync();
+
+        var newRideId = newRide.Entity.Id;
+        var command = new RemoveRideCommand(Id: newRideId);
+        var handler = new RemoveRideCommandHandler(_dbContext);
+
+        var result = await handler.HandleAsync(command);
+
+        Assert.False(result.IsFailed);
+        Assert.Null(await _dbContext.Rides.FirstOrDefaultAsync(x => x.Id == newRide.Entity.Id));
+        Assert.Null(
+            await _dbContext.RidePassengers.FirstOrDefaultAsync(x =>
+                EF.Property<int>(x, RideConfiguration.RideIdColumnName) == newRideId
+            )
+        );
+    }
+
+    [Fact]
+    public async Task RemoveRide_RideDoesNotExist_Fails()
+    {
+        const int nonExistentId = -1;
+        var command = new RemoveRideCommand(Id: nonExistentId);
+        var handler = new RemoveRideCommandHandler(_dbContext);
+
+        var result = await handler.HandleAsync(command);
+
+        Assert.True(result.IsFailed);
+        Assert.Equal(new EntityNotFoundError<Ride>(nonExistentId), result.Error);
     }
 }

@@ -24,5 +24,14 @@ public class RideMutations : ObjectType
                 GeographicCoordinatesErrors.InvalidLongitudeError,
                 EntityNotFoundError<User>
             >();
+
+        descriptor
+            .Field("removeRide")
+            .ResolveCompoolerMutation<
+                RemoveRideInput,
+                RemoveRideCommand,
+                Ride,
+                EntityNotFoundError<Ride>
+            >();
     }
 }

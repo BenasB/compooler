@@ -1,4 +1,5 @@
 using Compooler.Application.Commands;
+using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
 using JetBrains.Annotations;
 
@@ -23,4 +24,10 @@ public record CreateRideInput(
             FinishLatitude: FinishLatitude,
             FinishLongitude: FinishLongitude
         );
+}
+
+[PublicAPI]
+public record RemoveRideInput([property: ID<Ride>] int Id) : IMappableTo<RemoveRideCommand>
+{
+    public RemoveRideCommand Map() => new(Id: Id);
 }
