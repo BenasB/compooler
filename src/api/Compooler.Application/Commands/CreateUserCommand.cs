@@ -17,6 +17,6 @@ public class CreateUserCommandHandler(ICompoolerDbContext dbContext)
         dbContext.Users.Add(newUser);
         await dbContext.SaveChangesAsync(ct);
 
-        return Result<User>.Success(newUser);
+        return newUser;
     }
 }

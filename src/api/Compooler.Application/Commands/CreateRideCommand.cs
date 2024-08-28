@@ -27,7 +27,7 @@ public class CreateRideCommandHandler(ICompoolerDbContext dbContext)
         );
 
         if (startResult.IsFailed)
-            return Result<Ride>.Failure(startResult.Error);
+            return startResult.Error;
 
         var finishResult = GeographicCoordinates.Create(
             command.FinishLatitude,
@@ -35,13 +35,13 @@ public class CreateRideCommandHandler(ICompoolerDbContext dbContext)
         );
 
         if (finishResult.IsFailed)
-            return Result<Ride>.Failure(finishResult.Error);
+            return finishResult.Error;
 
         var driver = await dbContext.Users.FindAsync([command.DriverId], cancellationToken: ct);
 
         if (driver is null)
         {
-            return Result<Ride>.Failure(new EntityNotFoundError<User>(command.DriverId));
+            return new EntityNotFoundError<User>(command.DriverId);
         }
 
         var route = Route.Create(startResult.Value, finishResult.Value);
@@ -50,6 +50,6 @@ public class CreateRideCommandHandler(ICompoolerDbContext dbContext)
         dbContext.Rides.Add(ride);
         await dbContext.SaveChangesAsync(ct);
 
-        return Result<Ride>.Success(ride);
+        return ride;
     }
 }

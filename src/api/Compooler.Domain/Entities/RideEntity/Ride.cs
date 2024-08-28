@@ -23,7 +23,7 @@ public sealed class Ride : IEntity
     public Result AddPassenger(int userId)
     {
         if (_passengers.Count >= MaxPassengers)
-            return Result.Failure(new RideErrors.PassengerLimitReachedError(MaxPassengers));
+            return new RideErrors.PassengerLimitReachedError(MaxPassengers);
 
         _passengers.Add(RidePassenger.Create(userId: userId));
         return Result.Success();
@@ -34,7 +34,7 @@ public sealed class Ride : IEntity
         var passenger = _passengers.Find(p => p.UserId == userId);
 
         if (passenger == null)
-            return Result.Failure(new RideErrors.PassengerNotFoundError(userId));
+            return new RideErrors.PassengerNotFoundError(userId);
 
         _passengers.Remove(passenger);
         return Result.Success();

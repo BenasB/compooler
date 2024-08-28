@@ -18,6 +18,8 @@ public sealed class Result
     public static Result Success() => new(isFailed: false, error: null);
 
     public static Result Failure(Error error) => new(isFailed: true, error: error);
+
+    public static implicit operator Result(Error error) => Failure(error);
 }
 
 public sealed class Result<T>
@@ -40,4 +42,8 @@ public sealed class Result<T>
 
     public static Result<T> Failure(Error error) =>
         new(isFailed: true, error: error, value: default);
+
+    public static implicit operator Result<T>(Error error) => Failure(error);
+
+    public static implicit operator Result<T>(T value) => Success(value);
 }

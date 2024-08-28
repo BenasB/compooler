@@ -10,17 +10,11 @@ public sealed class GeographicCoordinates
     public static Result<GeographicCoordinates> Create(double latitude, double longitude)
     {
         if (latitude is < -90 or > 90)
-            return Result<GeographicCoordinates>.Failure(
-                new GeographicCoordinatesErrors.InvalidLatitudeError()
-            );
+            return new GeographicCoordinatesErrors.InvalidLatitudeError();
 
         if (longitude is < -180 or > 180)
-            return Result<GeographicCoordinates>.Failure(
-                new GeographicCoordinatesErrors.InvalidLongitudeError()
-            );
+            return new GeographicCoordinatesErrors.InvalidLongitudeError();
 
-        return Result<GeographicCoordinates>.Success(
-            new GeographicCoordinates { Latitude = latitude, Longitude = longitude }
-        );
+        return new GeographicCoordinates { Latitude = latitude, Longitude = longitude };
     }
 }
