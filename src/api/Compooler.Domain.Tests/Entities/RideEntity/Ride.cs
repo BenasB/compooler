@@ -6,6 +6,7 @@ public class RideTests
 {
     private readonly Ride _ride;
     private const int MaxPassengers = 2;
+    private const int DriverId = -42;
 
     public RideTests()
     {
@@ -21,7 +22,7 @@ public class RideTests
 
         _ride = Ride.Create(
             route: Route.Create(start: coords, finish: coords),
-            driverId: 0,
+            driverId: DriverId,
             maxPassengers: MaxPassengers
         );
     }
@@ -31,12 +32,31 @@ public class RideTests
     {
         for (int i = 0; i < MaxPassengers; i++)
         {
-            Assert.False(_ride.AddPassenger(0).IsFailed);
+            Assert.False(_ride.AddPassenger(i).IsFailed);
         }
 
         var result = _ride.AddPassenger(MaxPassengers);
         Assert.True(result.IsFailed);
         Assert.Equal(new RideErrors.PassengerLimitReachedError(MaxPassengers), result.Error);
+    }
+
+    [Fact]
+    public void AddPassenger_PassengerIsDriver_Fails()
+    {
+        var result = _ride.AddPassenger(DriverId);
+        Assert.True(result.IsFailed);
+        Assert.Equal(new RideErrors.PassengerIsDriverError(DriverId), result.Error);
+    }
+
+    [Fact]
+    public void AddPassenger_PassengerAlreadyExists_Fails()
+    {
+        var result = _ride.AddPassenger(0);
+        Assert.False(result.IsFailed);
+
+        result = _ride.AddPassenger(0);
+        Assert.True(result.IsFailed);
+        Assert.Equal(new RideErrors.PassengerAlreadyExistsError(0, default), result.Error);
     }
 
     [Fact]
@@ -52,7 +72,7 @@ public class RideTests
     {
         for (int i = 0; i < MaxPassengers; i++)
         {
-            Assert.False(_ride.AddPassenger(0).IsFailed);
+            Assert.False(_ride.AddPassenger(i).IsFailed);
         }
 
         const int nonExistentUserId = MaxPassengers;

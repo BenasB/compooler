@@ -25,6 +25,16 @@ public sealed class Ride : IEntity
         if (_passengers.Count >= MaxPassengers)
             return new RideErrors.PassengerLimitReachedError(MaxPassengers);
 
+        if (DriverId == userId)
+            return new RideErrors.PassengerIsDriverError(userId);
+
+        var existingPassenger = _passengers.Find(x => x.UserId == userId);
+        if (existingPassenger != null)
+            return new RideErrors.PassengerAlreadyExistsError(
+                existingPassenger.UserId,
+                existingPassenger.JoinedAt
+            );
+
         _passengers.Add(RidePassenger.Create(userId: userId));
         return Result.Success();
     }
