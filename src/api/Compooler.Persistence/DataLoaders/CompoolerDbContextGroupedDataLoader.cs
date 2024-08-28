@@ -1,15 +1,16 @@
-using Compooler.Persistence;
+using GreenDonut;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Compooler.API.DataLoaders;
+namespace Compooler.Persistence.DataLoaders;
 
-public abstract class CompoolerDbContextBatchDataLoader<TKey, TValue>(
+public abstract class CompoolerDbContextGroupedDataLoader<TKey, TValue>(
     IServiceProvider serviceProvider,
     IBatchScheduler batchScheduler,
     DataLoaderOptions options
-) : BatchDataLoader<TKey, TValue>(batchScheduler, options)
+) : GroupedDataLoader<TKey, TValue>(batchScheduler, options)
     where TKey : notnull
 {
-    protected override async Task<IReadOnlyDictionary<TKey, TValue>> LoadBatchAsync(
+    protected override async Task<ILookup<TKey, TValue>> LoadGroupedBatchAsync(
         IReadOnlyList<TKey> keys,
         CancellationToken cancellationToken
     )
@@ -17,10 +18,10 @@ public abstract class CompoolerDbContextBatchDataLoader<TKey, TValue>(
         await using var scope = serviceProvider.CreateAsyncScope();
         await using var dbContext = scope.ServiceProvider.GetRequiredService<CompoolerDbContext>();
 
-        return await LoadBatchAsync(keys, dbContext, cancellationToken);
+        return await LoadGroupedBatchAsync(keys, dbContext, cancellationToken);
     }
 
-    protected abstract Task<IReadOnlyDictionary<TKey, TValue>> LoadBatchAsync(
+    protected abstract Task<ILookup<TKey, TValue>> LoadGroupedBatchAsync(
         IReadOnlyList<TKey> keys,
         CompoolerDbContext dbContext,
         CancellationToken cancellationToken

@@ -1,8 +1,8 @@
-using Compooler.API.DataLoaders.Entities;
 using Compooler.API.Types.Errors;
 using Compooler.API.Types.Mutations;
 using Compooler.API.Types.Objects;
 using Compooler.API.Types.Queries;
+using Compooler.Persistence.DataLoaders.Entities;
 using HotChocolate.Execution.Configuration;
 
 namespace Compooler.API.Extensions;

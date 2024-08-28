@@ -1,11 +1,9 @@
 using Compooler.Domain.Entities.UserEntity;
-using Compooler.Persistence;
-using JetBrains.Annotations;
+using GreenDonut;
 using Microsoft.EntityFrameworkCore;
 
-namespace Compooler.API.DataLoaders.Entities;
+namespace Compooler.Persistence.DataLoaders.Entities;
 
-[UsedImplicitly]
 public class UserByIdDataLoader(
     IServiceProvider serviceProvider,
     IBatchScheduler batchScheduler,

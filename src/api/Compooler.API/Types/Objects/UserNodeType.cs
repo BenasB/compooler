@@ -1,6 +1,6 @@
-using Compooler.API.DataLoaders.Entities;
 using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
+using Compooler.Persistence.DataLoaders.Entities;
 using JetBrains.Annotations;
 
 namespace Compooler.API.Types.Objects;
@@ -26,12 +26,15 @@ public class UserNodeType : ObjectType<User>
                 var rideDataLoaderById = ctx.Services.GetRequiredService<RideByIdDataLoader>();
                 var user = ctx.Parent<User>();
 
-                var ridePassengers = await rideIdsByUserIdDataLoader.LoadAsync(
+                var ridePassengers = await rideIdsByUserIdDataLoader.LoadRequiredAsync(
                     user.Id,
                     ctx.RequestAborted
                 );
 
-                return await rideDataLoaderById.LoadAsync(ridePassengers, ctx.RequestAborted);
+                return await rideDataLoaderById.LoadRequiredAsync(
+                    ridePassengers,
+                    ctx.RequestAborted
+                );
             });
 
         descriptor
