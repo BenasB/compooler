@@ -1,5 +1,4 @@
 using Compooler.Application;
-using HotChocolate.Resolvers;
 
 namespace Compooler.API.Types.Mutations;
 

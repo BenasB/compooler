@@ -19,10 +19,30 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
     private async Task<int> CreateUser()
     {
         var firstName = Guid.NewGuid().ToString("N");
-        const string lastName = "Driver";
+        const string lastName = "Test";
         var driver = _dbContext.Users.Add(User.Create(firstName, lastName));
         await _dbContext.SaveChangesAsync();
         return driver.Entity.Id;
+    }
+
+    private async Task<Ride> CreateRide()
+    {
+        var driverId = await CreateUser();
+        var startCoordsResult = GeographicCoordinates.Create(0, 0);
+        var finishCoordsResult = GeographicCoordinates.Create(0, 0);
+        if (startCoordsResult.IsFailed || finishCoordsResult.IsFailed)
+            throw new InvalidOperationException("Expected a successful creation of coordinates");
+
+        var newRide = Ride.Create(
+            Route.Create(startCoordsResult.Value, finishCoordsResult.Value),
+            driverId,
+            1
+        );
+
+        _dbContext.Rides.Add(newRide);
+        await _dbContext.SaveChangesAsync();
+
+        return newRide;
     }
 
     [Fact]
@@ -88,31 +108,19 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
     [Fact]
     public async Task RemoveRide_RideExists_Succeeds()
     {
-        var driverId = await CreateUser();
+        var ride = await CreateRide();
         var passengerId = await CreateUser();
-        var startCoordsResult = GeographicCoordinates.Create(0, 0);
-        var finishCoordsResult = GeographicCoordinates.Create(0, 0);
-        if (startCoordsResult.IsFailed || finishCoordsResult.IsFailed)
-            throw new InvalidOperationException("Expected a successful creation of coordinates");
-
-        var newRide = _dbContext.Rides.Add(
-            Ride.Create(
-                Route.Create(startCoordsResult.Value, finishCoordsResult.Value),
-                driverId,
-                1
-            )
-        );
-        newRide.Entity.AddPassenger(passengerId);
+        ride.AddPassenger(passengerId);
         await _dbContext.SaveChangesAsync();
 
-        var newRideId = newRide.Entity.Id;
+        var newRideId = ride.Id;
         var command = new RemoveRideCommand(Id: newRideId);
         var handler = new RemoveRideCommandHandler(_dbContext);
 
         var result = await handler.HandleAsync(command);
 
         Assert.False(result.IsFailed);
-        Assert.Null(await _dbContext.Rides.FirstOrDefaultAsync(x => x.Id == newRide.Entity.Id));
+        Assert.Null(await _dbContext.Rides.FirstOrDefaultAsync(x => x.Id == ride.Id));
         Assert.Empty(
             await _dbContext
                 .RidePassengers.Where(x =>
@@ -133,5 +141,48 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
 
         Assert.True(result.IsFailed);
         Assert.Equal(new EntityNotFoundError<Ride>(nonExistentId), result.Error);
+    }
+
+    [Fact]
+    public async Task JoinRide_RideDoesNotExist_Fails()
+    {
+        var userId = await CreateUser();
+        const int nonExistentRideId = -1;
+        var command = new JoinRideCommand(RideId: nonExistentRideId, UserId: userId);
+        var handler = new JoinRideCommandHandler(_dbContext);
+
+        var result = await handler.HandleAsync(command);
+
+        Assert.True(result.IsFailed);
+        Assert.Equal(new EntityNotFoundError<Ride>(nonExistentRideId), result.Error);
+    }
+
+    [Fact]
+    public async Task JoinRide_UserDoesNotExist_Fails()
+    {
+        var ride = await CreateRide();
+        const int nonExistentUserId = -1;
+        var command = new JoinRideCommand(RideId: ride.Id, UserId: nonExistentUserId);
+        var handler = new JoinRideCommandHandler(_dbContext);
+
+        var result = await handler.HandleAsync(command);
+
+        Assert.True(result.IsFailed);
+        Assert.Equal(new EntityNotFoundError<User>(nonExistentUserId), result.Error);
+    }
+
+    [Fact]
+    public async Task JoinRide_UserAndRideExist_Succeeds()
+    {
+        var ride = await CreateRide();
+        var userId = await CreateUser();
+        var command = new JoinRideCommand(RideId: ride.Id, UserId: userId);
+        var handler = new JoinRideCommandHandler(_dbContext);
+
+        var result = await handler.HandleAsync(command);
+
+        Assert.False(result.IsFailed);
+        ride = await _dbContext.Rides.FirstAsync(x => x.Id == ride.Id);
+        Assert.Single(ride.Passengers);
     }
 }
