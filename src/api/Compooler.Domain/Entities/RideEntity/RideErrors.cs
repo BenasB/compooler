@@ -7,4 +7,16 @@ public static class RideErrors
 
     public record PassengerNotFoundError(int UserId)
         : Error("Ride.AddPassenger.PassengerNotFound", "User not found in the ride's passengers");
+
+    public record PassengerIsDriverError(int DriverId)
+        : Error(
+            "Ride.AddPassenger.PassengerIsDriverError",
+            "The ride's driver can't be a passenger"
+        );
+
+    public record PassengerAlreadyExistsError(int PassengerId, DateTimeOffset JoinedAt)
+        : Error(
+            "Ride.AddPassenger.PassengerAlreadyExistsError",
+            "User is already a passenger in this ride"
+        );
 }

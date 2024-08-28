@@ -16,13 +16,11 @@ public class RemoveUserCommandHandler(ICompoolerDbContext dbContext)
         var userToRemove = await dbContext.Users.FindAsync([command.Id], cancellationToken: ct);
 
         if (userToRemove is null)
-        {
-            return Result<User>.Failure(new EntityNotFoundError<User>(command.Id));
-        }
+            return new EntityNotFoundError<User>(command.Id);
 
         dbContext.Users.Remove(userToRemove);
         await dbContext.SaveChangesAsync(ct);
 
-        return Result<User>.Success(userToRemove);
+        return userToRemove;
     }
 }

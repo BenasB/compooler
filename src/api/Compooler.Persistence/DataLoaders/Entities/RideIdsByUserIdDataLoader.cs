@@ -1,11 +1,9 @@
-using Compooler.Persistence;
 using Compooler.Persistence.Configurations;
-using JetBrains.Annotations;
+using GreenDonut;
 using Microsoft.EntityFrameworkCore;
 
-namespace Compooler.API.DataLoaders.Entities;
+namespace Compooler.Persistence.DataLoaders.Entities;
 
-[UsedImplicitly]
 public class RideIdsByUserIdDataLoader(
     IServiceProvider serviceProvider,
     IBatchScheduler batchScheduler,
@@ -19,7 +17,7 @@ public class RideIdsByUserIdDataLoader(
     )
     {
         var ridePassengers = await dbContext
-            .RidesPassengers.Where(cgp => keys.Contains(cgp.UserId))
+            .RidePassengers.Where(cgp => keys.Contains(cgp.UserId))
             .Select(cgp => new
             {
                 cgp.UserId,

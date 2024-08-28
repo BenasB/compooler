@@ -37,8 +37,21 @@ type InvalidLongitudeError implements Error {
   message: String!
 }
 
+type JoinRidePayload {
+  ride: Ride
+  errors: [JoinRideError!]
+}
+
+type LeaveRidePayload {
+  ride: Ride
+  errors: [LeaveRideError!]
+}
+
 type Mutation {
   createRide(input: CreateRideInput): CreateRidePayload!
+  removeRide(input: RemoveRideInput): RemoveRidePayload!
+  joinRide(input: JoinRideInput): JoinRidePayload!
+  leaveRide(input: LeaveRideInput): LeaveRidePayload!
   createUser(input: CreateUserInput): CreateUserPayload!
   removeUser(input: RemoveUserInput): RemoveUserPayload!
 }
@@ -55,6 +68,31 @@ type PageInfo {
   endCursor: String
 }
 
+type PassengerAlreadyExistsError implements Error {
+  passengerId: ID!
+  joinedAt: DateTime!
+  code: String!
+  message: String!
+}
+
+type PassengerIsDriverError implements Error {
+  driverId: ID!
+  code: String!
+  message: String!
+}
+
+type PassengerLimitReachedError implements Error {
+  maxPassengers: Int!
+  code: String!
+  message: String!
+}
+
+type PassengerNotFoundError implements Error {
+  userId: ID!
+  code: String!
+  message: String!
+}
+
 type Query {
   "Fetches an object given its ID."
   node("ID of the object." id: ID!): Node
@@ -62,6 +100,11 @@ type Query {
   nodes("The list of node IDs." ids: [ID!]!): [Node]!
   rides("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): RidesConnection
   users("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): UsersConnection
+}
+
+type RemoveRidePayload {
+  ride: Ride
+  errors: [RemoveRideError!]
 }
 
 type RemoveUserPayload {
@@ -75,6 +118,12 @@ type Ride implements Node {
   route: Route!
   passengers: [RidePassenger!]!
   driver: User!
+}
+
+type RideNotFoundError implements Error {
+  id: ID!
+  code: String!
+  message: String!
 }
 
 type RidePassenger {
@@ -138,6 +187,12 @@ type UsersEdge {
 
 union CreateRideError = InvalidLatitudeError | InvalidLongitudeError | UserNotFoundError
 
+union JoinRideError = RideNotFoundError | UserNotFoundError | PassengerLimitReachedError | PassengerIsDriverError | PassengerAlreadyExistsError
+
+union LeaveRideError = RideNotFoundError | UserNotFoundError | PassengerNotFoundError
+
+union RemoveRideError = RideNotFoundError
+
 union RemoveUserError = UserNotFoundError
 
 input CreateRideInput {
@@ -152,6 +207,20 @@ input CreateRideInput {
 input CreateUserInput {
   firstName: String!
   lastName: String!
+}
+
+input JoinRideInput {
+  rideId: ID!
+  userId: ID!
+}
+
+input LeaveRideInput {
+  rideId: ID!
+  userId: ID!
+}
+
+input RemoveRideInput {
+  id: ID!
 }
 
 input RemoveUserInput {

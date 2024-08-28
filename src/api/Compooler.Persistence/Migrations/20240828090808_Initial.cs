@@ -51,7 +51,7 @@ namespace Compooler.Persistence.Migrations
             );
 
             migrationBuilder.CreateTable(
-                name: "RidesPassengers",
+                name: "RidePassengers",
                 columns: table => new
                 {
                     UserId = table.Column<int>(type: "integer", nullable: false),
@@ -64,9 +64,9 @@ namespace Compooler.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RidesPassengers", x => new { x.RideId, x.UserId });
+                    table.PrimaryKey("PK_RidePassengers", x => new { x.RideId, x.UserId });
                     table.ForeignKey(
-                        name: "FK_RidesPassengers_Rides_RideId",
+                        name: "FK_RidePassengers_Rides_RideId",
                         column: x => x.RideId,
                         principalTable: "Rides",
                         principalColumn: "Id",
@@ -114,7 +114,7 @@ namespace Compooler.Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(name: "RidesPassengers");
+            migrationBuilder.DropTable(name: "RidePassengers");
 
             migrationBuilder.DropTable(name: "Routes");
 

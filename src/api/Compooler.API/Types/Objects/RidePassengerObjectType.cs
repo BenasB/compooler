@@ -1,6 +1,6 @@
-using Compooler.API.DataLoaders.Entities;
 using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
+using Compooler.Persistence.DataLoaders.Entities;
 using JetBrains.Annotations;
 
 namespace Compooler.API.Types.Objects;
@@ -21,7 +21,10 @@ public class RidePassengerObjectType : ObjectType<RidePassenger>
             {
                 var dataLoader = ctx.Services.GetRequiredService<UserByIdDataLoader>();
                 var groupPassenger = ctx.Parent<RidePassenger>();
-                return await dataLoader.LoadAsync(groupPassenger.UserId, ctx.RequestAborted);
+                return await dataLoader.LoadRequiredAsync(
+                    groupPassenger.UserId,
+                    ctx.RequestAborted
+                );
             });
     }
 }

@@ -1,5 +1,6 @@
 using Compooler.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Testcontainers.PostgreSql;
 
 namespace Compooler.Application.Tests;
@@ -21,6 +22,7 @@ public class ApplicationFixture : IAsyncLifetime
 
         _contextOptions = new DbContextOptionsBuilder<CompoolerDbContext>()
             .UseNpgsql(_dbContainer.GetConnectionString())
+            .LogTo(Console.WriteLine, LogLevel.Information)
             .Options;
 
         await using var context = new CompoolerDbContext(_contextOptions);
