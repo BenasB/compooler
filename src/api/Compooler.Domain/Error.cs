@@ -1,3 +1,3 @@
 namespace Compooler.Domain;
 
-public record Error(string Code, string Message);
+public abstract record Error(string Code, string Message);

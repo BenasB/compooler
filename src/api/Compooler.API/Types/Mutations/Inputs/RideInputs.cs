@@ -31,3 +31,10 @@ public record RemoveRideInput([property: ID<Ride>] int Id) : IMappableTo<RemoveR
 {
     public RemoveRideCommand Map() => new(Id: Id);
 }
+
+[PublicAPI]
+public record JoinRideInput([property: ID<Ride>] int RideId, [property: ID<User>] int UserId)
+    : IMappableTo<JoinRideCommand>
+{
+    public JoinRideCommand Map() => new(RideId: RideId, UserId: UserId);
+}

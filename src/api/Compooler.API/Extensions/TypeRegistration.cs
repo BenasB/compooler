@@ -10,13 +10,7 @@ namespace Compooler.API.Extensions;
 public static class TypeRegistration
 {
     public static IRequestExecutorBuilder AddCompoolerTypes(this IRequestExecutorBuilder builder) =>
-        builder
-            .AddQueries()
-            .AddMutations()
-            .AddObjectTypes()
-            .AddDataLoaders()
-            .AddErrorInterfaceType<ErrorInterfaceType>()
-            .TryAddTypeInterceptor<EntityNotFoundErrorTypeInterceptor>();
+        builder.AddQueries().AddMutations().AddObjectTypes().AddDataLoaders().AddErrorTypes();
 
     private static IRequestExecutorBuilder AddQueries(this IRequestExecutorBuilder builder) =>
         builder.AddQueryType<RideQueries>().AddTypeExtension<UserQueries>();
@@ -37,4 +31,12 @@ public static class TypeRegistration
             .AddDataLoader<UserByIdDataLoader>()
             .AddDataLoader<RideByIdDataLoader>()
             .AddDataLoader<RideIdsByUserIdDataLoader>();
+
+    private static IRequestExecutorBuilder AddErrorTypes(this IRequestExecutorBuilder builder) =>
+        builder
+            .AddErrorInterfaceType<ErrorInterfaceType>()
+            .TryAddTypeInterceptor<EntityNotFoundErrorTypeInterceptor>()
+            .AddTypeExtension<PassengerNotFoundErrorExtension>()
+            .AddTypeExtension<PassengerIsDriverErrorExtension>()
+            .AddTypeExtension<PassengerAlreadyExistsErrorExtension>();
 }

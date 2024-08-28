@@ -40,9 +40,7 @@ public class CreateRideCommandHandler(ICompoolerDbContext dbContext)
         var driver = await dbContext.Users.FindAsync([command.DriverId], cancellationToken: ct);
 
         if (driver is null)
-        {
             return new EntityNotFoundError<User>(command.DriverId);
-        }
 
         var route = Route.Create(startResult.Value, finishResult.Value);
         var ride = Ride.Create(route, command.DriverId, command.MaxPassengers);

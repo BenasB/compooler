@@ -2,6 +2,8 @@ namespace Compooler.Domain.Tests;
 
 public class ResultTests
 {
+    private record TestError() : Error(Code: "test", Message: "test");
+
     [Fact]
     public void Success_NoError()
     {
@@ -14,7 +16,7 @@ public class ResultTests
     [Fact]
     public void Failure_HasError()
     {
-        var error = new Error(Code: "test", Message: "test");
+        var error = new TestError();
         var result = Result.Failure(error: error);
 
         Assert.True(result.IsFailed);
@@ -35,7 +37,7 @@ public class ResultTests
     [Fact]
     public void Generic_Failure_HasError()
     {
-        var error = new Error(Code: "test", Message: "test");
+        var error = new TestError();
         var result = Result<int>.Failure(error: error);
 
         Assert.True(result.IsFailed);

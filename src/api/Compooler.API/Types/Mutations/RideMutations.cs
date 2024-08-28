@@ -16,22 +16,23 @@ public class RideMutations : ObjectType
 
         descriptor
             .Field("createRide")
-            .ResolveCompoolerMutation<
-                CreateRideInput,
-                CreateRideCommand,
-                Ride,
-                GeographicCoordinatesErrors.InvalidLatitudeError,
-                GeographicCoordinatesErrors.InvalidLongitudeError,
-                EntityNotFoundError<User>
-            >();
+            .ResolveCompoolerMutation<CreateRideInput, CreateRideCommand, Ride>()
+            .Error<GeographicCoordinatesErrors.InvalidLatitudeError>()
+            .Error<GeographicCoordinatesErrors.InvalidLongitudeError>()
+            .Error<EntityNotFoundError<User>>();
 
         descriptor
             .Field("removeRide")
-            .ResolveCompoolerMutation<
-                RemoveRideInput,
-                RemoveRideCommand,
-                Ride,
-                EntityNotFoundError<Ride>
-            >();
+            .ResolveCompoolerMutation<RemoveRideInput, RemoveRideCommand, Ride>()
+            .Error<EntityNotFoundError<Ride>>();
+
+        descriptor
+            .Field("joinRide")
+            .ResolveCompoolerMutation<JoinRideInput, JoinRideCommand, Ride>()
+            .Error<EntityNotFoundError<Ride>>()
+            .Error<EntityNotFoundError<User>>()
+            .Error<RideErrors.PassengerLimitReachedError>()
+            .Error<RideErrors.PassengerIsDriverError>()
+            .Error<RideErrors.PassengerAlreadyExistsError>();
     }
 }
