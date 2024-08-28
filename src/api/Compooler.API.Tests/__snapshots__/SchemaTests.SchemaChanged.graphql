@@ -42,10 +42,16 @@ type JoinRidePayload {
   errors: [JoinRideError!]
 }
 
+type LeaveRidePayload {
+  ride: Ride
+  errors: [LeaveRideError!]
+}
+
 type Mutation {
   createRide(input: CreateRideInput): CreateRidePayload!
   removeRide(input: RemoveRideInput): RemoveRidePayload!
   joinRide(input: JoinRideInput): JoinRidePayload!
+  leaveRide(input: LeaveRideInput): LeaveRidePayload!
   createUser(input: CreateUserInput): CreateUserPayload!
   removeUser(input: RemoveUserInput): RemoveUserPayload!
 }
@@ -77,6 +83,12 @@ type PassengerIsDriverError implements Error {
 
 type PassengerLimitReachedError implements Error {
   maxPassengers: Int!
+  code: String!
+  message: String!
+}
+
+type PassengerNotFoundError implements Error {
+  userId: ID!
   code: String!
   message: String!
 }
@@ -177,6 +189,8 @@ union CreateRideError = InvalidLatitudeError | InvalidLongitudeError | UserNotFo
 
 union JoinRideError = RideNotFoundError | UserNotFoundError | PassengerLimitReachedError | PassengerIsDriverError | PassengerAlreadyExistsError
 
+union LeaveRideError = RideNotFoundError | UserNotFoundError | PassengerNotFoundError
+
 union RemoveRideError = RideNotFoundError
 
 union RemoveUserError = UserNotFoundError
@@ -196,6 +210,11 @@ input CreateUserInput {
 }
 
 input JoinRideInput {
+  rideId: ID!
+  userId: ID!
+}
+
+input LeaveRideInput {
   rideId: ID!
   userId: ID!
 }
