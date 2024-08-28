@@ -19,7 +19,7 @@ public class RideIdsByUserIdDataLoader(
     )
     {
         var ridePassengers = await dbContext
-            .RidesPassengers.Where(cgp => keys.Contains(cgp.UserId))
+            .RidePassengers.Where(cgp => keys.Contains(cgp.UserId))
             .Select(cgp => new
             {
                 cgp.UserId,

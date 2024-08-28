@@ -56,7 +56,7 @@ namespace Compooler.Persistence.Migrations
 
                     b.HasKey("RideId", "UserId");
 
-                    b.ToTable("RidesPassengers");
+                    b.ToTable("RidePassengers");
                 });
 
             modelBuilder.Entity("Compooler.Domain.Entities.UserEntity.User", b =>

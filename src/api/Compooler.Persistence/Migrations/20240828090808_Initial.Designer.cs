@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Compooler.Persistence.Migrations
 {
     [DbContext(typeof(CompoolerDbContext))]
-    [Migration("20240824200346_Initial")]
+    [Migration("20240828090808_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -59,7 +59,7 @@ namespace Compooler.Persistence.Migrations
 
                     b.HasKey("RideId", "UserId");
 
-                    b.ToTable("RidesPassengers");
+                    b.ToTable("RidePassengers");
                 });
 
             modelBuilder.Entity("Compooler.Domain.Entities.UserEntity.User", b =>

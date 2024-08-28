@@ -16,86 +16,58 @@ namespace Compooler.Persistence.Migrations
                 name: "Rides",
                 columns: table => new
                 {
-                    Id = table
-                        .Column<int>(type: "integer", nullable: false)
-                        .Annotation(
-                            "Npgsql:ValueGenerationStrategy",
-                            NpgsqlValueGenerationStrategy.IdentityByDefaultColumn
-                        ),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     DriverId = table.Column<int>(type: "integer", nullable: false),
                     MaxPassengers = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Rides", x => x.Id);
-                }
-            );
+                });
 
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table
-                        .Column<int>(type: "integer", nullable: false)
-                        .Annotation(
-                            "Npgsql:ValueGenerationStrategy",
-                            NpgsqlValueGenerationStrategy.IdentityByDefaultColumn
-                        ),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                }
-            );
+                });
 
             migrationBuilder.CreateTable(
-                name: "RidesPassengers",
+                name: "RidePassengers",
                 columns: table => new
                 {
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     RideId = table.Column<int>(type: "integer", nullable: false),
-                    JoinedAt = table.Column<DateTimeOffset>(
-                        type: "timestamp with time zone",
-                        nullable: false,
-                        defaultValueSql: "CURRENT_TIMESTAMP"
-                    )
+                    JoinedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RidesPassengers", x => new { x.RideId, x.UserId });
+                    table.PrimaryKey("PK_RidePassengers", x => new { x.RideId, x.UserId });
                     table.ForeignKey(
-                        name: "FK_RidesPassengers_Rides_RideId",
+                        name: "FK_RidePassengers_Rides_RideId",
                         column: x => x.RideId,
                         principalTable: "Rides",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade
-                    );
-                }
-            );
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Routes",
                 columns: table => new
                 {
                     RideId = table.Column<int>(type: "integer", nullable: false),
-                    Start_Latitude = table.Column<double>(
-                        type: "double precision",
-                        nullable: false
-                    ),
-                    Start_Longitude = table.Column<double>(
-                        type: "double precision",
-                        nullable: false
-                    ),
-                    Finish_Latitude = table.Column<double>(
-                        type: "double precision",
-                        nullable: false
-                    ),
-                    Finish_Longitude = table.Column<double>(
-                        type: "double precision",
-                        nullable: false
-                    )
+                    Start_Latitude = table.Column<double>(type: "double precision", nullable: false),
+                    Start_Longitude = table.Column<double>(type: "double precision", nullable: false),
+                    Finish_Latitude = table.Column<double>(type: "double precision", nullable: false),
+                    Finish_Longitude = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -105,22 +77,24 @@ namespace Compooler.Persistence.Migrations
                         column: x => x.RideId,
                         principalTable: "Rides",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade
-                    );
-                }
-            );
+                        onDelete: ReferentialAction.Cascade);
+                });
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(name: "RidesPassengers");
+            migrationBuilder.DropTable(
+                name: "RidePassengers");
 
-            migrationBuilder.DropTable(name: "Routes");
+            migrationBuilder.DropTable(
+                name: "Routes");
 
-            migrationBuilder.DropTable(name: "Users");
+            migrationBuilder.DropTable(
+                name: "Users");
 
-            migrationBuilder.DropTable(name: "Rides");
+            migrationBuilder.DropTable(
+                name: "Rides");
         }
     }
 }
