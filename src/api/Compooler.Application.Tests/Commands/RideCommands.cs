@@ -113,10 +113,12 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
 
         Assert.False(result.IsFailed);
         Assert.Null(await _dbContext.Rides.FirstOrDefaultAsync(x => x.Id == newRide.Entity.Id));
-        Assert.Null(
-            await _dbContext.RidePassengers.FirstOrDefaultAsync(x =>
-                EF.Property<int>(x, RideConfiguration.RideIdColumnName) == newRideId
-            )
+        Assert.Empty(
+            await _dbContext
+                .RidePassengers.Where(x =>
+                    EF.Property<int>(x, RideConfiguration.RideIdColumnName) == newRideId
+                )
+                .ToListAsync()
         );
     }
 
