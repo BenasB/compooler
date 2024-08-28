@@ -38,3 +38,10 @@ public record JoinRideInput([property: ID<Ride>] int RideId, [property: ID<User>
 {
     public JoinRideCommand Map() => new(RideId: RideId, UserId: UserId);
 }
+
+[PublicAPI]
+public record LeaveRideInput([property: ID<Ride>] int RideId, [property: ID<User>] int UserId)
+    : IMappableTo<LeaveRideCommand>
+{
+    public LeaveRideCommand Map() => new(RideId: RideId, UserId: UserId);
+}

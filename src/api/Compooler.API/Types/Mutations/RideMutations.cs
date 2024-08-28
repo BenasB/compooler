@@ -34,5 +34,12 @@ public class RideMutations : ObjectType
             .Error<RideErrors.PassengerLimitReachedError>()
             .Error<RideErrors.PassengerIsDriverError>()
             .Error<RideErrors.PassengerAlreadyExistsError>();
+
+        descriptor
+            .Field("leaveRide")
+            .ResolveCompoolerMutation<LeaveRideInput, LeaveRideCommand, Ride>()
+            .Error<EntityNotFoundError<Ride>>()
+            .Error<EntityNotFoundError<User>>()
+            .Error<RideErrors.PassengerNotFoundError>();
     }
 }

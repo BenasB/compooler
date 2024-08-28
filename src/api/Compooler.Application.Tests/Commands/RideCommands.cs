@@ -185,4 +185,54 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
         ride = await _dbContext.Rides.FirstAsync(x => x.Id == ride.Id);
         Assert.Single(ride.Passengers);
     }
+
+    [Fact]
+    public async Task LeaveRide_RideDoesNotExist_Fails()
+    {
+        var userId = await CreateUser();
+        const int nonExistentRideId = -1;
+        var command = new LeaveRideCommand(RideId: nonExistentRideId, UserId: userId);
+        var handler = new LeaveRideCommandHandler(_dbContext);
+
+        var result = await handler.HandleAsync(command);
+
+        Assert.True(result.IsFailed);
+        Assert.Equal(new EntityNotFoundError<Ride>(nonExistentRideId), result.Error);
+    }
+
+    [Fact]
+    public async Task LeaveRide_UserDoesNotExist_Fails()
+    {
+        var ride = await CreateRide();
+        const int nonExistentUserId = -1;
+        var command = new LeaveRideCommand(RideId: ride.Id, UserId: nonExistentUserId);
+        var handler = new LeaveRideCommandHandler(_dbContext);
+
+        var result = await handler.HandleAsync(command);
+
+        Assert.True(result.IsFailed);
+        Assert.Equal(new EntityNotFoundError<User>(nonExistentUserId), result.Error);
+    }
+
+    [Fact]
+    public async Task LeaveRide_UserAndRideExist_Succeeds()
+    {
+        var ride = await CreateRide();
+        var userId = await CreateUser();
+
+        Assert.False(
+            ride.AddPassenger(userId).IsFailed,
+            "Failed to add passenger which is a prerequisite"
+        );
+        await _dbContext.SaveChangesAsync();
+
+        var command = new LeaveRideCommand(RideId: ride.Id, UserId: userId);
+        var handler = new LeaveRideCommandHandler(_dbContext);
+
+        var result = await handler.HandleAsync(command);
+
+        Assert.False(result.IsFailed);
+        ride = await _dbContext.Rides.FirstAsync(x => x.Id == ride.Id);
+        Assert.Empty(ride.Passengers);
+    }
 }
