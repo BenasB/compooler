@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace Compooler.API.Types.Errors;
 
-[UsedImplicitly]
+[PublicAPI]
 public class PassengerNotFoundErrorExtension
     : ObjectTypeExtension<RideErrors.PassengerNotFoundError>
 {
@@ -16,7 +16,7 @@ public class PassengerNotFoundErrorExtension
     }
 }
 
-[UsedImplicitly]
+[PublicAPI]
 public class PassengerIsDriverErrorExtension
     : ObjectTypeExtension<RideErrors.PassengerIsDriverError>
 {
@@ -28,7 +28,7 @@ public class PassengerIsDriverErrorExtension
     }
 }
 
-[UsedImplicitly]
+[PublicAPI]
 public class PassengerAlreadyExistsErrorExtension
     : ObjectTypeExtension<RideErrors.PassengerAlreadyExistsError>
 {
