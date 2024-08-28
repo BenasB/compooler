@@ -39,10 +39,13 @@ jobs:
       - name: Test
         run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage"
       - name: Install coverage merge tool
+        if: ${{ github.event_name == 'pull_request' }}
         run: dotnet tool install --global dotnet-coverage
       - name: Merge coverage files
+        if: ${{ github.event_name == 'pull_request' }}
         run: dotnet-coverage merge *.cobertura.xml --recursive --output merged.cobertura.xml --output-format cobertura
       - name: Generate test report
+        if: ${{ github.event_name == 'pull_request' }}
         uses: bibipkins/dotnet-test-reporter@v1.4.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
