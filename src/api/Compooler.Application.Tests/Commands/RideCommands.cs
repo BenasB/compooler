@@ -48,7 +48,7 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
             StartLongitude: 0,
             FinishLatitude: 0,
             FinishLongitude: 0,
-            LeaveTime: dateTimeOffsetProvider.Future.ToUniversalTime()
+            TimeOfDeparture: dateTimeOffsetProvider.Future.ToUniversalTime()
         );
         var handler = new CreateRideCommandHandler(_dbContext, dateTimeOffsetProvider);
 
@@ -70,7 +70,7 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
             StartLongitude: 0,
             FinishLatitude: 0,
             FinishLongitude: 0,
-            LeaveTime: dateTimeOffsetProvider.Future.ToUniversalTime()
+            TimeOfDeparture: dateTimeOffsetProvider.Future.ToUniversalTime()
         );
 
         var handler = new CreateRideCommandHandler(_dbContext, dateTimeOffsetProvider);
@@ -93,7 +93,7 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
             StartLongitude: 181,
             FinishLatitude: 91,
             FinishLongitude: -181,
-            LeaveTime: dateTimeOffsetProvider.Future.ToUniversalTime()
+            TimeOfDeparture: dateTimeOffsetProvider.Future.ToUniversalTime()
         );
         var handler = new CreateRideCommandHandler(_dbContext, dateTimeOffsetProvider);
 

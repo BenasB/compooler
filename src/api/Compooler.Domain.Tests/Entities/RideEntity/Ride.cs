@@ -6,17 +6,17 @@ namespace Compooler.Domain.Tests.Entities.RideEntity;
 public class RideTests
 {
     [Fact]
-    public void Create_LeaveTimeInThePast_Fails()
+    public void Create_TimeOfDepartureInThePast_Fails()
     {
         var dateTimeOffsetProvider = new FixedDateTimeOffsetProvider { Now = DateTimeOffset.Now };
         var result = TestEntityFactory.CreateRide(
-            leaveTime: dateTimeOffsetProvider.Past,
+            timeOfDeparture: dateTimeOffsetProvider.Past,
             dateTimeOffsetProvider: dateTimeOffsetProvider
         );
 
         Assert.True(result.IsFailed);
         Assert.Equal(
-            new RideErrors.LeaveTimeIsNotInTheFutureError(
+            new RideErrors.TimeOfDepartureIsNotInTheFutureError(
                 dateTimeOffsetProvider.Past,
                 dateTimeOffsetProvider.Now
             ),

@@ -47,13 +47,6 @@ type LeaveRidePayload {
   errors: [LeaveRideError!]
 }
 
-type LeaveTimeIsNotInTheFutureError implements Error {
-  leaveTime: DateTime!
-  now: DateTime!
-  code: String!
-  message: String!
-}
-
 type MaxPassengersBelowOneError implements Error {
   maxPassengers: Int!
   code: String!
@@ -130,7 +123,7 @@ type Ride implements Node {
   maxPassengers: Int!
   route: Route!
   passengers: [RidePassenger!]!
-  leaveTime: DateTime!
+  timeOfDeparture: DateTime!
   driver: User!
 }
 
@@ -168,6 +161,13 @@ type Route {
   finish: GeographicCoordinates!
 }
 
+type TimeOfDepartureIsNotInTheFutureError implements Error {
+  timeOfDeparture: DateTime!
+  now: DateTime!
+  code: String!
+  message: String!
+}
+
 type User implements Node {
   id: ID!
   firstName: String!
@@ -199,7 +199,7 @@ type UsersEdge {
   node: User!
 }
 
-union CreateRideError = InvalidLatitudeError | InvalidLongitudeError | UserNotFoundError | MaxPassengersBelowOneError | LeaveTimeIsNotInTheFutureError
+union CreateRideError = InvalidLatitudeError | InvalidLongitudeError | UserNotFoundError | MaxPassengersBelowOneError | TimeOfDepartureIsNotInTheFutureError
 
 union JoinRideError = RideNotFoundError | UserNotFoundError | PassengerLimitReachedError | PassengerIsDriverError | PassengerAlreadyExistsError
 
@@ -216,7 +216,7 @@ input CreateRideInput {
   startLongitude: Float!
   finishLatitude: Float!
   finishLongitude: Float!
-  leaveTime: DateTime!
+  timeOfDeparture: DateTime!
 }
 
 input CreateUserInput {

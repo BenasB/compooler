@@ -22,7 +22,7 @@ public static class TestEntityFactory
     public static Result<Ride> CreateRide(
         int maxPassengers = 2,
         int driverId = -42,
-        DateTimeOffset? leaveTime = null,
+        DateTimeOffset? timeOfDeparture = null,
         IDateTimeOffsetProvider? dateTimeOffsetProvider = null
     )
     {
@@ -33,7 +33,7 @@ public static class TestEntityFactory
             route: Route.Create(start: startCoords, finish: finishCoords),
             driverId: driverId,
             maxPassengers: maxPassengers,
-            leaveTime: leaveTime ?? DateTimeOffsetProvider.Future.ToUniversalTime(),
+            timeOfDeparture: timeOfDeparture ?? DateTimeOffsetProvider.Future.ToUniversalTime(),
             dateTimeOffsetProvider: dateTimeOffsetProvider ?? DateTimeOffsetProvider
         );
     }

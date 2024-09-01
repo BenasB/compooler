@@ -24,7 +24,7 @@ namespace Compooler.Persistence.Migrations
                         ),
                     DriverId = table.Column<int>(type: "integer", nullable: false),
                     MaxPassengers = table.Column<int>(type: "integer", nullable: false),
-                    LeaveTime = table.Column<DateTimeOffset>(
+                    TimeOfDeparture = table.Column<DateTimeOffset>(
                         type: "timestamp with time zone",
                         nullable: false
                     )

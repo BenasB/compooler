@@ -20,10 +20,13 @@ public static class RideErrors
             "User is already a passenger in this ride"
         );
 
-    public record LeaveTimeIsNotInTheFutureError(DateTimeOffset LeaveTime, DateTimeOffset Now)
+    public record TimeOfDepartureIsNotInTheFutureError(
+        DateTimeOffset TimeOfDeparture,
+        DateTimeOffset Now
+    )
         : Error(
-            "Ride.Create.LeaveTimeIsNotInTheFutureError",
-            "The ride's planned leave time must be in the future"
+            "Ride.Create.TimeOfDepartureIsNotInTheFutureError",
+            "The ride's planned time of departure must be in the future"
         );
 
     public record MaxPassengersBelowOneError(int MaxPassengers)

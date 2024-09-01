@@ -25,7 +25,7 @@ Properties:
   - From `LatLng`
   - To `LatLng`
 - Driver `User`
-- Estimated start `DateTime`
+- Time of departure `DateTime`
 - Max passengers `Integer`
 - Passengers `[]`
   - Passenger `User`

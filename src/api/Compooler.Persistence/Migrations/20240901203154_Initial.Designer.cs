@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Compooler.Persistence.Migrations
 {
     [DbContext(typeof(CompoolerDbContext))]
-    [Migration("20240901150358_Initial")]
+    [Migration("20240901203154_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -36,11 +36,11 @@ namespace Compooler.Persistence.Migrations
                     b.Property<int>("DriverId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTimeOffset>("LeaveTime")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<int>("MaxPassengers")
                         .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("TimeOfDeparture")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 

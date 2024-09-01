@@ -16,7 +16,7 @@ public class RideNodeType : ObjectType<Ride>
         descriptor.Field(x => x.MaxPassengers);
         descriptor.Field(x => x.Route);
         descriptor.Field(x => x.Passengers);
-        descriptor.Field(x => x.LeaveTime);
+        descriptor.Field(x => x.TimeOfDeparture);
 
         descriptor
             .Field("driver")

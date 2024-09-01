@@ -21,7 +21,7 @@ public class RideMutations : ObjectType
             .Error<GeographicCoordinatesErrors.InvalidLongitudeError>()
             .Error<EntityNotFoundError<User>>()
             .Error<RideErrors.MaxPassengersBelowOneError>()
-            .Error<RideErrors.LeaveTimeIsNotInTheFutureError>();
+            .Error<RideErrors.TimeOfDepartureIsNotInTheFutureError>();
 
         descriptor
             .Field("removeRide")

@@ -11,7 +11,7 @@ public record CreateRideCommand(
     double StartLongitude,
     double FinishLatitude,
     double FinishLongitude,
-    DateTimeOffset LeaveTime
+    DateTimeOffset TimeOfDeparture
 );
 
 public class CreateRideCommandHandler(
@@ -50,7 +50,7 @@ public class CreateRideCommandHandler(
             route,
             command.DriverId,
             command.MaxPassengers,
-            command.LeaveTime,
+            command.TimeOfDeparture,
             dateTimeOffsetProvider
         );
 
