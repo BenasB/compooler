@@ -36,6 +36,9 @@ namespace Compooler.Persistence.Migrations
                     b.Property<int>("MaxPassengers")
                         .HasColumnType("integer");
 
+                    b.Property<DateTimeOffset>("TimeOfDeparture")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.ToTable("Rides");

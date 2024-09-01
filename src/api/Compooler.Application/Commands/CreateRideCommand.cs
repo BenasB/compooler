@@ -10,11 +10,14 @@ public record CreateRideCommand(
     double StartLatitude,
     double StartLongitude,
     double FinishLatitude,
-    double FinishLongitude
+    double FinishLongitude,
+    DateTimeOffset TimeOfDeparture
 );
 
-public class CreateRideCommandHandler(ICompoolerDbContext dbContext)
-    : ICommandHandler<CreateRideCommand, Ride>
+public class CreateRideCommandHandler(
+    ICompoolerDbContext dbContext,
+    IDateTimeOffsetProvider dateTimeOffsetProvider
+) : ICommandHandler<CreateRideCommand, Ride>
 {
     public async Task<Result<Ride>> HandleAsync(
         CreateRideCommand command,
@@ -43,11 +46,20 @@ public class CreateRideCommandHandler(ICompoolerDbContext dbContext)
             return new EntityNotFoundError<User>(command.DriverId);
 
         var route = Route.Create(startResult.Value, finishResult.Value);
-        var ride = Ride.Create(route, command.DriverId, command.MaxPassengers);
+        var rideResult = Ride.Create(
+            route,
+            command.DriverId,
+            command.MaxPassengers,
+            command.TimeOfDeparture,
+            dateTimeOffsetProvider
+        );
 
-        dbContext.Rides.Add(ride);
+        if (rideResult.IsFailed)
+            return rideResult.Error;
+
+        dbContext.Rides.Add(rideResult.Value);
         await dbContext.SaveChangesAsync(ct);
 
-        return ride;
+        return rideResult.Value;
     }
 }

@@ -9,16 +9,36 @@ public sealed class Ride : IEntity
     private readonly List<RidePassenger> _passengers = [];
     public IReadOnlyList<RidePassenger> Passengers => _passengers.AsReadOnly();
     public required int MaxPassengers { get; init; }
+    public required DateTimeOffset TimeOfDeparture { get; init; }
 
     private Ride() { }
 
-    public static Ride Create(Route route, int driverId, int maxPassengers) =>
-        new()
+    public static Result<Ride> Create(
+        Route route,
+        int driverId,
+        int maxPassengers,
+        DateTimeOffset timeOfDeparture,
+        IDateTimeOffsetProvider dateTimeOffsetProvider
+    )
+    {
+        if (maxPassengers < 1)
+            return new RideErrors.MaxPassengersBelowOneError(maxPassengers);
+
+        var timestampNow = dateTimeOffsetProvider.Now;
+        if (timeOfDeparture <= timestampNow)
+            return new RideErrors.TimeOfDepartureIsNotInTheFutureError(
+                timeOfDeparture,
+                timestampNow
+            );
+
+        return new Ride
         {
             Route = route,
             DriverId = driverId,
-            MaxPassengers = maxPassengers
+            MaxPassengers = maxPassengers,
+            TimeOfDeparture = timeOfDeparture
         };
+    }
 
     public Result AddPassenger(int userId)
     {

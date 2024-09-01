@@ -12,7 +12,8 @@ public record CreateRideInput(
     double StartLatitude,
     double StartLongitude,
     double FinishLatitude,
-    double FinishLongitude
+    double FinishLongitude,
+    DateTimeOffset TimeOfDeparture
 ) : IMappableTo<CreateRideCommand>
 {
     public CreateRideCommand Map() =>
@@ -22,7 +23,8 @@ public record CreateRideInput(
             StartLatitude: StartLatitude,
             StartLongitude: StartLongitude,
             FinishLatitude: FinishLatitude,
-            FinishLongitude: FinishLongitude
+            FinishLongitude: FinishLongitude,
+            TimeOfDeparture: TimeOfDeparture.ToUniversalTime()
         );
 }
 
