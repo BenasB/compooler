@@ -22,7 +22,7 @@ public static class RideErrors
 
     public record LeaveTimeIsNotInTheFutureError(DateTimeOffset LeaveTime, DateTimeOffset Now)
         : Error(
-            "Ride.Create.LeaveTimeIsInThePastError",
+            "Ride.Create.LeaveTimeIsNotInTheFutureError",
             "The ride's planned leave time must be in the future"
         );
 
