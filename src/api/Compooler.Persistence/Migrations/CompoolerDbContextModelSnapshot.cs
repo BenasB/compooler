@@ -33,6 +33,9 @@ namespace Compooler.Persistence.Migrations
                     b.Property<int>("DriverId")
                         .HasColumnType("integer");
 
+                    b.Property<DateTimeOffset>("LeaveTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("MaxPassengers")
                         .HasColumnType("integer");
 
