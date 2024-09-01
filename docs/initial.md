@@ -1,5 +1,9 @@
 # Initial draft
 
+!!! note
+
+    This page was created with a focus on commute carpooling, however due to technical progression, the project is starting out with one-time (not recurring commute) carpooling rides.
+
 ## Quick pitch
 
 - An application that allows you to find people with similar commute routes as you
