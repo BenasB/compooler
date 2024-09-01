@@ -17,13 +17,29 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
 
     public Task DisposeAsync() => _dbContext.DisposeAsync().AsTask();
 
+    private async Task<User> PersistNewUser()
+    {
+        var user = TestEntityFactory.CreateUser();
+        _dbContext.Users.Add(user);
+        await _dbContext.SaveChangesAsync();
+
+        return user;
+    }
+
+    private async Task<Ride> PersistNewRide()
+    {
+        var ride = TestEntityFactory.CreateRide().RequiredSuccess();
+        _dbContext.Rides.Add(ride);
+        await _dbContext.SaveChangesAsync();
+
+        return ride;
+    }
+
     [Fact]
     public async Task CreateRide_Succeeds()
     {
         var dateTimeOffsetProvider = new FixedDateTimeOffsetProvider { Now = DateTimeOffset.Now };
-        var driver = TestEntityFactory.CreateUser();
-        _dbContext.Users.Add(driver);
-        await _dbContext.SaveChangesAsync();
+        var driver = await PersistNewUser();
 
         var command = new CreateRideCommand(
             DriverId: driver.Id,
@@ -68,9 +84,7 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
     public async Task CreateRide_InvalidData_Fails()
     {
         var dateTimeOffsetProvider = new FixedDateTimeOffsetProvider { Now = DateTimeOffset.Now };
-        var driver = TestEntityFactory.CreateUser();
-        _dbContext.Users.Add(driver);
-        await _dbContext.SaveChangesAsync();
+        var driver = await PersistNewUser();
 
         var command = new CreateRideCommand(
             DriverId: driver.Id,
@@ -91,11 +105,8 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
     [Fact]
     public async Task RemoveRide_RideExists_Succeeds()
     {
-        var passenger = TestEntityFactory.CreateUser();
-        var ride = TestEntityFactory.CreateRide().RequiredSuccess();
-        _dbContext.Users.Add(passenger);
-        _dbContext.Rides.Add(ride);
-        await _dbContext.SaveChangesAsync();
+        var passenger = await PersistNewUser();
+        var ride = await PersistNewRide();
 
         Assert.False(
             ride.AddPassenger(passenger.Id).IsFailed,
@@ -136,9 +147,7 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
     [Fact]
     public async Task JoinRide_RideDoesNotExist_Fails()
     {
-        var user = TestEntityFactory.CreateUser();
-        _dbContext.Users.Add(user);
-        await _dbContext.SaveChangesAsync();
+        var user = await PersistNewUser();
         const int nonExistentRideId = -1;
 
         var command = new JoinRideCommand(RideId: nonExistentRideId, UserId: user.Id);
@@ -153,9 +162,7 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
     [Fact]
     public async Task JoinRide_UserDoesNotExist_Fails()
     {
-        var ride = TestEntityFactory.CreateRide().RequiredSuccess();
-        _dbContext.Rides.Add(ride);
-        await _dbContext.SaveChangesAsync();
+        var ride = await PersistNewRide();
         const int nonExistentUserId = -1;
 
         var command = new JoinRideCommand(RideId: ride.Id, UserId: nonExistentUserId);
@@ -170,11 +177,8 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
     [Fact]
     public async Task JoinRide_UserAndRideExist_Succeeds()
     {
-        var user = TestEntityFactory.CreateUser();
-        var ride = TestEntityFactory.CreateRide().RequiredSuccess();
-        _dbContext.Users.Add(user);
-        _dbContext.Rides.Add(ride);
-        await _dbContext.SaveChangesAsync();
+        var user = await PersistNewUser();
+        var ride = await PersistNewRide();
 
         var command = new JoinRideCommand(RideId: ride.Id, UserId: user.Id);
         var handler = new JoinRideCommandHandler(_dbContext);
@@ -189,9 +193,7 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
     [Fact]
     public async Task LeaveRide_RideDoesNotExist_Fails()
     {
-        var user = TestEntityFactory.CreateUser();
-        _dbContext.Users.Add(user);
-        await _dbContext.SaveChangesAsync();
+        var user = await PersistNewUser();
         const int nonExistentRideId = -1;
 
         var command = new LeaveRideCommand(RideId: nonExistentRideId, UserId: user.Id);
@@ -206,9 +208,7 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
     [Fact]
     public async Task LeaveRide_UserDoesNotExist_Fails()
     {
-        var ride = TestEntityFactory.CreateRide().RequiredSuccess();
-        _dbContext.Rides.Add(ride);
-        await _dbContext.SaveChangesAsync();
+        var ride = await PersistNewRide();
         const int nonExistentUserId = -1;
 
         var command = new LeaveRideCommand(RideId: ride.Id, UserId: nonExistentUserId);
@@ -223,11 +223,8 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
     [Fact]
     public async Task LeaveRide_UserAndRideExist_Succeeds()
     {
-        var user = TestEntityFactory.CreateUser();
-        var ride = TestEntityFactory.CreateRide().RequiredSuccess();
-        _dbContext.Users.Add(user);
-        _dbContext.Rides.Add(ride);
-        await _dbContext.SaveChangesAsync();
+        var user = await PersistNewUser();
+        var ride = await PersistNewRide();
 
         Assert.False(
             ride.AddPassenger(user.Id).IsFailed,
