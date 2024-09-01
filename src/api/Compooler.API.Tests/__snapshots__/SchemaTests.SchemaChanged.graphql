@@ -47,6 +47,19 @@ type LeaveRidePayload {
   errors: [LeaveRideError!]
 }
 
+type LeaveTimeIsNotInTheFutureError implements Error {
+  leaveTime: DateTime!
+  now: DateTime!
+  code: String!
+  message: String!
+}
+
+type MaxPassengersBelowOneError implements Error {
+  maxPassengers: Int!
+  code: String!
+  message: String!
+}
+
 type Mutation {
   createRide(input: CreateRideInput): CreateRidePayload!
   removeRide(input: RemoveRideInput): RemoveRidePayload!
@@ -186,7 +199,7 @@ type UsersEdge {
   node: User!
 }
 
-union CreateRideError = InvalidLatitudeError | InvalidLongitudeError | UserNotFoundError
+union CreateRideError = InvalidLatitudeError | InvalidLongitudeError | UserNotFoundError | MaxPassengersBelowOneError | LeaveTimeIsNotInTheFutureError
 
 union JoinRideError = RideNotFoundError | UserNotFoundError | PassengerLimitReachedError | PassengerIsDriverError | PassengerAlreadyExistsError
 

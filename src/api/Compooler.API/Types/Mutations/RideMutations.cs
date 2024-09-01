@@ -19,7 +19,9 @@ public class RideMutations : ObjectType
             .ResolveCompoolerMutation<CreateRideInput, CreateRideCommand, Ride>()
             .Error<GeographicCoordinatesErrors.InvalidLatitudeError>()
             .Error<GeographicCoordinatesErrors.InvalidLongitudeError>()
-            .Error<EntityNotFoundError<User>>();
+            .Error<EntityNotFoundError<User>>()
+            .Error<RideErrors.MaxPassengersBelowOneError>()
+            .Error<RideErrors.LeaveTimeIsNotInTheFutureError>();
 
         descriptor
             .Field("removeRide")

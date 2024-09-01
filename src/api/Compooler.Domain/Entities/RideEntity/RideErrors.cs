@@ -19,4 +19,16 @@ public static class RideErrors
             "Ride.AddPassenger.PassengerAlreadyExistsError",
             "User is already a passenger in this ride"
         );
+
+    public record LeaveTimeIsNotInTheFutureError(DateTimeOffset LeaveTime, DateTimeOffset Now)
+        : Error(
+            "Ride.Create.LeaveTimeIsInThePastError",
+            "The ride's planned leave time must be in the future"
+        );
+
+    public record MaxPassengersBelowOneError(int MaxPassengers)
+        : Error(
+            "Ride.Create.MaxPassengersBelowOneError",
+            "The number of maximum passengers in the ride must be at least 1"
+        );
 }

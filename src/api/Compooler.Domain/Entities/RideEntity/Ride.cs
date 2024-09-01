@@ -13,19 +13,29 @@ public sealed class Ride : IEntity
 
     private Ride() { }
 
-    public static Ride Create(
+    public static Result<Ride> Create(
         Route route,
         int driverId,
         int maxPassengers,
-        DateTimeOffset leaveTime
-    ) =>
-        new()
+        DateTimeOffset leaveTime,
+        IDateTimeOffsetProvider dateTimeOffsetProvider
+    )
+    {
+        if (maxPassengers < 1)
+            return new RideErrors.MaxPassengersBelowOneError(maxPassengers);
+
+        var timestampNow = dateTimeOffsetProvider.Now;
+        if (leaveTime <= timestampNow)
+            return new RideErrors.LeaveTimeIsNotInTheFutureError(leaveTime, timestampNow);
+
+        return new Ride
         {
             Route = route,
             DriverId = driverId,
             MaxPassengers = maxPassengers,
             LeaveTime = leaveTime
         };
+    }
 
     public Result AddPassenger(int userId)
     {

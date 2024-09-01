@@ -1,4 +1,5 @@
 using Compooler.Application;
+using Compooler.Domain;
 using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +46,9 @@ public static class CompoolerDbContextSetUp
                 dbContext.Users.AddRange(users);
                 await dbContext.SaveChangesAsync();
 
+                var dateTimeOffsetProvider =
+                    scope.ServiceProvider.GetRequiredService<IDateTimeOffsetProvider>();
+
                 Ride[] rides =
                 [
                     Ride.Create(
@@ -54,8 +58,9 @@ public static class CompoolerDbContextSetUp
                         ),
                         users[0].Id,
                         2,
-                        DateTimeOffset.Now.AddDays(1).ToUniversalTime()
-                    ),
+                        DateTimeOffset.Now.AddDays(1).ToUniversalTime(),
+                        dateTimeOffsetProvider
+                    ).Value!,
                     Ride.Create(
                         Route.Create(
                             GeographicCoordinates.Create(-12.5123, 32.421).Value!,
@@ -63,8 +68,9 @@ public static class CompoolerDbContextSetUp
                         ),
                         users[0].Id,
                         3,
-                        DateTimeOffset.Now.AddDays(2).AddMinutes(14).ToUniversalTime()
-                    ),
+                        DateTimeOffset.Now.AddDays(2).AddMinutes(14).ToUniversalTime(),
+                        dateTimeOffsetProvider
+                    ).Value!,
                     Ride.Create(
                         Route.Create(
                             GeographicCoordinates.Create(-12.5123, 32.421).Value!,
@@ -72,9 +78,11 @@ public static class CompoolerDbContextSetUp
                         ),
                         users[1].Id,
                         3,
-                        DateTimeOffset.Now.AddDays(4).AddHours(3).AddMinutes(14).ToUniversalTime()
-                    )
+                        DateTimeOffset.Now.AddDays(4).AddHours(3).AddMinutes(14).ToUniversalTime(),
+                        dateTimeOffsetProvider
+                    ).Value!
                 ];
+
                 rides[0].AddPassenger(users[1].Id);
                 rides[0].AddPassenger(users[2].Id);
 
