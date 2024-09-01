@@ -24,7 +24,7 @@ public record CreateRideInput(
             StartLongitude: StartLongitude,
             FinishLatitude: FinishLatitude,
             FinishLongitude: FinishLongitude,
-            LeaveTime: LeaveTime
+            LeaveTime: LeaveTime.ToUniversalTime()
         );
 }
 

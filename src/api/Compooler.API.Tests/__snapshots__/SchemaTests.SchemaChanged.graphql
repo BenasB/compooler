@@ -117,6 +117,7 @@ type Ride implements Node {
   maxPassengers: Int!
   route: Route!
   passengers: [RidePassenger!]!
+  leaveTime: DateTime!
   driver: User!
 }
 
@@ -202,6 +203,7 @@ input CreateRideInput {
   startLongitude: Float!
   finishLatitude: Float!
   finishLongitude: Float!
+  leaveTime: DateTime!
 }
 
 input CreateUserInput {

@@ -54,7 +54,7 @@ public static class CompoolerDbContextSetUp
                         ),
                         users[0].Id,
                         2,
-                        DateTimeOffset.Now.AddDays(1)
+                        DateTimeOffset.Now.AddDays(1).ToUniversalTime()
                     ),
                     Ride.Create(
                         Route.Create(
@@ -63,7 +63,7 @@ public static class CompoolerDbContextSetUp
                         ),
                         users[0].Id,
                         3,
-                        DateTimeOffset.Now.AddDays(2).AddMinutes(14)
+                        DateTimeOffset.Now.AddDays(2).AddMinutes(14).ToUniversalTime()
                     ),
                     Ride.Create(
                         Route.Create(
@@ -72,7 +72,7 @@ public static class CompoolerDbContextSetUp
                         ),
                         users[1].Id,
                         3,
-                        DateTimeOffset.Now.AddDays(4).AddHours(3).AddMinutes(14)
+                        DateTimeOffset.Now.AddDays(4).AddHours(3).AddMinutes(14).ToUniversalTime()
                     )
                 ];
                 rides[0].AddPassenger(users[1].Id);

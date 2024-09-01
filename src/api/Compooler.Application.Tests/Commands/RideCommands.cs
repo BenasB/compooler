@@ -37,7 +37,7 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
             Route.Create(startCoordsResult.Value, finishCoordsResult.Value),
             driverId,
             1,
-            DateTimeOffset.Now.AddDays(1)
+            DateTimeOffset.Now.AddDays(1).ToUniversalTime()
         );
 
         _dbContext.Rides.Add(newRide);
@@ -57,7 +57,7 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
             StartLongitude: 0,
             FinishLatitude: 0,
             FinishLongitude: 0,
-            LeaveTime: DateTimeOffset.Now.AddDays(1)
+            LeaveTime: DateTimeOffset.Now.AddDays(1).ToUniversalTime()
         );
         var handler = new CreateRideCommandHandler(_dbContext);
 
