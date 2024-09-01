@@ -23,7 +23,8 @@ public class RideTests
         _ride = Ride.Create(
             route: Route.Create(start: coords, finish: coords),
             driverId: DriverId,
-            maxPassengers: MaxPassengers
+            maxPassengers: MaxPassengers,
+            leaveTime: DateTimeOffset.Now.AddDays(1)
         );
     }
 

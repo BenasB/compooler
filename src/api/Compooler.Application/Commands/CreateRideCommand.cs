@@ -10,7 +10,8 @@ public record CreateRideCommand(
     double StartLatitude,
     double StartLongitude,
     double FinishLatitude,
-    double FinishLongitude
+    double FinishLongitude,
+    DateTimeOffset LeaveTime
 );
 
 public class CreateRideCommandHandler(ICompoolerDbContext dbContext)
@@ -43,7 +44,7 @@ public class CreateRideCommandHandler(ICompoolerDbContext dbContext)
             return new EntityNotFoundError<User>(command.DriverId);
 
         var route = Route.Create(startResult.Value, finishResult.Value);
-        var ride = Ride.Create(route, command.DriverId, command.MaxPassengers);
+        var ride = Ride.Create(route, command.DriverId, command.MaxPassengers, command.LeaveTime);
 
         dbContext.Rides.Add(ride);
         await dbContext.SaveChangesAsync(ct);

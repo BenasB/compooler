@@ -36,7 +36,8 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
         var newRide = Ride.Create(
             Route.Create(startCoordsResult.Value, finishCoordsResult.Value),
             driverId,
-            1
+            1,
+            DateTimeOffset.Now.AddDays(1)
         );
 
         _dbContext.Rides.Add(newRide);
@@ -55,7 +56,8 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
             StartLatitude: 0,
             StartLongitude: 0,
             FinishLatitude: 0,
-            FinishLongitude: 0
+            FinishLongitude: 0,
+            LeaveTime: DateTimeOffset.Now.AddDays(1)
         );
         var handler = new CreateRideCommandHandler(_dbContext);
 
@@ -75,7 +77,8 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
             StartLatitude: 0,
             StartLongitude: 0,
             FinishLatitude: 0,
-            FinishLongitude: 0
+            FinishLongitude: 0,
+            LeaveTime: DateTimeOffset.Now.AddDays(1)
         );
 
         var handler = new CreateRideCommandHandler(_dbContext);
@@ -96,7 +99,8 @@ public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
             StartLatitude: -91,
             StartLongitude: 181,
             FinishLatitude: 91,
-            FinishLongitude: -181
+            FinishLongitude: -181,
+            LeaveTime: DateTimeOffset.Now.AddDays(1)
         );
         var handler = new CreateRideCommandHandler(_dbContext);
 

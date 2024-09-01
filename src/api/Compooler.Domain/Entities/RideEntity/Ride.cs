@@ -9,15 +9,22 @@ public sealed class Ride : IEntity
     private readonly List<RidePassenger> _passengers = [];
     public IReadOnlyList<RidePassenger> Passengers => _passengers.AsReadOnly();
     public required int MaxPassengers { get; init; }
+    public required DateTimeOffset LeaveTime { get; init; }
 
     private Ride() { }
 
-    public static Ride Create(Route route, int driverId, int maxPassengers) =>
+    public static Ride Create(
+        Route route,
+        int driverId,
+        int maxPassengers,
+        DateTimeOffset leaveTime
+    ) =>
         new()
         {
             Route = route,
             DriverId = driverId,
-            MaxPassengers = maxPassengers
+            MaxPassengers = maxPassengers,
+            LeaveTime = leaveTime
         };
 
     public Result AddPassenger(int userId)

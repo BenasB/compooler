@@ -53,7 +53,8 @@ public static class CompoolerDbContextSetUp
                             GeographicCoordinates.Create(67.3232, 162.121).Value!
                         ),
                         users[0].Id,
-                        2
+                        2,
+                        DateTimeOffset.Now.AddDays(1)
                     ),
                     Ride.Create(
                         Route.Create(
@@ -61,7 +62,8 @@ public static class CompoolerDbContextSetUp
                             GeographicCoordinates.Create(-11.3, -112.441).Value!
                         ),
                         users[0].Id,
-                        3
+                        3,
+                        DateTimeOffset.Now.AddDays(2).AddMinutes(14)
                     ),
                     Ride.Create(
                         Route.Create(
@@ -69,7 +71,8 @@ public static class CompoolerDbContextSetUp
                             GeographicCoordinates.Create(-11.3, -112.441).Value!
                         ),
                         users[1].Id,
-                        3
+                        3,
+                        DateTimeOffset.Now.AddDays(4).AddHours(3).AddMinutes(14)
                     )
                 ];
                 rides[0].AddPassenger(users[1].Id);
