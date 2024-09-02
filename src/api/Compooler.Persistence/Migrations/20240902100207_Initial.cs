@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -12,6 +13,8 @@ namespace Compooler.Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase().Annotation("Npgsql:PostgresExtension:postgis", ",,");
+
             migrationBuilder.CreateTable(
                 name: "Rides",
                 columns: table => new
@@ -84,22 +87,8 @@ namespace Compooler.Persistence.Migrations
                 columns: table => new
                 {
                     RideId = table.Column<int>(type: "integer", nullable: false),
-                    Start_Latitude = table.Column<double>(
-                        type: "double precision",
-                        nullable: false
-                    ),
-                    Start_Longitude = table.Column<double>(
-                        type: "double precision",
-                        nullable: false
-                    ),
-                    Finish_Latitude = table.Column<double>(
-                        type: "double precision",
-                        nullable: false
-                    ),
-                    Finish_Longitude = table.Column<double>(
-                        type: "double precision",
-                        nullable: false
-                    )
+                    Start_Point = table.Column<Point>(type: "geography (point)", nullable: false),
+                    Finish_Point = table.Column<Point>(type: "geography (point)", nullable: false)
                 },
                 constraints: table =>
                 {

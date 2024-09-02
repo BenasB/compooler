@@ -2,9 +2,11 @@ using Compooler.Application;
 using Compooler.Domain;
 using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
+using Compooler.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NetTopologySuite.Geometries;
 using Npgsql;
 
 namespace Compooler.Persistence;
@@ -77,7 +79,7 @@ public static class CompoolerDbContextSetUp
                     ).Value!,
                     Ride.Create(
                         Route.Create(
-                            GeographicCoordinates.Create(-12.5123, 32.421).Value!,
+                            GeographicCoordinates.Create(-65.5123, -2.421).Value!,
                             GeographicCoordinates.Create(-11.3, -112.441).Value!
                         ),
                         users[0].Id,
@@ -89,6 +91,16 @@ public static class CompoolerDbContextSetUp
                         Route.Create(
                             GeographicCoordinates.Create(-12.5123, 32.421).Value!,
                             GeographicCoordinates.Create(-11.3, -112.441).Value!
+                        ),
+                        users[1].Id,
+                        3,
+                        DateTimeOffset.Now.AddDays(4).AddHours(3).AddMinutes(14).ToUniversalTime(),
+                        dateTimeOffsetProvider
+                    ).Value!,
+                    Ride.Create(
+                        Route.Create(
+                            GeographicCoordinates.Create(52.252058, 20.946427).Value!,
+                            GeographicCoordinates.Create(50.241338, 19.006077).Value!
                         ),
                         users[1].Id,
                         3,

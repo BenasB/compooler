@@ -4,6 +4,7 @@ using Compooler.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -20,6 +21,7 @@ namespace Compooler.Persistence.Migrations
                 .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Compooler.Domain.Entities.RideEntity.Ride", b =>
@@ -102,11 +104,9 @@ namespace Compooler.Persistence.Migrations
                                     b2.Property<int>("RouteRideId")
                                         .HasColumnType("integer");
 
-                                    b2.Property<double>("Latitude")
-                                        .HasColumnType("double precision");
-
-                                    b2.Property<double>("Longitude")
-                                        .HasColumnType("double precision");
+                                    b2.Property<Point>("Point")
+                                        .IsRequired()
+                                        .HasColumnType("geography (point)");
 
                                     b2.HasKey("RouteRideId");
 
@@ -121,11 +121,9 @@ namespace Compooler.Persistence.Migrations
                                     b2.Property<int>("RouteRideId")
                                         .HasColumnType("integer");
 
-                                    b2.Property<double>("Latitude")
-                                        .HasColumnType("double precision");
-
-                                    b2.Property<double>("Longitude")
-                                        .HasColumnType("double precision");
+                                    b2.Property<Point>("Point")
+                                        .IsRequired()
+                                        .HasColumnType("geography (point)");
 
                                     b2.HasKey("RouteRideId");
 

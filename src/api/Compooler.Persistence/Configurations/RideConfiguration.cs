@@ -9,6 +9,7 @@ public class RideConfiguration
         IEntityTypeConfiguration<RidePassenger>
 {
     public const string RideIdColumnName = "RideId";
+    public const string PointPropertyName = "Point";
 
     public void Configure(EntityTypeBuilder<Ride> builder)
     {
@@ -19,8 +20,20 @@ public class RideConfiguration
             routeBuilder =>
             {
                 routeBuilder.ToTable("Routes");
-                routeBuilder.OwnsOne(route => route.Start);
-                routeBuilder.OwnsOne(route => route.Finish);
+                routeBuilder.OwnsOne(
+                    route => route.Start,
+                    o =>
+                    {
+                        o.Property(PointPropertyName).HasColumnType("geography (point)");
+                    }
+                );
+                routeBuilder.OwnsOne(
+                    route => route.Finish,
+                    o =>
+                    {
+                        o.Property(PointPropertyName).HasColumnType("geography (point)");
+                    }
+                );
             }
         );
 
