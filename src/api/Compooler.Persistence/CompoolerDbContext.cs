@@ -14,6 +14,7 @@ public class CompoolerDbContext(DbContextOptions options) : DbContext(options), 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.HasPostgresExtension("postgis");
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(RideConfiguration).Assembly);
     }
 }

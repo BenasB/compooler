@@ -8,20 +8,20 @@ namespace Compooler.Application.Tests;
 public class ApplicationFixture : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()
-        .WithImage("postgres:16")
+        .WithImage("postgis/postgis:16-3.4")
         .Build();
 
-    public DbContextOptions<CompoolerDbContext> DbContextOptions =>
+    public DbContextOptions DbContextOptions =>
         _contextOptions ?? throw new InvalidOperationException("Database not initialized");
 
-    private DbContextOptions<CompoolerDbContext>? _contextOptions;
+    private DbContextOptions? _contextOptions;
 
     public async Task InitializeAsync()
     {
         await _dbContainer.StartAsync();
 
-        _contextOptions = new DbContextOptionsBuilder<CompoolerDbContext>()
-            .UseNpgsql(_dbContainer.GetConnectionString())
+        _contextOptions = new DbContextOptionsBuilder()
+            .UseCompoolerDatabase(_dbContainer.GetConnectionString())
             .LogTo(Console.WriteLine, LogLevel.Information)
             .Options;
 
