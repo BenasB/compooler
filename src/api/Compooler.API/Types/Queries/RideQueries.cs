@@ -62,7 +62,12 @@ public class RideQueries : ObjectType
 
                 return await dbContext
                     .Rides.AsNoTracking()
-                    .FilterAndOrderByRelevance(startResult.Value, finishResult.Value)
+                    .FilterAndOrderByRelevance(
+                        startResult.Value.Latitude,
+                        startResult.Value.Longitude,
+                        finishResult.Value.Latitude,
+                        finishResult.Value.Longitude
+                    )
                     .ToListAsync();
             });
     }

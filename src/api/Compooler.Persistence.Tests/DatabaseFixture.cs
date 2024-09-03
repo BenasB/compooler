@@ -1,11 +1,10 @@
-using Compooler.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Testcontainers.PostgreSql;
 
-namespace Compooler.Application.Tests;
+namespace Compooler.Persistence.Tests;
 
-public class ApplicationFixture : IAsyncLifetime
+public class DatabaseFixture : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()
         .WithImage("postgis/postgis:16-3.4")

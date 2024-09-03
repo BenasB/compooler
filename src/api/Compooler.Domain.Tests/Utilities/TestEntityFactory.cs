@@ -22,12 +22,14 @@ public static class TestEntityFactory
     public static Result<Ride> CreateRide(
         int maxPassengers = 2,
         int driverId = -42,
+        GeographicCoordinates? startCoords = null,
+        GeographicCoordinates? finishCoords = null,
         DateTimeOffset? timeOfDeparture = null,
         IDateTimeOffsetProvider? dateTimeOffsetProvider = null
     )
     {
-        var startCoords = CreateGeographicCoordinates().RequiredSuccess();
-        var finishCoords = CreateGeographicCoordinates().RequiredSuccess();
+        startCoords ??= CreateGeographicCoordinates().RequiredSuccess();
+        finishCoords ??= CreateGeographicCoordinates().RequiredSuccess();
 
         return Ride.Create(
             route: Route.Create(start: startCoords, finish: finishCoords),

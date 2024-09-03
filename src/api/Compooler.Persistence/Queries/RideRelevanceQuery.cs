@@ -9,12 +9,14 @@ public static class RideRelevanceQuery
 {
     public static IQueryable<Ride> FilterAndOrderByRelevance(
         this IQueryable<Ride> queryable,
-        GeographicCoordinates start,
-        GeographicCoordinates finish
+        double startLatitude,
+        double startLongitude,
+        double finishLatitude,
+        double finishLongitude
     )
     {
-        var startPoint = new Point(start.Longitude, start.Latitude);
-        var finishPoint = new Point(finish.Longitude, finish.Latitude);
+        var startPoint = new Point(startLongitude, startLatitude);
+        var finishPoint = new Point(finishLongitude, finishLatitude);
 
         // Filter out irrelevant rides
         const int maxProximityMeters = 15000;
