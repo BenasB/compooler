@@ -4,12 +4,13 @@ using Compooler.Domain.Entities.UserEntity;
 using Compooler.Domain.Tests.Utilities;
 using Compooler.Persistence;
 using Compooler.Persistence.Configurations;
+using Compooler.Persistence.Tests;
 using Microsoft.EntityFrameworkCore;
 
 namespace Compooler.Application.Tests.Commands;
 
 [Collection(ApplicationTestsCollection.Name)]
-public class RideCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
+public class RideCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
 {
     private readonly CompoolerDbContext _dbContext = new(fixture.DbContextOptions);
 

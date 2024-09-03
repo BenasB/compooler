@@ -105,6 +105,8 @@ type Query {
   "Lookup nodes by a list of IDs."
   nodes("The list of node IDs." ids: [ID!]!): [Node]!
   rides("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): RidesConnection
+  "Returns rides relevant to given criteria (e.g. route location)"
+  relevantRides(input: RideRelevanceInput!): [Ride!]!
   users("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): UsersConnection
 }
 
@@ -240,6 +242,13 @@ input RemoveRideInput {
 
 input RemoveUserInput {
   id: ID!
+}
+
+input RideRelevanceInput {
+  startLatitude: Float!
+  startLongitude: Float!
+  finishLatitude: Float!
+  finishLongitude: Float!
 }
 
 "The `@specifiedBy` directive is used within the type system definition language to provide a URL for specifying the behavior of custom scalar definitions."

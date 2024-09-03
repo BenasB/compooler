@@ -12,6 +12,8 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0"/>
+        <PackageReference Include="Testcontainers" Version="3.10.0" />
+        <PackageReference Include="Testcontainers.PostgreSql" Version="3.10.0" />
         <PackageReference Include="xunit" Version="2.9.0"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -24,9 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Compooler.Application\Compooler.Application.csproj" />
       <ProjectReference Include="..\Compooler.Domain.Tests\Compooler.Domain.Tests.csproj" />
-      <ProjectReference Include="..\Compooler.Persistence.Tests\Compooler.Persistence.Tests.csproj" />
       <ProjectReference Include="..\Compooler.Persistence\Compooler.Persistence.csproj" />
     </ItemGroup>
 

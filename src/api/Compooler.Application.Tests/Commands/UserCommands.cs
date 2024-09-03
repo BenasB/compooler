@@ -1,12 +1,13 @@
 using Compooler.Application.Commands;
 using Compooler.Domain.Entities.UserEntity;
 using Compooler.Persistence;
+using Compooler.Persistence.Tests;
 using Microsoft.EntityFrameworkCore;
 
 namespace Compooler.Application.Tests.Commands;
 
 [Collection(ApplicationTestsCollection.Name)]
-public class UserCommandsTests(ApplicationFixture fixture) : IAsyncLifetime
+public class UserCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
 {
     private readonly CompoolerDbContext _dbContext = new(fixture.DbContextOptions);
 

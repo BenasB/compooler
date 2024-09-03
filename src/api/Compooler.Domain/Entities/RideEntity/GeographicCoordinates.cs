@@ -1,9 +1,16 @@
+using NetTopologySuite.Geometries;
+
 namespace Compooler.Domain.Entities.RideEntity;
 
 public sealed class GeographicCoordinates
 {
-    public required double Latitude { get; init; }
-    public required double Longitude { get; init; }
+    public double Latitude => Point.Y;
+    public double Longitude => Point.X;
+
+    /// <summary>
+    /// Backing type to allow spatial queries
+    /// </summary>
+    private Point Point { get; init; } = Point.Empty;
 
     private GeographicCoordinates() { }
 
@@ -15,6 +22,6 @@ public sealed class GeographicCoordinates
         if (longitude is < -180 or > 180)
             return new GeographicCoordinatesErrors.InvalidLongitudeError();
 
-        return new GeographicCoordinates { Latitude = latitude, Longitude = longitude };
+        return new GeographicCoordinates { Point = new Point(x: longitude, y: latitude) };
     }
 }

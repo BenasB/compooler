@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -12,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Compooler.Persistence.Migrations
 {
     [DbContext(typeof(CompoolerDbContext))]
-    [Migration("20240901203154_Initial")]
+    [Migration("20240903182110_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -23,6 +24,7 @@ namespace Compooler.Persistence.Migrations
                 .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Compooler.Domain.Entities.RideEntity.Ride", b =>
@@ -105,13 +107,15 @@ namespace Compooler.Persistence.Migrations
                                     b2.Property<int>("RouteRideId")
                                         .HasColumnType("integer");
 
-                                    b2.Property<double>("Latitude")
-                                        .HasColumnType("double precision");
-
-                                    b2.Property<double>("Longitude")
-                                        .HasColumnType("double precision");
+                                    b2.Property<Point>("Point")
+                                        .IsRequired()
+                                        .HasColumnType("geography (point)");
 
                                     b2.HasKey("RouteRideId");
+
+                                    b2.HasIndex("Point");
+
+                                    NpgsqlIndexBuilderExtensions.HasMethod(b2.HasIndex("Point"), "GIST");
 
                                     b2.ToTable("Routes");
 
@@ -124,13 +128,15 @@ namespace Compooler.Persistence.Migrations
                                     b2.Property<int>("RouteRideId")
                                         .HasColumnType("integer");
 
-                                    b2.Property<double>("Latitude")
-                                        .HasColumnType("double precision");
-
-                                    b2.Property<double>("Longitude")
-                                        .HasColumnType("double precision");
+                                    b2.Property<Point>("Point")
+                                        .IsRequired()
+                                        .HasColumnType("geography (point)");
 
                                     b2.HasKey("RouteRideId");
+
+                                    b2.HasIndex("Point");
+
+                                    NpgsqlIndexBuilderExtensions.HasMethod(b2.HasIndex("Point"), "GIST");
 
                                     b2.ToTable("Routes");
 
