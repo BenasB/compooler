@@ -2,12 +2,11 @@ using Compooler.API.Extensions;
 using Compooler.API.Types.Queries.Inputs;
 using Compooler.Domain.Entities.RideEntity;
 using Compooler.Persistence;
-using Compooler.Persistence.Configurations;
+using Compooler.Persistence.Queries;
 using HotChocolate.Pagination;
 using HotChocolate.Types.Pagination;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
-using NetTopologySuite.Geometries;
 
 namespace Compooler.API.Types.Queries;
 
@@ -34,62 +33,36 @@ public class RideQueries : ObjectType
             });
 
         descriptor
-            .Field("rankedRides")
+            .Field("relevantRides")
+            .Description("Returns rides relevant to given criteria (e.g. route location)")
             .Type<NonNullType<ListType<NonNullType<ObjectType<Ride>>>>>()
-            .Argument("input", a => a.Type<NonNullType<InputObjectType<RideRankingInput>>>())
+            .Argument("input", a => a.Type<NonNullType<InputObjectType<RideRelevanceInput>>>())
             .Resolve<List<Ride>>(async ctx =>
             {
                 // TODO: Paging? Possible to implement with in memory caching of ride IDs, since we'll need to compute all of the scores anyway
 
                 var dbContext = ctx.Services.GetRequiredService<CompoolerDbContext>();
-                var input = ctx.ArgumentValue<RideRankingInput>("input");
+                var input = ctx.ArgumentValue<RideRelevanceInput>("input");
 
-                var startPoint = new Point(input.StartLongitude, input.StartLatitude); // TODO: validate input?
-                var finishPoint = new Point(input.FinishLongitude, input.FinishLatitude);
+                var startResult = GeographicCoordinates.Create(
+                    latitude: input.StartLatitude,
+                    longitude: input.StartLongitude
+                );
 
-                const int maxProximityMeters = 15000;
-                const double startDistanceWeight = 0.5;
-                const double finishDistanceWeight = 0.5;
+                if (startResult.IsFailed)
+                    throw new Exception(startResult.Error.Message);
+
+                var finishResult = GeographicCoordinates.Create(
+                    latitude: input.FinishLatitude,
+                    longitude: input.FinishLongitude
+                );
+
+                if (finishResult.IsFailed)
+                    throw new Exception(finishResult.Error.Message);
 
                 return await dbContext
                     .Rides.AsNoTracking()
-                    .Where(ride =>
-                        EF.Property<Point>(ride.Route.Start, RideConfiguration.PointPropertyName)
-                            .IsWithinDistance(startPoint, maxProximityMeters)
-                        && EF.Property<Point>(
-                                ride.Route.Finish,
-                                RideConfiguration.PointPropertyName
-                            )
-                            .IsWithinDistance(finishPoint, maxProximityMeters)
-                    )
-                    .Select(ride => new
-                    {
-                        Ride = ride,
-                        StartDistance = EF.Property<Point>(
-                                ride.Route.Start,
-                                RideConfiguration.PointPropertyName
-                            )
-                            .Distance(startPoint),
-                        FinishDistance = EF.Property<Point>(
-                                ride.Route.Finish,
-                                RideConfiguration.PointPropertyName
-                            )
-                            .Distance(finishPoint)
-                    })
-                    .Select(x => new
-                    {
-                        x.Ride,
-                        NormalizedStartDistance = 1 - x.StartDistance / maxProximityMeters,
-                        NormalizedFinishDistance = 1 - x.FinishDistance / maxProximityMeters
-                    })
-                    .Select(x => new
-                    {
-                        x.Ride,
-                        Score = x.NormalizedStartDistance * startDistanceWeight
-                            + x.NormalizedFinishDistance * finishDistanceWeight
-                    })
-                    .OrderByDescending(x => x.Score)
-                    .Select(x => x.Ride)
+                    .FilterAndOrderByRelevance(startResult.Value, finishResult.Value)
                     .ToListAsync();
             });
     }

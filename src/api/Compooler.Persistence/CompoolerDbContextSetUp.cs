@@ -2,11 +2,9 @@ using Compooler.Application;
 using Compooler.Domain;
 using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
-using Compooler.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NetTopologySuite.Geometries;
 using Npgsql;
 
 namespace Compooler.Persistence;

@@ -105,7 +105,8 @@ type Query {
   "Lookup nodes by a list of IDs."
   nodes("The list of node IDs." ids: [ID!]!): [Node]!
   rides("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): RidesConnection
-  rankedRides(input: RideRankingInput!): [Ride!]!
+  "Returns rides relevant to given criteria (e.g. route location)"
+  relevantRides(input: RideRelevanceInput!): [Ride!]!
   users("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): UsersConnection
 }
 
@@ -243,7 +244,7 @@ input RemoveUserInput {
   id: ID!
 }
 
-input RideRankingInput {
+input RideRelevanceInput {
   startLatitude: Float!
   startLongitude: Float!
   finishLatitude: Float!
