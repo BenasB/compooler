@@ -102,6 +102,18 @@ namespace Compooler.Persistence.Migrations
                     );
                 }
             );
+
+            migrationBuilder
+                .CreateIndex(
+                    name: "IX_Routes_Finish_Point",
+                    table: "Routes",
+                    column: "Finish_Point"
+                )
+                .Annotation("Npgsql:IndexMethod", "GIST");
+
+            migrationBuilder
+                .CreateIndex(name: "IX_Routes_Start_Point", table: "Routes", column: "Start_Point")
+                .Annotation("Npgsql:IndexMethod", "GIST");
         }
 
         /// <inheritdoc />

@@ -110,6 +110,10 @@ namespace Compooler.Persistence.Migrations
 
                                     b2.HasKey("RouteRideId");
 
+                                    b2.HasIndex("Point");
+
+                                    NpgsqlIndexBuilderExtensions.HasMethod(b2.HasIndex("Point"), "GIST");
+
                                     b2.ToTable("Routes");
 
                                     b2.WithOwner()
@@ -126,6 +130,10 @@ namespace Compooler.Persistence.Migrations
                                         .HasColumnType("geography (point)");
 
                                     b2.HasKey("RouteRideId");
+
+                                    b2.HasIndex("Point");
+
+                                    NpgsqlIndexBuilderExtensions.HasMethod(b2.HasIndex("Point"), "GIST");
 
                                     b2.ToTable("Routes");
 

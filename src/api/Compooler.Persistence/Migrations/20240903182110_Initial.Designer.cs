@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Compooler.Persistence.Migrations
 {
     [DbContext(typeof(CompoolerDbContext))]
-    [Migration("20240902100207_Initial")]
+    [Migration("20240903182110_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -113,6 +113,10 @@ namespace Compooler.Persistence.Migrations
 
                                     b2.HasKey("RouteRideId");
 
+                                    b2.HasIndex("Point");
+
+                                    NpgsqlIndexBuilderExtensions.HasMethod(b2.HasIndex("Point"), "GIST");
+
                                     b2.ToTable("Routes");
 
                                     b2.WithOwner()
@@ -129,6 +133,10 @@ namespace Compooler.Persistence.Migrations
                                         .HasColumnType("geography (point)");
 
                                     b2.HasKey("RouteRideId");
+
+                                    b2.HasIndex("Point");
+
+                                    NpgsqlIndexBuilderExtensions.HasMethod(b2.HasIndex("Point"), "GIST");
 
                                     b2.ToTable("Routes");
 

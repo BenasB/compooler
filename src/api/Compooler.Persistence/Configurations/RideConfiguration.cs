@@ -24,6 +24,7 @@ public class RideConfiguration
                     route => route.Start,
                     o =>
                     {
+                        o.HasIndex(PointPropertyName).HasMethod("GIST");
                         o.Property(PointPropertyName).HasColumnType("geography (point)");
                     }
                 );
@@ -31,6 +32,7 @@ public class RideConfiguration
                     route => route.Finish,
                     o =>
                     {
+                        o.HasIndex(PointPropertyName).HasMethod("GIST");
                         o.Property(PointPropertyName).HasColumnType("geography (point)");
                     }
                 );
