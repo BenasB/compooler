@@ -2,6 +2,7 @@ using Compooler.Application;
 using Compooler.Domain;
 using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
+using Compooler.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -53,9 +54,21 @@ public static class CompoolerDbContextSetUp
             {
                 User[] users =
                 [
-                    User.Create("Benas", "Bud"),
-                    User.Create("John", "Doe"),
-                    User.Create("Jermaine", "Cole")
+                    User.Create(
+                        Guid.NewGuid().ToString("N")[..UserConfiguration.IdLength],
+                        "Benas",
+                        "Bud"
+                    ),
+                    User.Create(
+                        Guid.NewGuid().ToString("N")[..UserConfiguration.IdLength],
+                        "John",
+                        "Doe"
+                    ),
+                    User.Create(
+                        Guid.NewGuid().ToString("N")[..UserConfiguration.IdLength],
+                        "Jermaine",
+                        "Cole"
+                    )
                 ];
                 dbContext.Users.AddRange(users);
                 await dbContext.SaveChangesAsync();

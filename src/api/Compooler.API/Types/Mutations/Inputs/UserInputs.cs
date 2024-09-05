@@ -5,13 +5,14 @@ using JetBrains.Annotations;
 namespace Compooler.API.Types.Mutations.Inputs;
 
 [PublicAPI]
-public record CreateUserInput(string FirstName, string LastName) : IMappableTo<CreateUserCommand>
+public record CreateUserInput(string IdpId, string FirstName, string LastName)
+    : IMappableTo<CreateUserCommand>
 {
-    public CreateUserCommand Map() => new(FirstName: FirstName, LastName: LastName);
+    public CreateUserCommand Map() => new(Id: IdpId, FirstName: FirstName, LastName: LastName);
 }
 
 [PublicAPI]
-public record RemoveUserInput([property: ID<User>] int Id) : IMappableTo<RemoveUserCommand>
+public record RemoveUserInput([property: ID<User>] string Id) : IMappableTo<RemoveUserCommand>
 {
     public RemoveUserCommand Map() => new(Id: Id);
 }

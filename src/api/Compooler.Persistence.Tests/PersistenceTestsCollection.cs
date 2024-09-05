@@ -1,3 +1,5 @@
+using Compooler.Tests.Utilities.Fixtures;
+
 namespace Compooler.Persistence.Tests;
 
 [CollectionDefinition(Name)]

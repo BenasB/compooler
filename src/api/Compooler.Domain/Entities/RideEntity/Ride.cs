@@ -1,10 +1,10 @@
 namespace Compooler.Domain.Entities.RideEntity;
 
-public sealed class Ride : IEntity
+public sealed class Ride : IEntity<int>
 {
     public int Id { get; }
     public required Route Route { get; init; }
-    public required int DriverId { get; init; }
+    public required string DriverId { get; init; }
 
     private readonly List<RidePassenger> _passengers = [];
     public IReadOnlyList<RidePassenger> Passengers => _passengers.AsReadOnly();
@@ -15,7 +15,7 @@ public sealed class Ride : IEntity
 
     public static Result<Ride> Create(
         Route route,
-        int driverId,
+        string driverId,
         int maxPassengers,
         DateTimeOffset timeOfDeparture,
         IDateTimeOffsetProvider dateTimeOffsetProvider
@@ -40,7 +40,7 @@ public sealed class Ride : IEntity
         };
     }
 
-    public Result AddPassenger(int userId)
+    public Result AddPassenger(string userId)
     {
         if (_passengers.Count >= MaxPassengers)
             return new RideErrors.PassengerLimitReachedError(MaxPassengers);
@@ -59,7 +59,7 @@ public sealed class Ride : IEntity
         return Result.Success();
     }
 
-    public Result RemovePassenger(int userId)
+    public Result RemovePassenger(string userId)
     {
         var passenger = _passengers.Find(p => p.UserId == userId);
 

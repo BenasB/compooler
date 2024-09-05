@@ -1,6 +1,7 @@
 using Compooler.Domain.Entities.RideEntity;
-using Compooler.Domain.Tests.Utilities;
 using Compooler.Persistence.Queries;
+using Compooler.Tests.Utilities;
+using Compooler.Tests.Utilities.Fixtures;
 using Microsoft.EntityFrameworkCore;
 
 namespace Compooler.Persistence.Tests.Queries;

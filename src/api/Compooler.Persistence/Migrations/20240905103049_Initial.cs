@@ -25,7 +25,7 @@ namespace Compooler.Persistence.Migrations
                             "Npgsql:ValueGenerationStrategy",
                             NpgsqlValueGenerationStrategy.IdentityByDefaultColumn
                         ),
-                    DriverId = table.Column<int>(type: "integer", nullable: false),
+                    DriverId = table.Column<string>(type: "text", nullable: false),
                     MaxPassengers = table.Column<int>(type: "integer", nullable: false),
                     TimeOfDeparture = table.Column<DateTimeOffset>(
                         type: "timestamp with time zone",
@@ -42,12 +42,7 @@ namespace Compooler.Persistence.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table
-                        .Column<int>(type: "integer", nullable: false)
-                        .Annotation(
-                            "Npgsql:ValueGenerationStrategy",
-                            NpgsqlValueGenerationStrategy.IdentityByDefaultColumn
-                        ),
+                    Id = table.Column<string>(type: "varchar(28)", nullable: false),
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: false)
                 },
@@ -61,7 +56,7 @@ namespace Compooler.Persistence.Migrations
                 name: "RidePassengers",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
                     RideId = table.Column<int>(type: "integer", nullable: false),
                     JoinedAt = table.Column<DateTimeOffset>(
                         type: "timestamp with time zone",

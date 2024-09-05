@@ -222,6 +222,7 @@ input CreateRideInput {
 }
 
 input CreateUserInput {
+  idpId: String!
   firstName: String!
   lastName: String!
 }

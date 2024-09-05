@@ -7,7 +7,7 @@ namespace Compooler.API.Types.Mutations.Inputs;
 
 [PublicAPI]
 public record CreateRideInput(
-    [property: ID<User>] int DriverId,
+    [property: ID<User>] string DriverId,
     int MaxPassengers,
     double StartLatitude,
     double StartLongitude,
@@ -35,14 +35,14 @@ public record RemoveRideInput([property: ID<Ride>] int Id) : IMappableTo<RemoveR
 }
 
 [PublicAPI]
-public record JoinRideInput([property: ID<Ride>] int RideId, [property: ID<User>] int UserId)
+public record JoinRideInput([property: ID<Ride>] int RideId, [property: ID<User>] string UserId)
     : IMappableTo<JoinRideCommand>
 {
     public JoinRideCommand Map() => new(RideId: RideId, UserId: UserId);
 }
 
 [PublicAPI]
-public record LeaveRideInput([property: ID<Ride>] int RideId, [property: ID<User>] int UserId)
+public record LeaveRideInput([property: ID<Ride>] int RideId, [property: ID<User>] string UserId)
     : IMappableTo<LeaveRideCommand>
 {
     public LeaveRideCommand Map() => new(RideId: RideId, UserId: UserId);

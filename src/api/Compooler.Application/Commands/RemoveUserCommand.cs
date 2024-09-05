@@ -3,7 +3,7 @@ using Compooler.Domain.Entities.UserEntity;
 
 namespace Compooler.Application.Commands;
 
-public record RemoveUserCommand(int Id);
+public record RemoveUserCommand(string Id);
 
 public class RemoveUserCommandHandler(ICompoolerDbContext dbContext)
     : ICommandHandler<RemoveUserCommand, User>
@@ -16,7 +16,7 @@ public class RemoveUserCommandHandler(ICompoolerDbContext dbContext)
         var userToRemove = await dbContext.Users.FindAsync([command.Id], cancellationToken: ct);
 
         if (userToRemove is null)
-            return new EntityNotFoundError<User>(command.Id);
+            return new EntityNotFoundError<User, string>(command.Id);
 
         dbContext.Users.Remove(userToRemove);
         await dbContext.SaveChangesAsync(ct);

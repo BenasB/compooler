@@ -5,16 +5,16 @@ public static class RideErrors
     public record PassengerLimitReachedError(int MaxPassengers)
         : Error("Ride.AddPassenger.PassengerLimitReached", "Reached passenger limit");
 
-    public record PassengerNotFoundError(int UserId)
+    public record PassengerNotFoundError(string UserId)
         : Error("Ride.AddPassenger.PassengerNotFound", "User not found in the ride's passengers");
 
-    public record PassengerIsDriverError(int DriverId)
+    public record PassengerIsDriverError(string DriverId)
         : Error(
             "Ride.AddPassenger.PassengerIsDriverError",
             "The ride's driver can't be a passenger"
         );
 
-    public record PassengerAlreadyExistsError(int PassengerId, DateTimeOffset JoinedAt)
+    public record PassengerAlreadyExistsError(string PassengerId, DateTimeOffset JoinedAt)
         : Error(
             "Ride.AddPassenger.PassengerAlreadyExistsError",
             "User is already a passenger in this ride"

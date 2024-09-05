@@ -1,7 +1,8 @@
 using Compooler.Application.Commands;
 using Compooler.Domain.Entities.UserEntity;
 using Compooler.Persistence;
-using Compooler.Persistence.Tests;
+using Compooler.Tests.Utilities;
+using Compooler.Tests.Utilities.Fixtures;
 using Microsoft.EntityFrameworkCore;
 
 namespace Compooler.Application.Tests.Commands;
@@ -19,7 +20,8 @@ public class UserCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task CreateUser_Succeeds()
     {
         var command = new CreateUserCommand(
-            FirstName: Guid.NewGuid().ToString("N"),
+            Id: TestEntityFactory.CreateUserId(),
+            FirstName: TestEntityFactory.CreateUserId(),
             LastName: "Test"
         );
         var handler = new CreateUserCommandHandler(_dbContext);
@@ -33,11 +35,12 @@ public class UserCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
     [Fact]
     public async Task RemoveUser_UserExists_Succeeds()
     {
-        var firstName = Guid.NewGuid().ToString("N");
+        var id = TestEntityFactory.CreateUserId();
+        var firstName = TestEntityFactory.CreateUserId();
         const string lastName = "Test";
-        var newUser = _dbContext.Users.Add(User.Create(firstName, lastName));
+        var newUser = _dbContext.Users.Add(User.Create(id, firstName, lastName));
         await _dbContext.SaveChangesAsync();
-        var command = new RemoveUserCommand(Id: newUser.Entity.Id);
+        var command = new RemoveUserCommand(Id: id);
         var handler = new RemoveUserCommandHandler(_dbContext);
 
         var result = await handler.HandleAsync(command);
@@ -49,13 +52,13 @@ public class UserCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
     [Fact]
     public async Task RemoveUser_UserDoesNotExist_Fails()
     {
-        const int nonExistentId = -1;
+        var nonExistentId = TestEntityFactory.CreateUserId();
         var command = new RemoveUserCommand(Id: nonExistentId);
         var handler = new RemoveUserCommandHandler(_dbContext);
 
         var result = await handler.HandleAsync(command);
 
         Assert.True(result.IsFailed);
-        Assert.Equal(new EntityNotFoundError<User>(nonExistentId), result.Error);
+        Assert.Equal(new EntityNotFoundError<User, string>(nonExistentId), result.Error);
     }
 }

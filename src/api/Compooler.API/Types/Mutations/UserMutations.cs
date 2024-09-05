@@ -20,6 +20,6 @@ public class UserMutations : ObjectTypeExtension
         descriptor
             .Field("removeUser")
             .ResolveCompoolerMutation<RemoveUserInput, RemoveUserCommand, User>()
-            .Error<EntityNotFoundError<User>>();
+            .Error<EntityNotFoundError<User, string>>();
     }
 }

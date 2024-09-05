@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Compooler.Persistence.Migrations
 {
     [DbContext(typeof(CompoolerDbContext))]
-    [Migration("20240903182110_Initial")]
+    [Migration("20240905103049_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -35,8 +35,9 @@ namespace Compooler.Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("DriverId")
-                        .HasColumnType("integer");
+                    b.Property<string>("DriverId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("MaxPassengers")
                         .HasColumnType("integer");
@@ -54,8 +55,8 @@ namespace Compooler.Persistence.Migrations
                     b.Property<int>("RideId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset>("JoinedAt")
                         .ValueGeneratedOnAdd()
@@ -69,11 +70,8 @@ namespace Compooler.Persistence.Migrations
 
             modelBuilder.Entity("Compooler.Domain.Entities.UserEntity.User", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(28)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()

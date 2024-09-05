@@ -1,15 +1,21 @@
+using Compooler.Domain;
 using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
+using Compooler.Persistence.Configurations;
 
-namespace Compooler.Domain.Tests.Utilities;
+namespace Compooler.Tests.Utilities;
 
 public static class TestEntityFactory
 {
     private static readonly FixedDateTimeOffsetProvider DateTimeOffsetProvider =
         new() { Now = DateTimeOffset.Now };
 
+    public static string CreateUserId() =>
+        Guid.NewGuid().ToString("N")[..UserConfiguration.IdLength];
+
     public static User CreateUser(string? firstName = null, string? lastName = null) =>
         User.Create(
+            id: CreateUserId(),
             firstName: firstName ?? Guid.NewGuid().ToString("N"),
             lastName: lastName ?? Guid.NewGuid().ToString("N")
         );
@@ -21,7 +27,7 @@ public static class TestEntityFactory
 
     public static Result<Ride> CreateRide(
         int maxPassengers = 2,
-        int driverId = -42,
+        string? driverId = null,
         GeographicCoordinates? startCoords = null,
         GeographicCoordinates? finishCoords = null,
         DateTimeOffset? timeOfDeparture = null,
@@ -33,7 +39,7 @@ public static class TestEntityFactory
 
         return Ride.Create(
             route: Route.Create(start: startCoords, finish: finishCoords),
-            driverId: driverId,
+            driverId: driverId ?? TestEntityFactory.CreateUserId(),
             maxPassengers: maxPassengers,
             timeOfDeparture: timeOfDeparture ?? DateTimeOffsetProvider.Future.ToUniversalTime(),
             dateTimeOffsetProvider: dateTimeOffsetProvider ?? DateTimeOffsetProvider

@@ -1,10 +1,10 @@
 using Compooler.Application.Commands;
 using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
-using Compooler.Domain.Tests.Utilities;
 using Compooler.Persistence;
 using Compooler.Persistence.Configurations;
-using Compooler.Persistence.Tests;
+using Compooler.Tests.Utilities;
+using Compooler.Tests.Utilities.Fixtures;
 using Microsoft.EntityFrameworkCore;
 
 namespace Compooler.Application.Tests.Commands;
@@ -63,9 +63,9 @@ public class RideCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task CreateRide_DriverDoesNotExist_Fails()
     {
         var dateTimeOffsetProvider = new FixedDateTimeOffsetProvider { Now = DateTimeOffset.Now };
-        const int nonExistentId = -1;
+        var nonExistentUserId = TestEntityFactory.CreateUserId();
         var command = new CreateRideCommand(
-            DriverId: nonExistentId,
+            DriverId: nonExistentUserId,
             MaxPassengers: 3,
             StartLatitude: 0,
             StartLongitude: 0,
@@ -78,7 +78,7 @@ public class RideCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
         var result = await handler.HandleAsync(command);
 
         Assert.True(result.IsFailed);
-        Assert.Equal(new EntityNotFoundError<User>(Id: nonExistentId), result.Error);
+        Assert.Equal(new EntityNotFoundError<User, string>(Id: nonExistentUserId), result.Error);
     }
 
     [Fact]
@@ -142,7 +142,7 @@ public class RideCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
         var result = await handler.HandleAsync(command);
 
         Assert.True(result.IsFailed);
-        Assert.Equal(new EntityNotFoundError<Ride>(nonExistentId), result.Error);
+        Assert.Equal(new EntityNotFoundError<Ride, int>(nonExistentId), result.Error);
     }
 
     [Fact]
@@ -157,14 +157,14 @@ public class RideCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
         var result = await handler.HandleAsync(command);
 
         Assert.True(result.IsFailed);
-        Assert.Equal(new EntityNotFoundError<Ride>(nonExistentRideId), result.Error);
+        Assert.Equal(new EntityNotFoundError<Ride, int>(nonExistentRideId), result.Error);
     }
 
     [Fact]
     public async Task JoinRide_UserDoesNotExist_Fails()
     {
         var ride = await PersistNewRide();
-        const int nonExistentUserId = -1;
+        var nonExistentUserId = TestEntityFactory.CreateUserId();
 
         var command = new JoinRideCommand(RideId: ride.Id, UserId: nonExistentUserId);
         var handler = new JoinRideCommandHandler(_dbContext);
@@ -172,7 +172,7 @@ public class RideCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
         var result = await handler.HandleAsync(command);
 
         Assert.True(result.IsFailed);
-        Assert.Equal(new EntityNotFoundError<User>(nonExistentUserId), result.Error);
+        Assert.Equal(new EntityNotFoundError<User, string>(nonExistentUserId), result.Error);
     }
 
     [Fact]
@@ -203,14 +203,14 @@ public class RideCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
         var result = await handler.HandleAsync(command);
 
         Assert.True(result.IsFailed);
-        Assert.Equal(new EntityNotFoundError<Ride>(nonExistentRideId), result.Error);
+        Assert.Equal(new EntityNotFoundError<Ride, int>(nonExistentRideId), result.Error);
     }
 
     [Fact]
     public async Task LeaveRide_UserDoesNotExist_Fails()
     {
         var ride = await PersistNewRide();
-        const int nonExistentUserId = -1;
+        var nonExistentUserId = TestEntityFactory.CreateUserId();
 
         var command = new LeaveRideCommand(RideId: ride.Id, UserId: nonExistentUserId);
         var handler = new LeaveRideCommandHandler(_dbContext);
@@ -218,7 +218,7 @@ public class RideCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
         var result = await handler.HandleAsync(command);
 
         Assert.True(result.IsFailed);
-        Assert.Equal(new EntityNotFoundError<User>(nonExistentUserId), result.Error);
+        Assert.Equal(new EntityNotFoundError<User, string>(nonExistentUserId), result.Error);
     }
 
     [Fact]

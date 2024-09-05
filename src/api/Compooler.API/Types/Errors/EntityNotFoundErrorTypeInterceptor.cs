@@ -23,18 +23,24 @@ public class EntityNotFoundErrorTypeInterceptor : TypeInterceptor
 
         var type = objectTypeDef.RuntimeType;
 
-        if (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(EntityNotFoundError<>))
+        if (
+            !type.IsGenericType
+            || type.GetGenericTypeDefinition() != typeof(EntityNotFoundError<,>)
+        )
             return;
 
         var entityType = type.GetGenericArguments()[0];
         objectTypeDef
             .ToDescriptor(discoveryContext.DescriptorContext)
-            .Name(nameof(EntityNotFoundError<IEntity>).Replace("Entity", entityType.Name));
+            .Name(
+                nameof(EntityNotFoundError<IEntity<object>, object>)
+                    .Replace("Entity", entityType.Name)
+            );
 
         var idField = objectTypeDef.Fields.First(field =>
             string.Equals(
                 field.Name,
-                nameof(EntityNotFoundError<IEntity>.Id),
+                nameof(EntityNotFoundError<IEntity<object>, object>.Id),
                 StringComparison.OrdinalIgnoreCase
             )
         );

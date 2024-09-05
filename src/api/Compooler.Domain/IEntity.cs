@@ -1,6 +1,6 @@
 namespace Compooler.Domain;
 
-public interface IEntity
+public interface IEntity<out TId>
 {
-    public int Id { get; }
+    public TId Id { get; }
 }

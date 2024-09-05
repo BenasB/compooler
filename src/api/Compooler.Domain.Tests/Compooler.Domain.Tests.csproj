@@ -25,6 +25,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Compooler.Domain\Compooler.Domain.csproj" />
+      <ProjectReference Include="..\Compooler.Tests.Utilities\Compooler.Tests.Utilities.csproj" />
     </ItemGroup>
 
 </Project>
