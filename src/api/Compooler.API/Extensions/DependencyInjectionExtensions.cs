@@ -1,5 +1,7 @@
 using System.Reflection;
+using Compooler.API.Options;
 using Compooler.Application;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Compooler.API.Extensions;
 
@@ -33,6 +35,14 @@ internal static class DependencyInjectionExtensions
             services.AddScoped(handlerInterface, handlerType);
         }
 
+        return services;
+    }
+
+    internal static IServiceCollection AddAuth(this IServiceCollection services)
+    {
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+        services.AddAuthorization();
+        services.ConfigureOptions<JwtBearerOptionsConfiguration>();
         return services;
     }
 }

@@ -27,5 +27,15 @@ public class UserQueries : ObjectTypeExtension
                     .ToPageAsync(pagingArguments, ctx.RequestAborted)
                     .ToConnectionAsync();
             });
+
+        descriptor
+            .Field("me")
+            .Authorize()
+            .Resolve(ctx =>
+            {
+                var claimsPrincipal = ctx.GetUser();
+
+                return claimsPrincipal!.Identity!.Name;
+            });
     }
 }
