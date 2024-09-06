@@ -1,6 +1,7 @@
 using Compooler.Application.Commands;
 using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
+using HotChocolate.Resolvers;
 using JetBrains.Annotations;
 
 namespace Compooler.API.Types.Mutations.Inputs;
@@ -16,7 +17,7 @@ public record CreateRideInput(
     DateTimeOffset TimeOfDeparture
 ) : IMappableTo<CreateRideCommand>
 {
-    public CreateRideCommand Map() =>
+    public CreateRideCommand Map(IResolverContext ctx) =>
         new(
             DriverId: DriverId,
             MaxPassengers: MaxPassengers,
@@ -31,19 +32,19 @@ public record CreateRideInput(
 [PublicAPI]
 public record RemoveRideInput([property: ID<Ride>] int Id) : IMappableTo<RemoveRideCommand>
 {
-    public RemoveRideCommand Map() => new(Id: Id);
+    public RemoveRideCommand Map(IResolverContext ctx) => new(Id: Id);
 }
 
 [PublicAPI]
 public record JoinRideInput([property: ID<Ride>] int RideId, [property: ID<User>] string UserId)
     : IMappableTo<JoinRideCommand>
 {
-    public JoinRideCommand Map() => new(RideId: RideId, UserId: UserId);
+    public JoinRideCommand Map(IResolverContext ctx) => new(RideId: RideId, UserId: UserId);
 }
 
 [PublicAPI]
 public record LeaveRideInput([property: ID<Ride>] int RideId, [property: ID<User>] string UserId)
     : IMappableTo<LeaveRideCommand>
 {
-    public LeaveRideCommand Map() => new(RideId: RideId, UserId: UserId);
+    public LeaveRideCommand Map(IResolverContext ctx) => new(RideId: RideId, UserId: UserId);
 }

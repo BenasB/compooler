@@ -33,9 +33,7 @@ public class UserQueries : ObjectTypeExtension
             .Authorize()
             .Resolve(ctx =>
             {
-                var claimsPrincipal = ctx.GetUser();
-
-                return claimsPrincipal!.Identity!.Name;
+                return ctx.GetRequiredUserId();
             });
     }
 }

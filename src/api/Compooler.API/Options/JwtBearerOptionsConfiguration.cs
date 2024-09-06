@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -6,39 +5,48 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Compooler.API.Options;
 
-public class JwtBearerOptionsConfiguration(IConfiguration configuration)
-    : IConfigureNamedOptions<JwtBearerOptions>
+public class JwtBearerOptionsConfiguration(
+    IConfiguration configuration,
+    IWebHostEnvironment environment
+) : IConfigureNamedOptions<JwtBearerOptions>
 {
-    private record JwtOptions(string Issuer, string Audience)
+    private record JwtOptions(string Authority, string Audience)
     {
         public static string SectionName = "Jwt";
     }
 
     public void Configure(string? name, JwtBearerOptions options)
     {
-        var jwtOptions =
-            configuration.GetRequiredSection(JwtOptions.SectionName).Get<JwtOptions>()
-            ?? throw new InvalidOperationException("Could not get the Jwt options");
+        options.MapInboundClaims = false;
 
-        options.Authority = "https://securetoken.google.com/compooler-434805";
-        options.TokenValidationParameters = new TokenValidationParameters
+        if (environment.IsDevelopment())
         {
-            // ValidateAudience = false,
-            // ValidateIssuer = false,
-            // ValidateIssuerSigningKey = false,
-            ValidIssuer = jwtOptions.Issuer,
-            ValidAudience = jwtOptions.Audience,
-            // SignatureValidator = (token, _) => new JsonWebToken(token)
-            NameClaimType = ClaimTypes.NameIdentifier
-        };
-
-        options.Events = new JwtBearerEvents
-        {
-            OnAuthenticationFailed = context =>
+            options.TokenValidationParameters = new TokenValidationParameters
             {
-                return Task.CompletedTask;
-            },
-        };
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateActor = false,
+                ValidateIssuerSigningKey = false,
+                ValidateLifetime = false,
+                ValidateTokenReplay = false,
+                SignatureValidator = (token, _) => new JsonWebToken(token)
+            };
+        }
+        else
+        {
+            var jwtOptions =
+                configuration.GetRequiredSection(JwtOptions.SectionName).Get<JwtOptions>()
+                ?? throw new InvalidOperationException("Could not get the Jwt options");
+
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidAudience = jwtOptions.Audience
+            };
+
+            options.Authority = jwtOptions.Authority;
+        }
+
+        options.TokenValidationParameters.NameClaimType = "user_id";
     }
 
     public void Configure(JwtBearerOptions options)
