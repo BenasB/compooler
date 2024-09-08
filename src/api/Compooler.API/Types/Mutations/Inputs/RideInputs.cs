@@ -1,6 +1,6 @@
+using Compooler.API.Extensions;
 using Compooler.Application.Commands;
 using Compooler.Domain.Entities.RideEntity;
-using Compooler.Domain.Entities.UserEntity;
 using HotChocolate.Resolvers;
 using JetBrains.Annotations;
 
@@ -8,7 +8,6 @@ namespace Compooler.API.Types.Mutations.Inputs;
 
 [PublicAPI]
 public record CreateRideInput(
-    [property: ID<User>] string DriverId,
     int MaxPassengers,
     double StartLatitude,
     double StartLongitude,
@@ -19,7 +18,7 @@ public record CreateRideInput(
 {
     public CreateRideCommand Map(IResolverContext ctx) =>
         new(
-            DriverId: DriverId,
+            DriverId: ctx.GetRequiredUserId(),
             MaxPassengers: MaxPassengers,
             StartLatitude: StartLatitude,
             StartLongitude: StartLongitude,
@@ -36,15 +35,15 @@ public record RemoveRideInput([property: ID<Ride>] int Id) : IMappableTo<RemoveR
 }
 
 [PublicAPI]
-public record JoinRideInput([property: ID<Ride>] int RideId, [property: ID<User>] string UserId)
-    : IMappableTo<JoinRideCommand>
+public record JoinRideInput([property: ID<Ride>] int RideId) : IMappableTo<JoinRideCommand>
 {
-    public JoinRideCommand Map(IResolverContext ctx) => new(RideId: RideId, UserId: UserId);
+    public JoinRideCommand Map(IResolverContext ctx) =>
+        new(RideId: RideId, UserId: ctx.GetRequiredUserId());
 }
 
 [PublicAPI]
-public record LeaveRideInput([property: ID<Ride>] int RideId, [property: ID<User>] string UserId)
-    : IMappableTo<LeaveRideCommand>
+public record LeaveRideInput([property: ID<Ride>] int RideId) : IMappableTo<LeaveRideCommand>
 {
-    public LeaveRideCommand Map(IResolverContext ctx) => new(RideId: RideId, UserId: UserId);
+    public LeaveRideCommand Map(IResolverContext ctx) =>
+        new(RideId: RideId, UserId: ctx.GetRequiredUserId());
 }

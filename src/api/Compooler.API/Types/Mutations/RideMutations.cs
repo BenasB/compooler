@@ -16,6 +16,7 @@ public class RideMutations : ObjectType
 
         descriptor
             .Field("createRide")
+            .Authorize()
             .ResolveCompoolerMutation<CreateRideInput, CreateRideCommand, Ride>()
             .Error<GeographicCoordinatesErrors.InvalidLatitudeError>()
             .Error<GeographicCoordinatesErrors.InvalidLongitudeError>()
@@ -25,11 +26,13 @@ public class RideMutations : ObjectType
 
         descriptor
             .Field("removeRide")
+            .Authorize()
             .ResolveCompoolerMutation<RemoveRideInput, RemoveRideCommand, Ride>()
             .Error<EntityNotFoundError<Ride, int>>();
 
         descriptor
             .Field("joinRide")
+            .Authorize()
             .ResolveCompoolerMutation<JoinRideInput, JoinRideCommand, Ride>()
             .Error<EntityNotFoundError<Ride, int>>()
             .Error<EntityNotFoundError<User, string>>()
@@ -39,6 +42,7 @@ public class RideMutations : ObjectType
 
         descriptor
             .Field("leaveRide")
+            .Authorize()
             .ResolveCompoolerMutation<LeaveRideInput, LeaveRideCommand, Ride>()
             .Error<EntityNotFoundError<Ride, int>>()
             .Error<EntityNotFoundError<User, string>>()

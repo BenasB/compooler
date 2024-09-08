@@ -6,9 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuth();
 
-builder
-    .Services.AddCompoolerDbContext(builder.Configuration)
-    .AddSingleton<IDateTimeOffsetProvider, CurrentDateTimeOffsetProvider>();
+builder.Services.AddCompoolerDbContext(builder.Configuration);
 
 builder
     .Services.AddGraphQLServer()
@@ -16,7 +14,9 @@ builder
     .AddCompoolerConventions()
     .InitializeOnStartup();
 
-builder.Services.RegisterCommandHandlers();
+builder
+    .Services.RegisterCommandHandlers()
+    .AddSingleton<IDateTimeOffsetProvider, CurrentDateTimeOffsetProvider>();
 
 var app = builder.Build();
 

@@ -54,12 +54,12 @@ type MaxPassengersBelowOneError implements Error {
 }
 
 type Mutation {
-  createRide(input: CreateRideInput): CreateRidePayload!
-  removeRide(input: RemoveRideInput): RemoveRidePayload!
-  joinRide(input: JoinRideInput): JoinRidePayload!
-  leaveRide(input: LeaveRideInput): LeaveRidePayload!
-  createUser(input: CreateUserInput): CreateUserPayload!
-  removeUser(input: RemoveUserInput): RemoveUserPayload!
+  createRide(input: CreateRideInput): CreateRidePayload! @authorize
+  removeRide(input: RemoveRideInput): RemoveRidePayload! @authorize
+  joinRide(input: JoinRideInput): JoinRidePayload! @authorize
+  leaveRide(input: LeaveRideInput): LeaveRidePayload! @authorize
+  createUser(input: CreateUserInput): CreateUserPayload! @authorize
+  removeUser: RemoveUserPayload! @authorize
 }
 
 "Information about pagination in a connection."
@@ -104,10 +104,11 @@ type Query {
   node("ID of the object." id: ID!): Node
   "Lookup nodes by a list of IDs."
   nodes("The list of node IDs." ids: [ID!]!): [Node]!
-  rides("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): RidesConnection
+  rides("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): RidesConnection @authorize
   "Returns rides relevant to given criteria (e.g. route location)"
-  relevantRides(input: RideRelevanceInput!): [Ride!]!
-  users("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): UsersConnection
+  relevantRides(input: RideRelevanceInput!): [Ride!]! @authorize
+  users("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): UsersConnection @authorize
+  me: User! @authorize
 }
 
 type RemoveRidePayload {
@@ -212,7 +213,6 @@ union RemoveRideError = RideNotFoundError
 union RemoveUserError = UserNotFoundError
 
 input CreateRideInput {
-  driverId: ID!
   maxPassengers: Int!
   startLatitude: Float!
   startLongitude: Float!
@@ -222,26 +222,19 @@ input CreateRideInput {
 }
 
 input CreateUserInput {
-  idpId: String!
   firstName: String!
   lastName: String!
 }
 
 input JoinRideInput {
   rideId: ID!
-  userId: ID!
 }
 
 input LeaveRideInput {
   rideId: ID!
-  userId: ID!
 }
 
 input RemoveRideInput {
-  id: ID!
-}
-
-input RemoveUserInput {
   id: ID!
 }
 
@@ -251,6 +244,19 @@ input RideRelevanceInput {
   finishLatitude: Float!
   finishLongitude: Float!
 }
+
+"Defines when a policy shall be executed."
+enum ApplyPolicy {
+  "Before the resolver was executed."
+  BEFORE_RESOLVER
+  "After the resolver was executed."
+  AFTER_RESOLVER
+  "The policy is applied in the validation step before the execution."
+  VALIDATION
+}
+
+"The authorize directive."
+directive @authorize("The name of the authorization policy that determines access to the annotated resource." policy: String "Roles that are allowed to access the annotated resource." roles: [String!] "Defines when when the authorize directive shall be applied.By default the authorize directives are applied during the validation phase." apply: ApplyPolicy! = BEFORE_RESOLVER) repeatable on OBJECT | FIELD_DEFINITION
 
 "The `@specifiedBy` directive is used within the type system definition language to provide a URL for specifying the behavior of custom scalar definitions."
 directive @specifiedBy("The specifiedBy URL points to a human-readable specification. This field will only read a result for scalar types." url: String!) on SCALAR

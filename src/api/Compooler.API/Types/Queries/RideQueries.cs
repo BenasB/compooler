@@ -19,6 +19,7 @@ public class RideQueries : ObjectType
 
         descriptor
             .Field("rides")
+            .Authorize()
             .UsePaging()
             .Type<NonNullType<ListType<NonNullType<ObjectType<Ride>>>>>()
             .Resolve<Connection<Ride>>(async ctx =>
@@ -35,6 +36,7 @@ public class RideQueries : ObjectType
         descriptor
             .Field("relevantRides")
             .Description("Returns rides relevant to given criteria (e.g. route location)")
+            .Authorize()
             .Type<NonNullType<ListType<NonNullType<ObjectType<Ride>>>>>()
             .Argument("input", a => a.Type<NonNullType<InputObjectType<RideRelevanceInput>>>())
             .Resolve<List<Ride>>(async ctx =>

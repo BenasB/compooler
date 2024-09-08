@@ -1,3 +1,4 @@
+using Compooler.API.Extensions;
 using Compooler.API.Types.Mutations.Inputs;
 using Compooler.Application;
 using Compooler.Application.Commands;
@@ -15,11 +16,15 @@ public class UserMutations : ObjectTypeExtension
 
         descriptor
             .Field("createUser")
+            .Authorize()
             .ResolveCompoolerMutation<CreateUserInput, CreateUserCommand, User>();
 
         descriptor
             .Field("removeUser")
-            .ResolveCompoolerMutation<RemoveUserInput, RemoveUserCommand, User>()
+            .Authorize()
+            .ResolveCompoolerMutation<RemoveUserCommand, User>(ctx => new RemoveUserCommand(
+                Id: ctx.GetRequiredUserId()
+            ))
             .Error<EntityNotFoundError<User, string>>();
     }
 }

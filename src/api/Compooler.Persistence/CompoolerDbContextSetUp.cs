@@ -21,8 +21,10 @@ public static class CompoolerDbContextSetUp
             configuration.GetConnectionString("CompoolerDb")
             ?? throw new InvalidOperationException("Could not find the database connection string");
 
-        return services.AddDbContext<ICompoolerDbContext, CompoolerDbContext>(o =>
-            o.UseCompoolerDatabase(connectionString)
+        return services.AddDbContext<ICompoolerDbContext, CompoolerDbContext>(
+            o => o.UseCompoolerDatabase(connectionString),
+            ServiceLifetime.Scoped,
+            ServiceLifetime.Singleton
         );
     }
 
