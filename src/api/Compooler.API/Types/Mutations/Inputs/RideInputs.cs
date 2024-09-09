@@ -1,13 +1,13 @@
+using Compooler.API.Extensions;
 using Compooler.Application.Commands;
 using Compooler.Domain.Entities.RideEntity;
-using Compooler.Domain.Entities.UserEntity;
+using HotChocolate.Resolvers;
 using JetBrains.Annotations;
 
 namespace Compooler.API.Types.Mutations.Inputs;
 
 [PublicAPI]
 public record CreateRideInput(
-    [property: ID<User>] int DriverId,
     int MaxPassengers,
     double StartLatitude,
     double StartLongitude,
@@ -16,9 +16,9 @@ public record CreateRideInput(
     DateTimeOffset TimeOfDeparture
 ) : IMappableTo<CreateRideCommand>
 {
-    public CreateRideCommand Map() =>
+    public CreateRideCommand Map(IResolverContext ctx) =>
         new(
-            DriverId: DriverId,
+            DriverId: ctx.GetRequiredUserId(),
             MaxPassengers: MaxPassengers,
             StartLatitude: StartLatitude,
             StartLongitude: StartLongitude,
@@ -31,19 +31,19 @@ public record CreateRideInput(
 [PublicAPI]
 public record RemoveRideInput([property: ID<Ride>] int Id) : IMappableTo<RemoveRideCommand>
 {
-    public RemoveRideCommand Map() => new(Id: Id);
+    public RemoveRideCommand Map(IResolverContext ctx) => new(Id: Id);
 }
 
 [PublicAPI]
-public record JoinRideInput([property: ID<Ride>] int RideId, [property: ID<User>] int UserId)
-    : IMappableTo<JoinRideCommand>
+public record JoinRideInput([property: ID<Ride>] int RideId) : IMappableTo<JoinRideCommand>
 {
-    public JoinRideCommand Map() => new(RideId: RideId, UserId: UserId);
+    public JoinRideCommand Map(IResolverContext ctx) =>
+        new(RideId: RideId, UserId: ctx.GetRequiredUserId());
 }
 
 [PublicAPI]
-public record LeaveRideInput([property: ID<Ride>] int RideId, [property: ID<User>] int UserId)
-    : IMappableTo<LeaveRideCommand>
+public record LeaveRideInput([property: ID<Ride>] int RideId) : IMappableTo<LeaveRideCommand>
 {
-    public LeaveRideCommand Map() => new(RideId: RideId, UserId: UserId);
+    public LeaveRideCommand Map(IResolverContext ctx) =>
+        new(RideId: RideId, UserId: ctx.GetRequiredUserId());
 }

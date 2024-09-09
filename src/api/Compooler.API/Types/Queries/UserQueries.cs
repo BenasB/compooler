@@ -1,6 +1,7 @@
 using Compooler.API.Extensions;
 using Compooler.Domain.Entities.UserEntity;
 using Compooler.Persistence;
+using Compooler.Persistence.DataLoaders.Entities;
 using HotChocolate.Pagination;
 using HotChocolate.Types.Pagination;
 using JetBrains.Annotations;
@@ -26,6 +27,17 @@ public class UserQueries : ObjectTypeExtension
                     .Users.OrderBy(x => x.Id)
                     .ToPageAsync(pagingArguments, ctx.RequestAborted)
                     .ToConnectionAsync();
+            });
+
+        descriptor
+            .Field("me")
+            .Type<ObjectType<User>>()
+            .Resolve(async ctx =>
+            {
+                var dataLoader = ctx.Services.GetRequiredService<UserByIdDataLoader>();
+                var userId = ctx.GetRequiredUserId();
+
+                return await dataLoader.LoadAsync(userId, ctx.RequestAborted);
             });
     }
 }

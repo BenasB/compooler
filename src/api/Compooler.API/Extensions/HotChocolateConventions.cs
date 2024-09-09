@@ -14,5 +14,6 @@ public static class HotChocolateConventions
                 options.RequirePagingBoundaries = false;
             })
             .AddGlobalObjectIdentification()
+            .AddAuthorization()
             .AddMutationConventions(applyToAllMutations: true);
 }

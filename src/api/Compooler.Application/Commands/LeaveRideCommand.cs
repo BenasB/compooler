@@ -4,7 +4,7 @@ using Compooler.Domain.Entities.UserEntity;
 
 namespace Compooler.Application.Commands;
 
-public record LeaveRideCommand(int RideId, int UserId);
+public record LeaveRideCommand(int RideId, string UserId);
 
 public class LeaveRideCommandHandler(ICompoolerDbContext dbContext)
     : ICommandHandler<LeaveRideCommand, Ride>
@@ -17,12 +17,12 @@ public class LeaveRideCommandHandler(ICompoolerDbContext dbContext)
         var ride = await dbContext.Rides.FindAsync([command.RideId], cancellationToken: ct);
 
         if (ride is null)
-            return new EntityNotFoundError<Ride>(command.RideId);
+            return new EntityNotFoundError<Ride, int>(command.RideId);
 
         var user = await dbContext.Users.FindAsync([command.UserId], cancellationToken: ct);
 
         if (user is null)
-            return new EntityNotFoundError<User>(command.UserId);
+            return new EntityNotFoundError<User, string>(command.UserId);
 
         var result = ride.RemovePassenger(user.Id);
 

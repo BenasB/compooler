@@ -1,4 +1,4 @@
-using Compooler.Persistence.Tests;
+using Compooler.Tests.Utilities.Fixtures;
 
 namespace Compooler.Application.Tests;
 

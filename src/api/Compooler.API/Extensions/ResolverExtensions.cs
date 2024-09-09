@@ -21,4 +21,10 @@ public static class ResolverExtensions
             Last = cursorPagingArguments.Last
         };
     }
+
+    public static string GetRequiredUserId(this IResolverContext context) =>
+        context.GetUser()?.Identity?.Name
+        ?? throw new InvalidOperationException(
+            "User id was not found. Are you sure the user is authenticated?"
+        );
 }

@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Compooler.Domain\Compooler.Domain.csproj" />
+      <ProjectReference Include="..\Compooler.Persistence\Compooler.Persistence.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Testcontainers.PostgreSql" Version="3.10.0" />
+      <PackageReference Include="xunit.extensibility.core" Version="2.9.0" />
+    </ItemGroup>
+
+</Project>

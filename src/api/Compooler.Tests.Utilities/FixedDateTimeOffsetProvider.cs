@@ -1,4 +1,6 @@
-namespace Compooler.Domain.Tests.Utilities;
+using Compooler.Domain;
+
+namespace Compooler.Tests.Utilities;
 
 public class FixedDateTimeOffsetProvider : IDateTimeOffsetProvider
 {

@@ -2,6 +2,6 @@ using Compooler.Domain;
 
 namespace Compooler.Application;
 
-public record EntityNotFoundError<T>(int Id)
+public record EntityNotFoundError<TEntity, TId>(TId Id)
     : Error("NotFound", "Could not find the specified entity")
-    where T : IEntity;
+    where TEntity : IEntity<TId>;

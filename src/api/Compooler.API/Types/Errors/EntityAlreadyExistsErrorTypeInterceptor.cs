@@ -8,10 +8,10 @@ using JetBrains.Annotations;
 namespace Compooler.API.Types.Errors;
 
 /// <summary>
-/// Renames the generic EntityNotFoundError in SDL from 'EntityNotFoundErrorOfType' to 'TypeNotFoundError' and transforms the 'Id' field type
+/// Renames the generic EntityAlreadyExistsError in SDL from 'EntityAlreadyExistsErrorOfType' to 'TypeAlreadyExistsError' and transforms the 'Id' field type
 /// </summary>
 [UsedImplicitly]
-public class EntityNotFoundErrorTypeInterceptor : TypeInterceptor
+public class EntityAlreadyExistsErrorTypeInterceptor : TypeInterceptor
 {
     public override void OnBeforeRegisterDependencies(
         ITypeDiscoveryContext discoveryContext,
@@ -25,7 +25,7 @@ public class EntityNotFoundErrorTypeInterceptor : TypeInterceptor
 
         if (
             !type.IsGenericType
-            || type.GetGenericTypeDefinition() != typeof(EntityNotFoundError<,>)
+            || type.GetGenericTypeDefinition() != typeof(EntityAlreadyExistsError<,>)
         )
             return;
 
@@ -33,14 +33,14 @@ public class EntityNotFoundErrorTypeInterceptor : TypeInterceptor
         objectTypeDef
             .ToDescriptor(discoveryContext.DescriptorContext)
             .Name(
-                nameof(EntityNotFoundError<IEntity<object>, object>)
+                nameof(EntityAlreadyExistsError<IEntity<object>, object>)
                     .Replace("Entity", entityType.Name)
             );
 
         var idField = objectTypeDef.Fields.First(field =>
             string.Equals(
                 field.Name,
-                nameof(EntityNotFoundError<IEntity<object>, object>.Id),
+                nameof(EntityAlreadyExistsError<IEntity<object>, object>.Id),
                 StringComparison.OrdinalIgnoreCase
             )
         );

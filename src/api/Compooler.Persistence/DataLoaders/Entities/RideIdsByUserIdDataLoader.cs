@@ -8,10 +8,10 @@ public class RideIdsByUserIdDataLoader(
     IServiceProvider serviceProvider,
     IBatchScheduler batchScheduler,
     DataLoaderOptions options
-) : CompoolerDbContextGroupedDataLoader<int, int>(serviceProvider, batchScheduler, options)
+) : CompoolerDbContextGroupedDataLoader<string, int>(serviceProvider, batchScheduler, options)
 {
-    protected override async Task<ILookup<int, int>> LoadGroupedBatchAsync(
-        IReadOnlyList<int> keys,
+    protected override async Task<ILookup<string, int>> LoadGroupedBatchAsync(
+        IReadOnlyList<string> keys,
         CompoolerDbContext dbContext,
         CancellationToken cancellationToken
     )

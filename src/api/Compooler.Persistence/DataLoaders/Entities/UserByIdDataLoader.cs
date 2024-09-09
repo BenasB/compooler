@@ -8,10 +8,10 @@ public class UserByIdDataLoader(
     IServiceProvider serviceProvider,
     IBatchScheduler batchScheduler,
     DataLoaderOptions options
-) : CompoolerDbContextBatchDataLoader<int, User>(serviceProvider, batchScheduler, options)
+) : CompoolerDbContextBatchDataLoader<string, User>(serviceProvider, batchScheduler, options)
 {
-    protected override async Task<IReadOnlyDictionary<int, User>> LoadBatchAsync(
-        IReadOnlyList<int> keys,
+    protected override async Task<IReadOnlyDictionary<string, User>> LoadBatchAsync(
+        IReadOnlyList<string> keys,
         CompoolerDbContext dbContext,
         CancellationToken cancellationToken
     )

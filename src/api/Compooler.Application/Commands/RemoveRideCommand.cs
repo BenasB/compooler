@@ -16,7 +16,7 @@ public class RemoveRideCommandHandler(ICompoolerDbContext dbContext)
         var rideToRemove = await dbContext.Rides.FindAsync([command.Id], cancellationToken: ct);
 
         if (rideToRemove is null)
-            return new EntityNotFoundError<Ride>(command.Id);
+            return new EntityNotFoundError<Ride, int>(command.Id);
 
         dbContext.Rides.Remove(rideToRemove);
         await dbContext.SaveChangesAsync(ct);

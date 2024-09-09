@@ -5,7 +5,7 @@ using Compooler.Domain.Entities.UserEntity;
 namespace Compooler.Application.Commands;
 
 public record CreateRideCommand(
-    int DriverId,
+    string DriverId,
     int MaxPassengers,
     double StartLatitude,
     double StartLongitude,
@@ -43,7 +43,7 @@ public class CreateRideCommandHandler(
         var driver = await dbContext.Users.FindAsync([command.DriverId], cancellationToken: ct);
 
         if (driver is null)
-            return new EntityNotFoundError<User>(command.DriverId);
+            return new EntityNotFoundError<User, string>(command.DriverId);
 
         var route = Route.Create(startResult.Value, finishResult.Value);
         var rideResult = Ride.Create(

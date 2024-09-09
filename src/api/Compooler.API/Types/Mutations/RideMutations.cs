@@ -16,32 +16,36 @@ public class RideMutations : ObjectType
 
         descriptor
             .Field("createRide")
+            .Authorize()
             .ResolveCompoolerMutation<CreateRideInput, CreateRideCommand, Ride>()
             .Error<GeographicCoordinatesErrors.InvalidLatitudeError>()
             .Error<GeographicCoordinatesErrors.InvalidLongitudeError>()
-            .Error<EntityNotFoundError<User>>()
+            .Error<EntityNotFoundError<User, string>>()
             .Error<RideErrors.MaxPassengersBelowOneError>()
             .Error<RideErrors.TimeOfDepartureIsNotInTheFutureError>();
 
         descriptor
             .Field("removeRide")
+            .Authorize()
             .ResolveCompoolerMutation<RemoveRideInput, RemoveRideCommand, Ride>()
-            .Error<EntityNotFoundError<Ride>>();
+            .Error<EntityNotFoundError<Ride, int>>();
 
         descriptor
             .Field("joinRide")
+            .Authorize()
             .ResolveCompoolerMutation<JoinRideInput, JoinRideCommand, Ride>()
-            .Error<EntityNotFoundError<Ride>>()
-            .Error<EntityNotFoundError<User>>()
+            .Error<EntityNotFoundError<Ride, int>>()
+            .Error<EntityNotFoundError<User, string>>()
             .Error<RideErrors.PassengerLimitReachedError>()
             .Error<RideErrors.PassengerIsDriverError>()
             .Error<RideErrors.PassengerAlreadyExistsError>();
 
         descriptor
             .Field("leaveRide")
+            .Authorize()
             .ResolveCompoolerMutation<LeaveRideInput, LeaveRideCommand, Ride>()
-            .Error<EntityNotFoundError<Ride>>()
-            .Error<EntityNotFoundError<User>>()
+            .Error<EntityNotFoundError<Ride, int>>()
+            .Error<EntityNotFoundError<User, string>>()
             .Error<RideErrors.PassengerNotFoundError>();
     }
 }

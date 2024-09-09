@@ -1,4 +1,5 @@
 using Compooler.Application;
+using HotChocolate.Resolvers;
 
 namespace Compooler.API.Types.Mutations;
 
@@ -19,9 +20,23 @@ public static class CompoolerMutation
             {
                 var input = ctx.ArgumentValue<TInput>("input");
                 var handler = ctx.Services.GetRequiredService<ICommandHandler<TCommand, TResult>>();
-                var command = input.Map();
+                var command = input.Map(ctx);
                 var result = await handler.HandleAsync(command, ctx.RequestAborted);
 
                 return !result.IsFailed ? result.Value : new FieldResult<TResult>(result.Error);
             });
+
+    /// <inheritdoc cref="CompoolerMutation"/>
+    public static IObjectFieldDescriptor ResolveCompoolerMutation<TCommand, TResult>(
+        this IObjectFieldDescriptor descriptor,
+        Func<IResolverContext, TCommand> commandCreation
+    ) =>
+        descriptor.Resolve<FieldResult<TResult>>(async ctx =>
+        {
+            var handler = ctx.Services.GetRequiredService<ICommandHandler<TCommand, TResult>>();
+            var command = commandCreation.Invoke(ctx);
+            var result = await handler.HandleAsync(command, ctx.RequestAborted);
+
+            return !result.IsFailed ? result.Value : new FieldResult<TResult>(result.Error);
+        });
 }

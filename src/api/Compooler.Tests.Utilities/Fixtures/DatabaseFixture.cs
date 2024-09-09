@@ -1,8 +1,10 @@
+using Compooler.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Testcontainers.PostgreSql;
+using Xunit;
 
-namespace Compooler.Persistence.Tests;
+namespace Compooler.Tests.Utilities.Fixtures;
 
 public class DatabaseFixture : IAsyncLifetime
 {

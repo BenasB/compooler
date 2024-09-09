@@ -1,13 +1,18 @@
 namespace Compooler.Domain.Entities.UserEntity;
 
-public sealed class User : IEntity
+public sealed class User : IEntity<string>
 {
-    public int Id { get; }
+    public required string Id { get; init; }
     public required string FirstName { get; init; }
     public required string LastName { get; init; }
 
     private User() { }
 
-    public static User Create(string firstName, string lastName) =>
-        new() { FirstName = firstName, LastName = lastName };
+    public static User Create(string id, string firstName, string lastName) =>
+        new()
+        {
+            Id = id,
+            FirstName = firstName,
+            LastName = lastName
+        };
 }

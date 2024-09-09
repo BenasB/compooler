@@ -1,5 +1,5 @@
 using Compooler.Domain.Entities.RideEntity;
-using Compooler.Domain.Tests.Utilities;
+using Compooler.Tests.Utilities;
 
 namespace Compooler.Domain.Tests.Entities.RideEntity;
 
@@ -43,10 +43,10 @@ public class RideTests
 
         for (int i = 0; i < maxPassengers; i++)
         {
-            Assert.False(ride.AddPassenger(i).IsFailed);
+            Assert.False(ride.AddPassenger(TestEntityFactory.CreateUserId()).IsFailed);
         }
 
-        var result = ride.AddPassenger(maxPassengers);
+        var result = ride.AddPassenger(TestEntityFactory.CreateUserId());
         Assert.True(result.IsFailed);
         Assert.Equal(new RideErrors.PassengerLimitReachedError(maxPassengers), result.Error);
     }
@@ -54,7 +54,7 @@ public class RideTests
     [Fact]
     public void AddPassenger_PassengerIsDriver_Fails()
     {
-        const int driverId = -42;
+        var driverId = TestEntityFactory.CreateUserId();
         var ride = TestEntityFactory.CreateRide(driverId: driverId).RequiredSuccess();
         var result = ride.AddPassenger(driverId);
         Assert.True(result.IsFailed);
@@ -65,7 +65,7 @@ public class RideTests
     public void AddPassenger_PassengerAlreadyExists_Fails()
     {
         var ride = TestEntityFactory.CreateRide(maxPassengers: 3).RequiredSuccess();
-        const int passengerId = 0;
+        var passengerId = TestEntityFactory.CreateUserId();
 
         var result = ride.AddPassenger(passengerId);
         Assert.False(result.IsFailed);
@@ -83,7 +83,7 @@ public class RideTests
     {
         var ride = TestEntityFactory.CreateRide().RequiredSuccess();
 
-        var result = ride.AddPassenger(0);
+        var result = ride.AddPassenger(TestEntityFactory.CreateUserId());
         Assert.False(result.IsFailed);
         Assert.Single(ride.Passengers);
     }
@@ -96,10 +96,10 @@ public class RideTests
 
         for (int i = 0; i < maxPassengers; i++)
         {
-            Assert.False(ride.AddPassenger(i).IsFailed);
+            Assert.False(ride.AddPassenger(TestEntityFactory.CreateUserId()).IsFailed);
         }
 
-        const int notPassengerId = maxPassengers;
+        var notPassengerId = TestEntityFactory.CreateUserId();
         var result = ride.RemovePassenger(notPassengerId);
         Assert.True(result.IsFailed);
         Assert.Equal(new RideErrors.PassengerNotFoundError(notPassengerId), result.Error);
@@ -110,7 +110,7 @@ public class RideTests
     {
         var ride = TestEntityFactory.CreateRide().RequiredSuccess();
 
-        const int userId = 0;
+        var userId = TestEntityFactory.CreateUserId();
         var result = ride.AddPassenger(userId);
         Assert.False(result.IsFailed);
 
