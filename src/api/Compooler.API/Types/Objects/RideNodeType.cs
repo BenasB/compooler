@@ -10,6 +10,7 @@ public class RideNodeType : ObjectType<Ride>
 {
     protected override void Configure(IObjectTypeDescriptor<Ride> descriptor)
     {
+        descriptor.Authorize();
         descriptor.BindFieldsExplicitly();
 
         descriptor.Field(x => x.Id);

@@ -10,6 +10,7 @@ public class UserNodeType : ObjectType<User>
 {
     protected override void Configure(IObjectTypeDescriptor<User> descriptor)
     {
+        descriptor.Authorize();
         descriptor.BindFieldsExplicitly();
 
         descriptor.Field(x => x.Id);

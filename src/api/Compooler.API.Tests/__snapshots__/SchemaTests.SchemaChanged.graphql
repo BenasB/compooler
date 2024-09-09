@@ -104,11 +104,11 @@ type Query {
   node("ID of the object." id: ID!): Node
   "Lookup nodes by a list of IDs."
   nodes("The list of node IDs." ids: [ID!]!): [Node]!
-  rides("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): RidesConnection @authorize
+  rides("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): RidesConnection
   "Returns rides relevant to given criteria (e.g. route location)"
-  relevantRides(input: RideRelevanceInput!): [Ride!]! @authorize
-  users("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): UsersConnection @authorize
-  me: User! @authorize
+  relevantRides(input: RideRelevanceInput!): [Ride!]!
+  users("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): UsersConnection
+  me: User
 }
 
 type RemoveRidePayload {
@@ -121,7 +121,7 @@ type RemoveUserPayload {
   errors: [RemoveUserError!]
 }
 
-type Ride implements Node {
+type Ride implements Node @authorize {
   id: ID!
   maxPassengers: Int!
   route: Route!
@@ -171,7 +171,7 @@ type TimeOfDepartureIsNotInTheFutureError implements Error {
   message: String!
 }
 
-type User implements Node {
+type User implements Node @authorize {
   id: ID!
   firstName: String!
   lastName: String!

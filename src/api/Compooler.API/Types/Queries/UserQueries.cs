@@ -17,7 +17,6 @@ public class UserQueries : ObjectTypeExtension
 
         descriptor
             .Field("users")
-            .Authorize()
             .UsePaging()
             .Type<NonNullType<ListType<NonNullType<ObjectType<User>>>>>()
             .Resolve<Connection<User>>(async ctx =>
@@ -32,12 +31,12 @@ public class UserQueries : ObjectTypeExtension
 
         descriptor
             .Field("me")
-            .Authorize()
-            .Type<NonNullType<ObjectType<User>>>()
+            .Type<ObjectType<User>>()
             .Resolve(async ctx =>
             {
                 var dataLoader = ctx.Services.GetRequiredService<UserByIdDataLoader>();
                 var userId = ctx.GetRequiredUserId();
+
                 return await dataLoader.LoadAsync(userId, ctx.RequestAborted);
             });
     }
