@@ -17,7 +17,8 @@ public class UserMutations : ObjectTypeExtension
         descriptor
             .Field("createUser")
             .Authorize()
-            .ResolveCompoolerMutation<CreateUserInput, CreateUserCommand, User>();
+            .ResolveCompoolerMutation<CreateUserInput, CreateUserCommand, User>()
+            .Error<EntityAlreadyExistsError<User, string>>();
 
         descriptor
             .Field("removeUser")

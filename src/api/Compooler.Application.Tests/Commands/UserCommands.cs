@@ -21,7 +21,7 @@ public class UserCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
     {
         var command = new CreateUserCommand(
             Id: TestEntityFactory.CreateUserId(),
-            FirstName: TestEntityFactory.CreateUserId(),
+            FirstName: "Test",
             LastName: "Test"
         );
         var handler = new CreateUserCommandHandler(_dbContext);
@@ -33,12 +33,26 @@ public class UserCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
     }
 
     [Fact]
+    public async Task CreateUser_UserExists_Fails()
+    {
+        var id = TestEntityFactory.CreateUserId();
+        _dbContext.Users.Add(User.Create(id, "Test", "Test"));
+        await _dbContext.SaveChangesAsync();
+
+        var command = new CreateUserCommand(Id: id, FirstName: "Foo", LastName: "Bar");
+        var handler = new CreateUserCommandHandler(_dbContext);
+
+        var result = await handler.HandleAsync(command);
+
+        Assert.True(result.IsFailed);
+        Assert.Equal(new EntityAlreadyExistsError<User, string>(id), result.Error);
+    }
+
+    [Fact]
     public async Task RemoveUser_UserExists_Succeeds()
     {
         var id = TestEntityFactory.CreateUserId();
-        var firstName = TestEntityFactory.CreateUserId();
-        const string lastName = "Test";
-        var newUser = _dbContext.Users.Add(User.Create(id, firstName, lastName));
+        var newUser = _dbContext.Users.Add(User.Create(id, "Test", "Test"));
         await _dbContext.SaveChangesAsync();
         var command = new RemoveUserCommand(Id: id);
         var handler = new RemoveUserCommandHandler(_dbContext);

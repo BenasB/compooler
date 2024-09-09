@@ -20,6 +20,7 @@ type CreateRidePayload {
 
 type CreateUserPayload {
   user: User
+  errors: [CreateUserError!]
 }
 
 type GeographicCoordinates {
@@ -178,6 +179,12 @@ type User implements Node @authorize {
   rides: [Ride!]!
 }
 
+type UserAlreadyExistsError implements Error {
+  id: ID!
+  code: String!
+  message: String!
+}
+
 type UserNotFoundError implements Error {
   id: ID!
   code: String!
@@ -203,6 +210,8 @@ type UsersEdge {
 }
 
 union CreateRideError = InvalidLatitudeError | InvalidLongitudeError | UserNotFoundError | MaxPassengersBelowOneError | TimeOfDepartureIsNotInTheFutureError
+
+union CreateUserError = UserAlreadyExistsError
 
 union JoinRideError = RideNotFoundError | UserNotFoundError | PassengerLimitReachedError | PassengerIsDriverError | PassengerAlreadyExistsError
 

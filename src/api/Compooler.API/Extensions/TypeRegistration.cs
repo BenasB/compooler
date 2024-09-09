@@ -36,6 +36,7 @@ public static class TypeRegistration
         builder
             .AddErrorInterfaceType<ErrorInterfaceType>()
             .TryAddTypeInterceptor<EntityNotFoundErrorTypeInterceptor>()
+            .TryAddTypeInterceptor<EntityAlreadyExistsErrorTypeInterceptor>()
             .AddTypeExtension<PassengerNotFoundErrorExtension>()
             .AddTypeExtension<PassengerIsDriverErrorExtension>()
             .AddTypeExtension<PassengerAlreadyExistsErrorExtension>();
