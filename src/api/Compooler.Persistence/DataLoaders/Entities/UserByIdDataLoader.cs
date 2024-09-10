@@ -17,7 +17,8 @@ public class UserByIdDataLoader(
     )
     {
         return await dbContext
-            .Users.Where(u => keys.Contains(u.Id))
+            .Users.AsNoTracking()
+            .Where(u => keys.Contains(u.Id))
             .ToDictionaryAsync(u => u.Id, cancellationToken);
     }
 }

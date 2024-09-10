@@ -5,6 +5,7 @@ using Compooler.Persistence.DataLoaders.Entities;
 using HotChocolate.Pagination;
 using HotChocolate.Types.Pagination;
 using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Compooler.API.Types.Queries;
 
@@ -24,7 +25,8 @@ public class UserQueries : ObjectTypeExtension
                 var pagingArguments = ctx.GetPagingArguments();
                 var dbContext = ctx.Services.GetRequiredService<CompoolerDbContext>();
                 return await dbContext
-                    .Users.OrderBy(x => x.Id)
+                    .Users.AsNoTracking()
+                    .OrderBy(x => x.Id)
                     .ToPageAsync(pagingArguments, ctx.RequestAborted)
                     .ToConnectionAsync();
             });

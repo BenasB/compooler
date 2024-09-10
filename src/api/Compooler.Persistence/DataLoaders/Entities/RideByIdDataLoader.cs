@@ -16,6 +16,7 @@ public class RideByIdDataLoader(
         CancellationToken cancellationToken
     ) =>
         await dbContext
-            .Rides.Where(cg => keys.Contains(cg.Id))
+            .Rides.AsNoTracking()
+            .Where(cg => keys.Contains(cg.Id))
             .ToDictionaryAsync(cg => cg.Id, cancellationToken);
 }

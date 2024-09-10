@@ -26,8 +26,8 @@ public class RideQueries : ObjectType
                 var pagingArguments = ctx.GetPagingArguments();
                 var dbContext = ctx.Services.GetRequiredService<CompoolerDbContext>();
                 return await dbContext
-                    .Rides.OrderBy(x => x.Id)
-                    .AsNoTracking()
+                    .Rides.AsNoTracking()
+                    .OrderBy(x => x.Id)
                     .ToPageAsync(pagingArguments, ctx.RequestAborted)
                     .ToConnectionAsync();
             });

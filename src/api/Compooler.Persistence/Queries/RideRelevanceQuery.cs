@@ -19,6 +19,7 @@ public static class RideRelevanceQuery
         var finishPoint = new Point(finishLongitude, finishLatitude);
 
         // Filter out irrelevant rides
+        // TODO: Filter out rides where requesting user is the driver
         const int maxProximityMeters = 15000;
         var filteredQuery = queryable
             .Where(ride =>

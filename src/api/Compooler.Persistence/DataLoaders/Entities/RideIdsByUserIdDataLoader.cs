@@ -17,7 +17,8 @@ public class RideIdsByUserIdDataLoader(
     )
     {
         var ridePassengers = await dbContext
-            .RidePassengers.Where(cgp => keys.Contains(cgp.UserId))
+            .RidePassengers.AsNoTracking()
+            .Where(cgp => keys.Contains(cgp.UserId))
             .Select(cgp => new
             {
                 cgp.UserId,
