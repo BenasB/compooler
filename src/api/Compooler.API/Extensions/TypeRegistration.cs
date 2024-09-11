@@ -2,15 +2,18 @@ using Compooler.API.Types.Errors;
 using Compooler.API.Types.Mutations;
 using Compooler.API.Types.Objects;
 using Compooler.API.Types.Queries;
-using Compooler.Persistence.DataLoaders.Entities;
 using HotChocolate.Execution.Configuration;
 
 namespace Compooler.API.Extensions;
 
 public static class TypeRegistration
 {
-    public static IRequestExecutorBuilder AddCompoolerTypes(this IRequestExecutorBuilder builder) =>
-        builder.AddQueries().AddMutations().AddObjectTypes().AddDataLoaders().AddErrorTypes();
+    public static IRequestExecutorBuilder AddCompoolerTypes(this IRequestExecutorBuilder builder)
+    {
+        builder.Services.AddCompoolerDataLoaders();
+
+        return builder.AddQueries().AddMutations().AddObjectTypes().AddErrorTypes();
+    }
 
     private static IRequestExecutorBuilder AddQueries(this IRequestExecutorBuilder builder) =>
         builder.AddQueryType<RideQueries>().AddTypeExtension<UserQueries>();
@@ -25,12 +28,6 @@ public static class TypeRegistration
             .AddType<RidePassengerObjectType>()
             .AddType<GeographicCoordinatesObjectType>()
             .AddType<UserNodeType>();
-
-    private static IRequestExecutorBuilder AddDataLoaders(this IRequestExecutorBuilder builder) =>
-        builder
-            .AddDataLoader<UserByIdDataLoader>()
-            .AddDataLoader<RideByIdDataLoader>()
-            .AddDataLoader<RideIdsByUserIdDataLoader>();
 
     private static IRequestExecutorBuilder AddErrorTypes(this IRequestExecutorBuilder builder) =>
         builder

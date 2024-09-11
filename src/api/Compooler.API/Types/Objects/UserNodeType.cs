@@ -1,6 +1,6 @@
 using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
-using Compooler.Persistence.DataLoaders.Entities;
+using Compooler.Persistence.DataLoaders;
 using JetBrains.Annotations;
 
 namespace Compooler.API.Types.Objects;
@@ -23,8 +23,8 @@ public class UserNodeType : ObjectType<User>
             .Resolve<IReadOnlyList<Ride>>(async ctx =>
             {
                 var rideIdsByUserIdDataLoader =
-                    ctx.Services.GetRequiredService<RideIdsByUserIdDataLoader>();
-                var rideDataLoaderById = ctx.Services.GetRequiredService<RideByIdDataLoader>();
+                    ctx.Services.GetRequiredService<IRideIdsByUserIdDataLoader>();
+                var rideDataLoaderById = ctx.Services.GetRequiredService<IRideByIdDataLoader>();
                 var user = ctx.Parent<User>();
 
                 var ridePassengers = await rideIdsByUserIdDataLoader.LoadRequiredAsync(

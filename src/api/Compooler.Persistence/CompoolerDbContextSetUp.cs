@@ -3,12 +3,10 @@ using Compooler.Domain;
 using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
 using Compooler.Persistence.Configurations;
-using HotChocolate.Pagination;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
-using NpgsqlTypes;
 
 namespace Compooler.Persistence;
 

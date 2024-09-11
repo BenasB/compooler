@@ -1,7 +1,7 @@
 using Compooler.API.Extensions;
 using Compooler.Domain.Entities.UserEntity;
 using Compooler.Persistence;
-using Compooler.Persistence.DataLoaders.Entities;
+using Compooler.Persistence.DataLoaders;
 using HotChocolate.Pagination;
 using HotChocolate.Types.Pagination;
 using JetBrains.Annotations;
@@ -36,7 +36,7 @@ public class UserQueries : ObjectTypeExtension
             .Type<ObjectType<User>>()
             .Resolve(async ctx =>
             {
-                var dataLoader = ctx.Services.GetRequiredService<UserByIdDataLoader>();
+                var dataLoader = ctx.Services.GetRequiredService<IUserByIdDataLoader>();
                 var userId = ctx.GetRequiredUserId();
 
                 return await dataLoader.LoadAsync(userId, ctx.RequestAborted);

@@ -1,6 +1,5 @@
 using Compooler.Domain;
 using Compooler.Domain.Entities.UserEntity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Compooler.Application.Commands;
 
