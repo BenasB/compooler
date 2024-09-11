@@ -3,10 +3,12 @@ using Compooler.Domain;
 using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
 using Compooler.Persistence.Configurations;
+using HotChocolate.Pagination;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using NpgsqlTypes;
 
 namespace Compooler.Persistence;
 
@@ -138,5 +140,36 @@ public static class CompoolerDbContextSetUp
             if (pendingMigrations.Any())
                 throw new InvalidOperationException("Not all migrations have been applied");
         }
+
+        const string query = $"""
+            WITH PartitionedRides AS (
+                SELECT
+                    rp."{nameof(RidePassenger.UserId)}",
+                    r."{nameof(Ride.Id)}",
+                    ROW_NUMBER() OVER
+                    (PARTITION BY rp."{nameof(RidePassenger.UserId)}"
+                    ORDER BY r."{nameof(Ride.Id)}") AS "RowNumber"
+                FROM "{nameof(CompoolerDbContext.Rides)}" r
+                JOIN "{nameof(CompoolerDbContext.RidePassengers)}" rp
+                    ON r."{nameof(Ride.Id)}" = rp."{RideConfiguration.RideIdColumnName}"
+                WHERE rp."UserId" = ANY(@userIds) AND r."Id" > @after
+            )
+            SELECT *
+            FROM PartitionedRides
+            WHERE "RowNumber" <= @first;
+            """;
+
+        var userIds = new NpgsqlParameter(
+            "userIds",
+            new[] { "b39ca817b7b14cbb9f7ff7bc8a30", "19de0d3457144406b38a528268ee" }
+        );
+        var after = new NpgsqlParameter("after", value: 0);
+        var first = new NpgsqlParameter("first", value: 1);
+
+        var r = await dbContext
+            .Database.SqlQueryRaw<PaginationResult>(query, userIds, after, first)
+            .ToListAsync();
     }
+
+    private record PaginationResult(string UserId, int RowNumber, int Id);
 }

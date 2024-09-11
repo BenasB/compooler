@@ -12,7 +12,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="GreenDonut" Version="14.0.0-rc.0" />
+      <PackageReference Include="GreenDonut" Version="14.0.0-rc.1" />
+      <PackageReference Include="HotChocolate.Pagination.EntityFramework" Version="14.0.0-rc.1" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="8.0.4" />
     </ItemGroup>
