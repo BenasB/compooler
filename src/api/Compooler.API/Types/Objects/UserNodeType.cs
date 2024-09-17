@@ -1,6 +1,9 @@
+using Compooler.API.Extensions;
 using Compooler.Domain.Entities.RideEntity;
 using Compooler.Domain.Entities.UserEntity;
 using Compooler.Persistence.DataLoaders;
+using HotChocolate.Pagination;
+using HotChocolate.Types.Pagination;
 using JetBrains.Annotations;
 
 namespace Compooler.API.Types.Objects;
@@ -36,6 +39,38 @@ public class UserNodeType : ObjectType<User>
                     ridePassengers,
                     ctx.RequestAborted
                 );
+            });
+
+        descriptor
+            .Field("testRides")
+            .UsePaging()
+            .Type<NonNullType<ListType<NonNullType<ObjectType<Ride>>>>>()
+            .Resolve<Connection<Ride>>(async ctx =>
+            {
+                var rideIdsByUserIdDataLoader =
+                    ctx.Services.GetRequiredService<ITestRideIdsByUserIdDataLoader>();
+                var rideDataLoaderById = ctx.Services.GetRequiredService<IRideByIdDataLoader>();
+                var user = ctx.Parent<User>();
+                var pagingArguments = ctx.GetPagingArguments();
+
+                var idsPage = await rideIdsByUserIdDataLoader
+                    .WithPagingArguments(pagingArguments)
+                    .LoadAsync(user.Id, ctx.RequestAborted);
+
+                if (idsPage.Items == null)
+                    return Connection.Empty<Ride>();
+
+                var rides = await rideDataLoaderById.LoadRequiredAsync(
+                    idsPage.Items.Select(x => x.RideId).ToList(),
+                    ctx.RequestAborted
+                );
+
+                return new Page<Ride>(
+                    items: [.. rides],
+                    hasNextPage: idsPage.HasNextPage,
+                    hasPreviousPage: idsPage.HasPreviousPage,
+                    createCursor: ride => idsPage.CreateCursor((ride.TimeOfDeparture, ride.Id))
+                ).ToConnection();
             });
 
         descriptor
