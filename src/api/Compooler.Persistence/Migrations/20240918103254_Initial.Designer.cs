@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Compooler.Persistence.Migrations
 {
     [DbContext(typeof(CompoolerDbContext))]
-    [Migration("20240905103049_Initial")]
+    [Migration("20240918103254_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -47,6 +47,8 @@ namespace Compooler.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DriverId", "TimeOfDeparture", "Id");
+
                     b.ToTable("Rides");
                 });
 
@@ -64,6 +66,8 @@ namespace Compooler.Persistence.Migrations
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.HasKey("RideId", "UserId");
+
+                    b.HasIndex("UserId", "RideId");
 
                     b.ToTable("RidePassengers");
                 });

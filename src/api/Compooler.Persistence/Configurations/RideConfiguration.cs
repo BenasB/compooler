@@ -43,7 +43,12 @@ public class RideConfiguration
 
         builder.HasMany(x => x.Passengers).WithOne().HasForeignKey(RideIdColumnName);
 
-        // TODO: Indices for RideIdsByUserId DataLoader
+        builder.HasIndex(r => new
+        {
+            r.DriverId,
+            r.TimeOfDeparture,
+            r.Id
+        });
     }
 
     public void Configure(EntityTypeBuilder<RidePassenger> builder)
@@ -51,5 +56,7 @@ public class RideConfiguration
         builder.Property(x => x.JoinedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
         builder.HasKey(RideIdColumnName, nameof(RidePassenger.UserId));
+
+        builder.HasIndex(nameof(RidePassenger.UserId), RideIdColumnName);
     }
 }

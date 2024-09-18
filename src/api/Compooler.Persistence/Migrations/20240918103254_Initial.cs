@@ -98,6 +98,18 @@ namespace Compooler.Persistence.Migrations
                 }
             );
 
+            migrationBuilder.CreateIndex(
+                name: "IX_RidePassengers_UserId_RideId",
+                table: "RidePassengers",
+                columns: new[] { "UserId", "RideId" }
+            );
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rides_DriverId_TimeOfDeparture_Id",
+                table: "Rides",
+                columns: new[] { "DriverId", "TimeOfDeparture", "Id" }
+            );
+
             migrationBuilder
                 .CreateIndex(
                     name: "IX_Routes_Finish_Point",
