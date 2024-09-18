@@ -36,10 +36,24 @@ public class RideCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
         return ride;
     }
 
+    private async Task PersistNewRidePassenger(params (int rideId, string userId)[] ridePassengers)
+    {
+        foreach (var (rideId, userId) in ridePassengers)
+        {
+            var entity = _dbContext.RidePassengers.Add(RidePassenger.Create(userId));
+            entity.Property<int>(RideConfiguration.RideIdColumnName).CurrentValue = rideId;
+        }
+
+        await _dbContext.SaveChangesAsync();
+    }
+
     [Fact]
     public async Task CreateRide_Succeeds()
     {
-        var dateTimeOffsetProvider = new FixedDateTimeOffsetProvider { Now = DateTimeOffset.Now };
+        var dateTimeOffsetProvider = new FixedDateTimeOffsetProvider
+        {
+            Now = DateTimeOffset.Now.ToUniversalTime()
+        };
         var driver = await PersistNewUser();
 
         var command = new CreateRideCommand(
@@ -49,7 +63,7 @@ public class RideCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
             StartLongitude: 0,
             FinishLatitude: 0,
             FinishLongitude: 0,
-            TimeOfDeparture: dateTimeOffsetProvider.Future.ToUniversalTime()
+            TimeOfDeparture: dateTimeOffsetProvider.Future
         );
         var handler = new CreateRideCommandHandler(_dbContext, dateTimeOffsetProvider);
 
@@ -62,7 +76,10 @@ public class RideCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
     [Fact]
     public async Task CreateRide_DriverDoesNotExist_Fails()
     {
-        var dateTimeOffsetProvider = new FixedDateTimeOffsetProvider { Now = DateTimeOffset.Now };
+        var dateTimeOffsetProvider = new FixedDateTimeOffsetProvider
+        {
+            Now = DateTimeOffset.Now.ToUniversalTime()
+        };
         var nonExistentUserId = TestEntityFactory.CreateUserId();
         var command = new CreateRideCommand(
             DriverId: nonExistentUserId,
@@ -71,7 +88,7 @@ public class RideCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
             StartLongitude: 0,
             FinishLatitude: 0,
             FinishLongitude: 0,
-            TimeOfDeparture: dateTimeOffsetProvider.Future.ToUniversalTime()
+            TimeOfDeparture: dateTimeOffsetProvider.Future
         );
 
         var handler = new CreateRideCommandHandler(_dbContext, dateTimeOffsetProvider);
@@ -84,7 +101,10 @@ public class RideCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
     [Fact]
     public async Task CreateRide_InvalidData_Fails()
     {
-        var dateTimeOffsetProvider = new FixedDateTimeOffsetProvider { Now = DateTimeOffset.Now };
+        var dateTimeOffsetProvider = new FixedDateTimeOffsetProvider
+        {
+            Now = DateTimeOffset.Now.ToUniversalTime()
+        };
         var driver = await PersistNewUser();
 
         var command = new CreateRideCommand(
@@ -94,7 +114,7 @@ public class RideCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
             StartLongitude: 181,
             FinishLatitude: 91,
             FinishLongitude: -181,
-            TimeOfDeparture: dateTimeOffsetProvider.Future.ToUniversalTime()
+            TimeOfDeparture: dateTimeOffsetProvider.Future
         );
         var handler = new CreateRideCommandHandler(_dbContext, dateTimeOffsetProvider);
 
@@ -108,12 +128,7 @@ public class RideCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
     {
         var passenger = await PersistNewUser();
         var ride = await PersistNewRide();
-
-        Assert.False(
-            ride.AddPassenger(passenger.Id).IsFailed,
-            "Failed to add passenger which is a prerequisite"
-        );
-        await _dbContext.SaveChangesAsync();
+        await PersistNewRidePassenger((ride.Id, passenger.Id));
 
         var newRideId = ride.Id;
         var command = new RemoveRideCommand(Id: newRideId);
@@ -226,12 +241,7 @@ public class RideCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
     {
         var user = await PersistNewUser();
         var ride = await PersistNewRide();
-
-        Assert.False(
-            ride.AddPassenger(user.Id).IsFailed,
-            "Failed to add passenger which is a prerequisite"
-        );
-        await _dbContext.SaveChangesAsync();
+        await PersistNewRidePassenger((ride.Id, user.Id));
 
         var command = new LeaveRideCommand(RideId: ride.Id, UserId: user.Id);
         var handler = new LeaveRideCommandHandler(_dbContext);

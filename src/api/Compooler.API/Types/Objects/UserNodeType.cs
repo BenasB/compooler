@@ -22,33 +22,12 @@ public class UserNodeType : ObjectType<User>
 
         descriptor
             .Field("rides")
-            .Type<NonNullType<ListType<NonNullType<ObjectType<Ride>>>>>()
-            .Resolve<IReadOnlyList<Ride>>(async ctx =>
-            {
-                var rideIdsByUserIdDataLoader =
-                    ctx.Services.GetRequiredService<IRideIdsByUserIdDataLoader>();
-                var rideDataLoaderById = ctx.Services.GetRequiredService<IRideByIdDataLoader>();
-                var user = ctx.Parent<User>();
-
-                var ridePassengers = await rideIdsByUserIdDataLoader.LoadRequiredAsync(
-                    user.Id,
-                    ctx.RequestAborted
-                );
-
-                return await rideDataLoaderById.LoadRequiredAsync(
-                    ridePassengers,
-                    ctx.RequestAborted
-                );
-            });
-
-        descriptor
-            .Field("testRides")
             .UsePaging()
             .Type<NonNullType<ListType<NonNullType<ObjectType<Ride>>>>>()
             .Resolve<Connection<Ride>>(async ctx =>
             {
                 var rideIdsByUserIdDataLoader =
-                    ctx.Services.GetRequiredService<ITestRideIdsByUserIdDataLoader>();
+                    ctx.Services.GetRequiredService<IRideIdsByUserIdDataLoader>();
                 var rideDataLoaderById = ctx.Services.GetRequiredService<IRideByIdDataLoader>();
                 var user = ctx.Parent<User>();
                 var pagingArguments = ctx.GetPagingArguments();

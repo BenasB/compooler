@@ -42,6 +42,8 @@ public class RideConfiguration
         builder.Navigation(x => x.Passengers).AutoInclude();
 
         builder.HasMany(x => x.Passengers).WithOne().HasForeignKey(RideIdColumnName);
+
+        // TODO: Indices for RideIdsByUserId DataLoader
     }
 
     public void Configure(EntityTypeBuilder<RidePassenger> builder)

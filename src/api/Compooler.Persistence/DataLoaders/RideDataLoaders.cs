@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Compooler.Domain.Entities.RideEntity;
 using Compooler.Persistence.Configurations;
 using GreenDonut;
@@ -22,39 +23,26 @@ public sealed class RideDataLoaders
             .ToDictionaryAsync(cg => cg.Id, cancellationToken);
 
     [DataLoader]
-    public static async Task<ILookup<string, int>> GetRideIdsByUserIdAsync(
-        IReadOnlyList<string> keys,
-        CompoolerDbContext dbContext,
-        CancellationToken cancellationToken
-    )
-    {
-        var ridePassengers = await dbContext
-            .RidePassengers.AsNoTracking()
-            .Where(rp => keys.Contains(rp.UserId))
-            .Select(rp => new
-            {
-                rp.UserId,
-                RideId = EF.Property<int>(rp, RideConfiguration.RideIdColumnName)
-            })
-            .ToListAsync(cancellationToken);
-
-        return ridePassengers.ToLookup(x => x.UserId, x => x.RideId);
-    }
-
-    [DataLoader]
     public static async Task<
         IReadOnlyDictionary<string, Page<(DateTimeOffset TimeOfDeparture, int RideId)>>
-    > GetTestRideIdsByUserIdAsync(
+    > GetRideIdsByUserIdAsync(
         IReadOnlyList<string> keys,
         CompoolerDbContext dbContext,
         PagingArguments pagingArguments,
         CancellationToken cancellationToken
     )
     {
+        if (pagingArguments.First == null)
+            throw new ArgumentException(
+                $"'{nameof(pagingArguments.First)}' Argument must be specified",
+                nameof(pagingArguments)
+            );
+
         if (pagingArguments.Last != null || pagingArguments.Before != null)
             throw new ArgumentException(
                 $"'{nameof(pagingArguments.Last)}' and '{nameof(pagingArguments.Before)}' not supported,"
-                    + $"use '{nameof(pagingArguments.First)}' and '{nameof(pagingArguments.After)}'"
+                    + $"use '{nameof(pagingArguments.First)}' and '{nameof(pagingArguments.After)}'",
+                nameof(pagingArguments)
             );
 
         var tables = new
@@ -81,17 +69,21 @@ public sealed class RideDataLoaders
         var sqlParameters = new List<NpgsqlParameter>();
         var paginationFilter = """("TOD", "RideId") > (CURRENT_TIMESTAMP, 0)""";
 
-        var cursor = GetCursor();
-        if (cursor.HasValue)
+        var cursorKeys = GetCursorKeys();
+        if (pagingArguments.After != null)
         {
+            var parsedCursor = CursorParser.Parse(pagingArguments.After, cursorKeys);
+            if (parsedCursor is not [DateTimeOffset afterTimeOfDeparture, int afterId])
+                throw new InvalidOperationException("Unexpected cursor format");
+
             paginationFilter = """("TOD", "RideId") > (@afterTimeOfDeparture, @afterId)""";
             sqlParameters.Add(
                 new NpgsqlParameter(
                     "afterTimeOfDeparture",
-                    value: cursor.Value.afterTimeOfDeparture
+                    value: afterTimeOfDeparture.ToUniversalTime()
                 )
             );
-            sqlParameters.Add(new NpgsqlParameter("afterId", value: cursor.Value.afterId));
+            sqlParameters.Add(new NpgsqlParameter("afterId", value: afterId));
         }
 
         /*language=sql*/
@@ -132,43 +124,46 @@ public sealed class RideDataLoaders
             )
             SELECT "UserId", "TOD" AS "TimeOfDeparture", "RideId"
             FROM PartitionedRides
-            WHERE "RowNumber" <= @first;
+            WHERE "RowNumber" <= @first + 1;
             """;
 
         sqlParameters.Add(new NpgsqlParameter("userIds", keys));
-        sqlParameters.Add(new NpgsqlParameter("first", value: pagingArguments.First));
+        sqlParameters.Add(new NpgsqlParameter("first", value: pagingArguments.First.Value));
 
         var rows = await dbContext
-            .Database.SqlQueryRaw<UserRideRow>(query, parameters: sqlParameters.ToArray<object>())
+            .Database.SqlQueryRaw<UserOrderedRideRow>(
+                query,
+                parameters: sqlParameters.ToArray<object>()
+            )
             .ToListAsync(cancellationToken: cancellationToken);
 
         return rows.GroupBy(row => row.UserId, row => (row.TimeOfDeparture, row.RideId))
+            .Select(x => (x.Key, Items: x.ToImmutableArray()))
             .ToDictionary(
                 x => x.Key,
                 x => new Page<(DateTimeOffset TimeOfDeparture, int RideId)>(
-                    items: [.. x],
-                    hasNextPage: false, // TODO
+                    items: x.Items.Length > pagingArguments.First.Value
+                        ? x.Items[..pagingArguments.First.Value]
+                        : x.Items,
+                    hasNextPage: x.Items.Length > pagingArguments.First.Value,
                     hasPreviousPage: default,
-                    createCursor: row => "" // TODO
+                    createCursor: value => CursorFormatter.Format(value, cursorKeys)
                 )
             );
 
-        (DateTimeOffset afterTimeOfDeparture, int afterId)? GetCursor()
+        CursorKey[] GetCursorKeys()
         {
-            if (pagingArguments.After == null)
-                return null;
-
             var cursorKeyParser = new CursorKeyParser();
             cursorKeyParser.Visit(
-                dbContext.Rides.OrderBy(r => r.TimeOfDeparture).ThenBy(r => r.Id).Expression
+                dbContext
+                    .Database.SqlQuery<(DateTimeOffset TimeOfDeparture, int RideId)>($"")
+                    .OrderBy(r => r.TimeOfDeparture)
+                    .ThenBy(r => r.RideId)
+                    .Expression
             );
-            var parsedCursor = CursorParser.Parse(pagingArguments.After, [.. cursorKeyParser.Keys]);
-            if (parsedCursor is not [DateTimeOffset afterTimeOfDeparture, int afterId])
-                throw new InvalidOperationException("Unexpected cursor format");
-
-            return (afterTimeOfDeparture.ToUniversalTime(), afterId);
+            return [.. cursorKeyParser.Keys];
         }
     }
 
-    private record UserRideRow(string UserId, DateTimeOffset TimeOfDeparture, int RideId);
+    private record UserOrderedRideRow(string UserId, DateTimeOffset TimeOfDeparture, int RideId);
 }
