@@ -87,7 +87,7 @@ public static class CompoolerDbContextSetUp
                         ),
                         users[0].Id,
                         2,
-                        DateTimeOffset.Now.AddDays(1).ToUniversalTime(),
+                        dateTimeOffsetProvider.Now.AddDays(1),
                         dateTimeOffsetProvider
                     ).Value!,
                     Ride.Create(
@@ -97,7 +97,7 @@ public static class CompoolerDbContextSetUp
                         ),
                         users[0].Id,
                         3,
-                        DateTimeOffset.Now.AddDays(2).AddMinutes(14).ToUniversalTime(),
+                        dateTimeOffsetProvider.Now.AddDays(2).AddMinutes(14),
                         dateTimeOffsetProvider
                     ).Value!,
                     Ride.Create(
@@ -107,7 +107,7 @@ public static class CompoolerDbContextSetUp
                         ),
                         users[1].Id,
                         3,
-                        DateTimeOffset.Now.AddDays(4).AddHours(3).AddMinutes(14).ToUniversalTime(),
+                        dateTimeOffsetProvider.Now.AddDays(4).AddHours(3).AddMinutes(14),
                         dateTimeOffsetProvider
                     ).Value!,
                     Ride.Create(
@@ -117,7 +117,7 @@ public static class CompoolerDbContextSetUp
                         ),
                         users[1].Id,
                         3,
-                        DateTimeOffset.Now.AddDays(4).AddHours(3).AddMinutes(14).ToUniversalTime(),
+                        dateTimeOffsetProvider.Now.AddDays(4).AddHours(3).AddMinutes(14),
                         dateTimeOffsetProvider
                     ).Value!
                 ];

@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Compooler.Domain;
 using Compooler.Domain.Entities.RideEntity;
 using Compooler.Persistence.Configurations;
 using GreenDonut;
@@ -28,6 +29,7 @@ public sealed class RideDataLoaders
     > GetRideIdsByUserIdAsync(
         IReadOnlyList<string> keys,
         CompoolerDbContext dbContext,
+        IDateTimeOffsetProvider dateTimeOffsetProvider,
         PagingArguments pagingArguments,
         CancellationToken cancellationToken
     )
@@ -67,7 +69,7 @@ public sealed class RideDataLoaders
         };
 
         var sqlParameters = new List<NpgsqlParameter>();
-        var paginationFilter = """("TOD", "RideId") > (CURRENT_TIMESTAMP, 0)""";
+        string paginationFilter;
 
         var cursorKeys = GetCursorKeys();
         if (pagingArguments.After != null)
@@ -84,6 +86,16 @@ public sealed class RideDataLoaders
                 )
             );
             sqlParameters.Add(new NpgsqlParameter("afterId", value: afterId));
+        }
+        else
+        {
+            paginationFilter = """("TOD", "RideId") > (@currentTime, 0)""";
+            sqlParameters.Add(
+                new NpgsqlParameter(
+                    "currentTime",
+                    value: dateTimeOffsetProvider.Now.ToUniversalTime()
+                )
+            );
         }
 
         /*language=sql*/

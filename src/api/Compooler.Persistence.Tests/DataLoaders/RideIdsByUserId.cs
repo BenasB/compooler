@@ -1,3 +1,4 @@
+using Compooler.Domain;
 using Compooler.Domain.Entities.RideEntity;
 using Compooler.Persistence.Configurations;
 using Compooler.Persistence.DataLoaders;
@@ -11,6 +12,9 @@ namespace Compooler.Persistence.Tests.DataLoaders;
 public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
 {
     private readonly CompoolerDbContext _dbContext = new(fixture.DbContextOptions);
+
+    private static readonly IDateTimeOffsetProvider DateTimeOffsetProvider =
+        new FixedDateTimeOffsetProvider { Now = DateTimeOffset.Now.ToUniversalTime() };
 
     public Task InitializeAsync() => Task.CompletedTask;
 
@@ -44,6 +48,7 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
         var result = await RideDataLoaders.GetRideIdsByUserIdAsync(
             [user.Id],
             _dbContext,
+            DateTimeOffsetProvider,
             new PagingArguments(first: rides.Count + 1),
             cancellationToken: default
         );
@@ -76,6 +81,7 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
         var result = await RideDataLoaders.GetRideIdsByUserIdAsync(
             [user.Id],
             _dbContext,
+            DateTimeOffsetProvider,
             new PagingArguments(first: rides.Count + 1),
             cancellationToken: default
         );
@@ -115,6 +121,7 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
         var result = await RideDataLoaders.GetRideIdsByUserIdAsync(
             [user1.Id],
             _dbContext,
+            DateTimeOffsetProvider,
             new PagingArguments(first: rides.Count + 1),
             cancellationToken: default
         );
@@ -160,6 +167,7 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
         var result = await RideDataLoaders.GetRideIdsByUserIdAsync(
             [user3.Id],
             _dbContext,
+            DateTimeOffsetProvider,
             new PagingArguments(first: rides.Count + 1),
             cancellationToken: default
         );
@@ -198,6 +206,7 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
         var result = await RideDataLoaders.GetRideIdsByUserIdAsync(
             [user.Id],
             _dbContext,
+            DateTimeOffsetProvider,
             new PagingArguments(first: rides.Count + 1),
             cancellationToken: default
         );
@@ -236,6 +245,7 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
         var result = await RideDataLoaders.GetRideIdsByUserIdAsync(
             [user1.Id, user2.Id],
             _dbContext,
+            DateTimeOffsetProvider,
             new PagingArguments(first: rides.Count + 1),
             cancellationToken: default
         );
@@ -262,12 +272,14 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
         _dbContext.Users.Add(user);
         await _dbContext.SaveChangesAsync();
 
-        // During ride creation, makes it think it's currently 2 days before
-        const int creationDayOffset = -2;
-        const int currentDayOffset = -creationDayOffset;
         var creationDateTimeOffsetProvider = new FixedDateTimeOffsetProvider
         {
-            Now = DateTimeOffset.Now.AddDays(creationDayOffset).ToUniversalTime()
+            Now = DateTimeOffset.MinValue.ToUniversalTime()
+        };
+
+        var queryDateTimeOffsetProvider = new FixedDateTimeOffsetProvider
+        {
+            Now = new DateTimeOffset(year: 2001, month: 4, day: 18, 0, 0, 0, TimeSpan.Zero)
         };
 
         Ride[] rides =
@@ -275,27 +287,21 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
             TestEntityFactory
                 .CreateRide(
                     driverId: user.Id,
-                    timeOfDeparture: creationDateTimeOffsetProvider.Now.AddDays(
-                        currentDayOffset - 1 // in the past (relative to current time)
-                    ),
+                    timeOfDeparture: queryDateTimeOffsetProvider.Now.AddDays(-1),
                     dateTimeOffsetProvider: creationDateTimeOffsetProvider
                 )
                 .RequiredSuccess(),
             TestEntityFactory
                 .CreateRide(
                     driverId: user.Id,
-                    timeOfDeparture: creationDateTimeOffsetProvider.Now.AddDays(
-                        currentDayOffset + 1 // in the future (relative to current time)
-                    ),
+                    timeOfDeparture: queryDateTimeOffsetProvider.Now.AddDays(1),
                     dateTimeOffsetProvider: creationDateTimeOffsetProvider
                 )
                 .RequiredSuccess(),
             TestEntityFactory
                 .CreateRide(
                     driverId: user.Id,
-                    timeOfDeparture: creationDateTimeOffsetProvider.Now.AddDays(
-                        currentDayOffset + 1 // in the future (relative to current time)
-                    ),
+                    timeOfDeparture: queryDateTimeOffsetProvider.Now.AddDays(1),
                     dateTimeOffsetProvider: creationDateTimeOffsetProvider
                 )
                 .RequiredSuccess()
@@ -306,14 +312,13 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
         var result = await RideDataLoaders.GetRideIdsByUserIdAsync(
             [user.Id],
             _dbContext,
+            queryDateTimeOffsetProvider,
             new PagingArguments(first: rides.Length + 1),
             cancellationToken: default
         );
 
         Assert.Equivalent(
-            rides
-                .Where(r => r.TimeOfDeparture > DateTimeOffset.Now) // Corresponds to CURRENT_TIMESTAMP filter
-                .Select(r => r.Id),
+            rides.Where(r => r.TimeOfDeparture > queryDateTimeOffsetProvider.Now).Select(r => r.Id),
             result[user.Id].Items.Select(row => row.RideId),
             strict: true
         );
@@ -337,6 +342,7 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
         var intermediateResult = await RideDataLoaders.GetRideIdsByUserIdAsync(
             [user.Id],
             _dbContext,
+            DateTimeOffsetProvider,
             new PagingArguments(first: rides.Count + 1),
             cancellationToken: default
         );
@@ -349,6 +355,7 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
         var result = await RideDataLoaders.GetRideIdsByUserIdAsync(
             [user.Id],
             _dbContext,
+            DateTimeOffsetProvider,
             new PagingArguments(first: rides.Count + 1, after: after),
             cancellationToken: default
         );
@@ -379,12 +386,14 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
         var resultBelow = await RideDataLoaders.GetRideIdsByUserIdAsync(
             [user.Id],
             _dbContext,
+            DateTimeOffsetProvider,
             new PagingArguments(first: rides.Count - 1),
             cancellationToken: default
         );
         var resultAbove = await RideDataLoaders.GetRideIdsByUserIdAsync(
             [user.Id],
             _dbContext,
+            DateTimeOffsetProvider,
             new PagingArguments(first: rides.Count + 1),
             cancellationToken: default
         );
@@ -414,18 +423,21 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
         var resultBelow = await RideDataLoaders.GetRideIdsByUserIdAsync(
             [user.Id],
             _dbContext,
+            DateTimeOffsetProvider,
             new PagingArguments(first: rides.Count - 1),
             cancellationToken: default
         );
         var resultExact = await RideDataLoaders.GetRideIdsByUserIdAsync(
             [user.Id],
             _dbContext,
+            DateTimeOffsetProvider,
             new PagingArguments(first: rides.Count),
             cancellationToken: default
         );
         var resultAbove = await RideDataLoaders.GetRideIdsByUserIdAsync(
             [user.Id],
             _dbContext,
+            DateTimeOffsetProvider,
             new PagingArguments(first: rides.Count + 1),
             cancellationToken: default
         );
