@@ -12,15 +12,18 @@ public static class RideRelevanceQuery
         double startLatitude,
         double startLongitude,
         double finishLatitude,
-        double finishLongitude
+        double finishLongitude,
+        string userId
     )
     {
         var startPoint = new Point(startLongitude, startLatitude);
         var finishPoint = new Point(finishLongitude, finishLatitude);
 
         // Filter out irrelevant rides
+        // TODO: Filter out rides where user is passenger?
         const int maxProximityMeters = 15000;
         var filteredQuery = queryable
+            .Where(ride => ride.DriverId != userId)
             .Where(ride =>
                 EF.Property<Point>(ride.Route.Start, RideConfiguration.PointPropertyName)
                     .IsWithinDistance(startPoint, maxProximityMeters)

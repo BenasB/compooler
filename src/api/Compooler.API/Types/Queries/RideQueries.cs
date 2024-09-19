@@ -26,8 +26,8 @@ public class RideQueries : ObjectType
                 var pagingArguments = ctx.GetPagingArguments();
                 var dbContext = ctx.Services.GetRequiredService<CompoolerDbContext>();
                 return await dbContext
-                    .Rides.OrderBy(x => x.Id)
-                    .AsNoTracking()
+                    .Rides.AsNoTracking()
+                    .OrderBy(x => x.Id)
                     .ToPageAsync(pagingArguments, ctx.RequestAborted)
                     .ToConnectionAsync();
             });
@@ -43,6 +43,7 @@ public class RideQueries : ObjectType
 
                 var dbContext = ctx.Services.GetRequiredService<CompoolerDbContext>();
                 var input = ctx.ArgumentValue<RideRelevanceInput>("input");
+                var userId = ctx.GetRequiredUserId();
 
                 var startResult = GeographicCoordinates.Create(
                     latitude: input.StartLatitude,
@@ -66,7 +67,8 @@ public class RideQueries : ObjectType
                         startResult.Value.Latitude,
                         startResult.Value.Longitude,
                         finishResult.Value.Latitude,
-                        finishResult.Value.Longitude
+                        finishResult.Value.Longitude,
+                        userId
                     )
                     .ToListAsync();
             });

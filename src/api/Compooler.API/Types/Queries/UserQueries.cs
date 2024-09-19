@@ -1,10 +1,11 @@
 using Compooler.API.Extensions;
 using Compooler.Domain.Entities.UserEntity;
 using Compooler.Persistence;
-using Compooler.Persistence.DataLoaders.Entities;
+using Compooler.Persistence.DataLoaders;
 using HotChocolate.Pagination;
 using HotChocolate.Types.Pagination;
 using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Compooler.API.Types.Queries;
 
@@ -24,7 +25,8 @@ public class UserQueries : ObjectTypeExtension
                 var pagingArguments = ctx.GetPagingArguments();
                 var dbContext = ctx.Services.GetRequiredService<CompoolerDbContext>();
                 return await dbContext
-                    .Users.OrderBy(x => x.Id)
+                    .Users.AsNoTracking()
+                    .OrderBy(x => x.Id)
                     .ToPageAsync(pagingArguments, ctx.RequestAborted)
                     .ToConnectionAsync();
             });
@@ -34,7 +36,7 @@ public class UserQueries : ObjectTypeExtension
             .Type<ObjectType<User>>()
             .Resolve(async ctx =>
             {
-                var dataLoader = ctx.Services.GetRequiredService<UserByIdDataLoader>();
+                var dataLoader = ctx.Services.GetRequiredService<IUserByIdDataLoader>();
                 var userId = ctx.GetRequiredUserId();
 
                 return await dataLoader.LoadAsync(userId, ctx.RequestAborted);

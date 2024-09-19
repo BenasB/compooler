@@ -8,7 +8,7 @@ namespace Compooler.Tests.Utilities;
 public static class TestEntityFactory
 {
     private static readonly FixedDateTimeOffsetProvider DateTimeOffsetProvider =
-        new() { Now = DateTimeOffset.Now };
+        new() { Now = DateTimeOffset.Now.ToUniversalTime() };
 
     public static string CreateUserId() =>
         Guid.NewGuid().ToString("N")[..UserConfiguration.IdLength];
@@ -41,7 +41,7 @@ public static class TestEntityFactory
             route: Route.Create(start: startCoords, finish: finishCoords),
             driverId: driverId ?? TestEntityFactory.CreateUserId(),
             maxPassengers: maxPassengers,
-            timeOfDeparture: timeOfDeparture ?? DateTimeOffsetProvider.Future.ToUniversalTime(),
+            timeOfDeparture: timeOfDeparture ?? DateTimeOffsetProvider.Future,
             dateTimeOffsetProvider: dateTimeOffsetProvider ?? DateTimeOffsetProvider
         );
     }
