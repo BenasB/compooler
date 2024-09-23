@@ -23,6 +23,7 @@ public class DatabaseFixture : IAsyncLifetime
 
         _contextOptions = new DbContextOptionsBuilder()
             .UseCompoolerDatabase(_dbContainer.GetConnectionString())
+            .EnableSensitiveDataLogging()
             .LogTo(Console.WriteLine, LogLevel.Information)
             .Options;
 

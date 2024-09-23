@@ -14,7 +14,7 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
     private readonly CompoolerDbContext _dbContext = new(fixture.DbContextOptions);
 
     private static readonly IDateTimeOffsetProvider DateTimeOffsetProvider =
-        new FixedDateTimeOffsetProvider { Now = DateTimeOffset.Now.ToUniversalTime() };
+        new FixedDateTimeOffsetProvider { Now = DateTimeOffset.Now.AddHours(25).ToUniversalTime() };
 
     public Task InitializeAsync() => Task.CompletedTask;
 
@@ -39,7 +39,11 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
 
         var rides = Enumerable
             .Range(0, 3)
-            .Select(_ => TestEntityFactory.CreateRide(driverId: user.Id).RequiredSuccess())
+            .Select(_ =>
+                TestEntityFactory
+                    .CreateRide(driverId: user.Id, dateTimeOffsetProvider: DateTimeOffsetProvider)
+                    .RequiredSuccess()
+            )
             .ToList();
 
         _dbContext.Rides.AddRange(rides);
@@ -70,7 +74,11 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
 
         var rides = Enumerable
             .Range(0, 3)
-            .Select(_ => TestEntityFactory.CreateRide(driverId: driver.Id).RequiredSuccess())
+            .Select(_ =>
+                TestEntityFactory
+                    .CreateRide(driverId: driver.Id, dateTimeOffsetProvider: DateTimeOffsetProvider)
+                    .RequiredSuccess()
+            )
             .ToList();
 
         _dbContext.Rides.AddRange(rides);
@@ -103,12 +111,20 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
 
         var drivingRides = Enumerable
             .Range(0, 1)
-            .Select(_ => TestEntityFactory.CreateRide(driverId: user1.Id).RequiredSuccess())
+            .Select(_ =>
+                TestEntityFactory
+                    .CreateRide(driverId: user1.Id, dateTimeOffsetProvider: DateTimeOffsetProvider)
+                    .RequiredSuccess()
+            )
             .ToList();
 
         var passengerRides = Enumerable
             .Range(0, 2)
-            .Select(_ => TestEntityFactory.CreateRide(driverId: user2.Id).RequiredSuccess())
+            .Select(_ =>
+                TestEntityFactory
+                    .CreateRide(driverId: user2.Id, dateTimeOffsetProvider: DateTimeOffsetProvider)
+                    .RequiredSuccess()
+            )
             .ToList();
 
         var rides = drivingRides.Concat(passengerRides).ToList();
@@ -144,12 +160,20 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
 
         var user1DrivingRides = Enumerable
             .Range(0, 2)
-            .Select(_ => TestEntityFactory.CreateRide(driverId: user1.Id).RequiredSuccess())
+            .Select(_ =>
+                TestEntityFactory
+                    .CreateRide(driverId: user1.Id, dateTimeOffsetProvider: DateTimeOffsetProvider)
+                    .RequiredSuccess()
+            )
             .ToList();
 
         var user2DrivingRides = Enumerable
             .Range(0, 2)
-            .Select(_ => TestEntityFactory.CreateRide(driverId: user2.Id).RequiredSuccess())
+            .Select(_ =>
+                TestEntityFactory
+                    .CreateRide(driverId: user2.Id, dateTimeOffsetProvider: DateTimeOffsetProvider)
+                    .RequiredSuccess()
+            )
             .ToList();
 
         var rides = user1DrivingRides.Concat(user2DrivingRides).ToList();
@@ -206,7 +230,7 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
         var result = await RideDataLoaders.GetRideIdsByUserIdAsync(
             [user.Id],
             _dbContext,
-            DateTimeOffsetProvider,
+            dateTimeOffsetProvider,
             new PagingArguments(first: rides.Count + 1),
             cancellationToken: default
         );
@@ -227,12 +251,20 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
 
         var user1DrivingRides = Enumerable
             .Range(0, 2)
-            .Select(_ => TestEntityFactory.CreateRide(driverId: user1.Id).RequiredSuccess())
+            .Select(_ =>
+                TestEntityFactory
+                    .CreateRide(driverId: user1.Id, dateTimeOffsetProvider: DateTimeOffsetProvider)
+                    .RequiredSuccess()
+            )
             .ToList();
 
         var user2DrivingRides = Enumerable
             .Range(0, 3)
-            .Select(_ => TestEntityFactory.CreateRide(driverId: user2.Id).RequiredSuccess())
+            .Select(_ =>
+                TestEntityFactory
+                    .CreateRide(driverId: user2.Id, dateTimeOffsetProvider: DateTimeOffsetProvider)
+                    .RequiredSuccess()
+            )
             .ToList();
 
         var rides = user1DrivingRides.Concat(user2DrivingRides).ToList();
@@ -287,21 +319,21 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
             TestEntityFactory
                 .CreateRide(
                     driverId: user.Id,
-                    timeOfDeparture: queryDateTimeOffsetProvider.Now.AddDays(-1),
+                    timeOfDeparture: queryDateTimeOffsetProvider.Past,
                     dateTimeOffsetProvider: creationDateTimeOffsetProvider
                 )
                 .RequiredSuccess(),
             TestEntityFactory
                 .CreateRide(
                     driverId: user.Id,
-                    timeOfDeparture: queryDateTimeOffsetProvider.Now.AddDays(1),
+                    timeOfDeparture: queryDateTimeOffsetProvider.Future,
                     dateTimeOffsetProvider: creationDateTimeOffsetProvider
                 )
                 .RequiredSuccess(),
             TestEntityFactory
                 .CreateRide(
                     driverId: user.Id,
-                    timeOfDeparture: queryDateTimeOffsetProvider.Now.AddDays(1),
+                    timeOfDeparture: queryDateTimeOffsetProvider.Future,
                     dateTimeOffsetProvider: creationDateTimeOffsetProvider
                 )
                 .RequiredSuccess()
@@ -333,7 +365,11 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
 
         var rides = Enumerable
             .Range(0, 5)
-            .Select(_ => TestEntityFactory.CreateRide(driverId: user.Id).RequiredSuccess())
+            .Select(_ =>
+                TestEntityFactory
+                    .CreateRide(driverId: user.Id, dateTimeOffsetProvider: DateTimeOffsetProvider)
+                    .RequiredSuccess()
+            )
             .ToList();
 
         _dbContext.Rides.AddRange(rides);
@@ -377,7 +413,11 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
 
         var rides = Enumerable
             .Range(0, 10)
-            .Select(_ => TestEntityFactory.CreateRide(driverId: user.Id).RequiredSuccess())
+            .Select(_ =>
+                TestEntityFactory
+                    .CreateRide(driverId: user.Id, dateTimeOffsetProvider: DateTimeOffsetProvider)
+                    .RequiredSuccess()
+            )
             .ToList();
 
         _dbContext.Rides.AddRange(rides);
@@ -414,7 +454,11 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
 
         var rides = Enumerable
             .Range(0, 5)
-            .Select(_ => TestEntityFactory.CreateRide(driverId: user.Id).RequiredSuccess())
+            .Select(_ =>
+                TestEntityFactory
+                    .CreateRide(driverId: user.Id, dateTimeOffsetProvider: DateTimeOffsetProvider)
+                    .RequiredSuccess()
+            )
             .ToList();
 
         _dbContext.Rides.AddRange(rides);

@@ -41,7 +41,9 @@ public static class TestEntityFactory
             route: Route.Create(start: startCoords, finish: finishCoords),
             driverId: driverId ?? TestEntityFactory.CreateUserId(),
             maxPassengers: maxPassengers,
-            timeOfDeparture: timeOfDeparture ?? DateTimeOffsetProvider.Future,
+            timeOfDeparture: timeOfDeparture
+                ?? dateTimeOffsetProvider?.Now.AddDays(1)
+                ?? DateTimeOffsetProvider.Future,
             dateTimeOffsetProvider: dateTimeOffsetProvider ?? DateTimeOffsetProvider
         );
     }
