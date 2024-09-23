@@ -14,7 +14,7 @@ public class RideIdsByUserId(DatabaseFixture fixture) : IAsyncLifetime
     private readonly CompoolerDbContext _dbContext = new(fixture.DbContextOptions);
 
     private static readonly IDateTimeOffsetProvider DateTimeOffsetProvider =
-        new FixedDateTimeOffsetProvider { Now = DateTimeOffset.Now.AddHours(25).ToUniversalTime() };
+        new FixedDateTimeOffsetProvider { Now = DateTimeOffset.Now.ToUniversalTime() };
 
     public Task InitializeAsync() => Task.CompletedTask;
 

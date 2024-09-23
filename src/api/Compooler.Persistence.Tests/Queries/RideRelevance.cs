@@ -13,7 +13,7 @@ public class RideRelevance(DatabaseFixture fixture) : IAsyncLifetime
     private readonly CompoolerDbContext _dbContext = new(fixture.DbContextOptions);
 
     private static readonly IDateTimeOffsetProvider DateTimeOffsetProvider =
-        new FixedDateTimeOffsetProvider { Now = DateTimeOffset.Now.AddHours(25).ToUniversalTime() };
+        new FixedDateTimeOffsetProvider { Now = DateTimeOffset.Now.ToUniversalTime() };
 
     private static readonly (double Latitude, double Longitude) VilniusOzoParkas = (
         Latitude: 54.720017,
