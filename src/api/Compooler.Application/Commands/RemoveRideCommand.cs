@@ -3,7 +3,7 @@ using Compooler.Domain.Entities.RideEntity;
 
 namespace Compooler.Application.Commands;
 
-public record RemoveRideCommand(int Id);
+public record RemoveRideCommand(int Id, string UserId);
 
 public class RemoveRideCommandHandler(ICompoolerDbContext dbContext)
     : ICommandHandler<RemoveRideCommand, Ride>
@@ -17,6 +17,9 @@ public class RemoveRideCommandHandler(ICompoolerDbContext dbContext)
 
         if (rideToRemove is null)
             return new EntityNotFoundError<Ride, int>(command.Id);
+
+        if (rideToRemove.DriverId != command.UserId)
+            return new RideErrors.UserIsNotDriverError();
 
         dbContext.Rides.Remove(rideToRemove);
         await dbContext.SaveChangesAsync(ct);

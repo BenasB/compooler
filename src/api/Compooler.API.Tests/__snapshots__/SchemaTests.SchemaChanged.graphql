@@ -222,6 +222,11 @@ type UserAlreadyExistsError implements Error {
   message: String!
 }
 
+type UserIsNotDriverError implements Error {
+  code: String!
+  message: String!
+}
+
 type UserNotFoundError implements Error {
   id: ID!
   code: String!
@@ -254,7 +259,7 @@ union JoinRideError = RideNotFoundError | UserNotFoundError | PassengerLimitReac
 
 union LeaveRideError = RideNotFoundError | UserNotFoundError | PassengerNotFoundError
 
-union RemoveRideError = RideNotFoundError
+union RemoveRideError = RideNotFoundError | UserIsNotDriverError
 
 union RemoveUserError = UserNotFoundError
 
