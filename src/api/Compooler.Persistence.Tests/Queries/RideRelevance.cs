@@ -230,7 +230,7 @@ public class RideRelevance(DatabaseFixture fixture) : IAsyncLifetime
 
         var result = await _dbContext
             .Rides.AsNoTracking()
-            .Where(r => rideIds.Contains(r.Id)) // Isolates this test's data from other tests
+            .Where(r => rideIds.Contains(r.Id))
             .FilterAndOrderByRelevance(
                 startLatitude: start.Latitude,
                 startLongitude: start.Longitude,
