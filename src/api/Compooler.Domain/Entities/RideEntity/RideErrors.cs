@@ -34,4 +34,10 @@ public static class RideErrors
             "Ride.Create.MaxPassengersBelowOneError",
             "The number of maximum passengers in the ride must be at least 1"
         );
+
+    public record UserIsNotDriverError()
+        : Error(
+            "Ride.Remove.UserIsNotDriverError",
+            "The user must be the ride's driver to remove it"
+        );
 }

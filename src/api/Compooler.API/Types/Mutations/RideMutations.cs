@@ -28,7 +28,8 @@ public class RideMutations : ObjectType
             .Field("removeRide")
             .Authorize()
             .ResolveCompoolerMutation<RemoveRideInput, RemoveRideCommand, Ride>()
-            .Error<EntityNotFoundError<Ride, int>>();
+            .Error<EntityNotFoundError<Ride, int>>()
+            .Error<RideErrors.UserIsNotDriverError>();
 
         descriptor
             .Field("joinRide")

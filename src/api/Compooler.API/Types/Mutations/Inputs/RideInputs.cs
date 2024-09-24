@@ -31,7 +31,8 @@ public record CreateRideInput(
 [PublicAPI]
 public record RemoveRideInput([property: ID<Ride>] int Id) : IMappableTo<RemoveRideCommand>
 {
-    public RemoveRideCommand Map(IResolverContext ctx) => new(Id: Id);
+    public RemoveRideCommand Map(IResolverContext ctx) =>
+        new(Id: Id, UserId: ctx.GetRequiredUserId());
 }
 
 [PublicAPI]

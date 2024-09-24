@@ -131,7 +131,7 @@ public class RideCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
         await PersistNewRidePassenger((ride.Id, passenger.Id));
 
         var newRideId = ride.Id;
-        var command = new RemoveRideCommand(Id: newRideId);
+        var command = new RemoveRideCommand(Id: newRideId, UserId: ride.DriverId);
         var handler = new RemoveRideCommandHandler(_dbContext);
 
         var result = await handler.HandleAsync(command);
@@ -151,13 +151,34 @@ public class RideCommandsTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task RemoveRide_RideDoesNotExist_Fails()
     {
         const int nonExistentId = -1;
-        var command = new RemoveRideCommand(Id: nonExistentId);
+        var command = new RemoveRideCommand(
+            Id: nonExistentId,
+            UserId: TestEntityFactory.CreateUserId()
+        );
         var handler = new RemoveRideCommandHandler(_dbContext);
 
         var result = await handler.HandleAsync(command);
 
         Assert.True(result.IsFailed);
         Assert.Equal(new EntityNotFoundError<Ride, int>(nonExistentId), result.Error);
+    }
+
+    [Fact]
+    public async Task RemoveRide_UserIsNotDriver_Fails()
+    {
+        var ride = await PersistNewRide();
+
+        var newRideId = ride.Id;
+        var command = new RemoveRideCommand(
+            Id: newRideId,
+            UserId: TestEntityFactory.CreateUserId()
+        );
+        var handler = new RemoveRideCommandHandler(_dbContext);
+
+        var result = await handler.HandleAsync(command);
+
+        Assert.True(result.IsFailed);
+        Assert.Equal(new RideErrors.UserIsNotDriverError(), result.Error);
     }
 
     [Fact]
