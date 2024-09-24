@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Linq.Expressions;
 using Compooler.Domain;
 using Compooler.Domain.Entities.RideEntity;
 using Compooler.Persistence.Configurations;
@@ -24,9 +25,56 @@ public sealed class RideDataLoaders
             .ToDictionaryAsync(cg => cg.Id, cancellationToken);
 
     [DataLoader]
-    public static async Task<
+    public static Task<
+        IReadOnlyDictionary<string, Page<(DateTimeOffset TimeOfDeparture, int RideId)>>
+    > GetUpcomingRideIdsByUserIdAsync(
+        IReadOnlyList<string> keys,
+        CompoolerDbContext dbContext,
+        IDateTimeOffsetProvider dateTimeOffsetProvider,
+        PagingArguments pagingArguments,
+        CancellationToken cancellationToken
+    ) =>
+        GetRideIdsByUserIdAsync(
+            defaultPaginationFilter: """ "TOD" > @currentTime""",
+            cursorPaginationFilter: """("TOD", "RideId") > (@afterTimeOfDeparture, @afterId)""",
+            partitionOrder: """ "TOD", "RideId" """,
+            keys,
+            dbContext,
+            dateTimeOffsetProvider,
+            pagingArguments,
+            cancellationToken
+        );
+
+    [DataLoader]
+    public static Task<
+        IReadOnlyDictionary<string, Page<(DateTimeOffset TimeOfDeparture, int RideId)>>
+    > GetHistoricalRideIdsByUserIdAsync(
+        IReadOnlyList<string> keys,
+        CompoolerDbContext dbContext,
+        IDateTimeOffsetProvider dateTimeOffsetProvider,
+        PagingArguments pagingArguments,
+        CancellationToken cancellationToken
+    ) =>
+        GetRideIdsByUserIdAsync(
+            defaultPaginationFilter: """ "TOD" < @currentTime""",
+            cursorPaginationFilter: """
+             "TOD" < @afterTimeOfDeparture OR
+             ("TOD" = @afterTimeOfDeparture AND "RideId" > @afterId)
+            """,
+            partitionOrder: """ "TOD" DESC, "RideId" """,
+            keys,
+            dbContext,
+            dateTimeOffsetProvider,
+            pagingArguments,
+            cancellationToken
+        );
+
+    private static async Task<
         IReadOnlyDictionary<string, Page<(DateTimeOffset TimeOfDeparture, int RideId)>>
     > GetRideIdsByUserIdAsync(
+        string defaultPaginationFilter,
+        string cursorPaginationFilter,
+        string partitionOrder,
         IReadOnlyList<string> keys,
         CompoolerDbContext dbContext,
         IDateTimeOffsetProvider dateTimeOffsetProvider,
@@ -71,14 +119,21 @@ public sealed class RideDataLoaders
         var sqlParameters = new List<NpgsqlParameter>();
         string paginationFilter;
 
-        var cursorKeys = GetCursorKeys();
+        var cursorKeys = GetCursorKeys(
+            dbContext
+                .Database.SqlQuery<(DateTimeOffset TimeOfDeparture, int RideId)>($"")
+                .OrderBy(r => r.TimeOfDeparture)
+                .ThenBy(r => r.RideId)
+                .Expression
+        );
+
         if (pagingArguments.After != null)
         {
             var parsedCursor = CursorParser.Parse(pagingArguments.After, cursorKeys);
             if (parsedCursor is not [DateTimeOffset afterTimeOfDeparture, int afterId])
                 throw new InvalidOperationException("Unexpected cursor format");
 
-            paginationFilter = """("TOD", "RideId") > (@afterTimeOfDeparture, @afterId)""";
+            paginationFilter = cursorPaginationFilter;
             sqlParameters.Add(
                 new NpgsqlParameter(
                     "afterTimeOfDeparture",
@@ -89,7 +144,7 @@ public sealed class RideDataLoaders
         }
         else
         {
-            paginationFilter = """("TOD", "RideId") > (@currentTime, 0)""";
+            paginationFilter = defaultPaginationFilter;
             sqlParameters.Add(
                 new NpgsqlParameter(
                     "currentTime",
@@ -130,7 +185,7 @@ public sealed class RideDataLoaders
                     "UserId",
                     "TOD",
                     "RideId",
-                    ROW_NUMBER() OVER (PARTITION BY "UserId" ORDER BY "TOD", "RideId") AS "RowNumber"
+                    ROW_NUMBER() OVER (PARTITION BY "UserId" ORDER BY {partitionOrder}) AS "RowNumber"
                 FROM CombinedRides
                 WHERE {paginationFilter}
             )
@@ -162,20 +217,14 @@ public sealed class RideDataLoaders
                     createCursor: value => CursorFormatter.Format(value, cursorKeys)
                 )
             );
-
-        CursorKey[] GetCursorKeys()
-        {
-            var cursorKeyParser = new CursorKeyParser();
-            cursorKeyParser.Visit(
-                dbContext
-                    .Database.SqlQuery<(DateTimeOffset TimeOfDeparture, int RideId)>($"")
-                    .OrderBy(r => r.TimeOfDeparture)
-                    .ThenBy(r => r.RideId)
-                    .Expression
-            );
-            return [.. cursorKeyParser.Keys];
-        }
     }
 
     private record UserOrderedRideRow(string UserId, DateTimeOffset TimeOfDeparture, int RideId);
+
+    private static CursorKey[] GetCursorKeys(Expression expression)
+    {
+        var cursorKeyParser = new CursorKeyParser();
+        cursorKeyParser.Visit(expression);
+        return [.. cursorKeyParser.Keys];
+    }
 }
