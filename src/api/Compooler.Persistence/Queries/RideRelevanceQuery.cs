@@ -1,3 +1,4 @@
+using Compooler.Domain;
 using Compooler.Domain.Entities.RideEntity;
 using Compooler.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,8 @@ public static class RideRelevanceQuery
         double startLongitude,
         double finishLatitude,
         double finishLongitude,
-        string userId
+        string userId,
+        IDateTimeOffsetProvider dateTimeOffsetProvider
     )
     {
         var startPoint = new Point(startLongitude, startLatitude);
@@ -22,8 +24,10 @@ public static class RideRelevanceQuery
         // Filter out irrelevant rides
         // TODO: Filter out rides where user is passenger?
         const int maxProximityMeters = 15000;
+        var currentTime = dateTimeOffsetProvider.Now.ToUniversalTime();
         var filteredQuery = queryable
             .Where(ride => ride.DriverId != userId)
+            .Where(ride => ride.TimeOfDeparture > currentTime)
             .Where(ride =>
                 EF.Property<Point>(ride.Route.Start, RideConfiguration.PointPropertyName)
                     .IsWithinDistance(startPoint, maxProximityMeters)

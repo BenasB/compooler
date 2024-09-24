@@ -1,5 +1,6 @@
 using Compooler.API.Extensions;
 using Compooler.API.Types.Queries.Inputs;
+using Compooler.Domain;
 using Compooler.Domain.Entities.RideEntity;
 using Compooler.Persistence;
 using Compooler.Persistence.Queries;
@@ -42,6 +43,8 @@ public class RideQueries : ObjectType
                 // TODO: Paging? Possible to implement with in memory caching of ride IDs, since we'll need to compute all of the scores anyway
 
                 var dbContext = ctx.Services.GetRequiredService<CompoolerDbContext>();
+                var dateTimeOffsetProvider =
+                    ctx.Services.GetRequiredService<IDateTimeOffsetProvider>();
                 var input = ctx.ArgumentValue<RideRelevanceInput>("input");
                 var userId = ctx.GetRequiredUserId();
 
@@ -68,7 +71,8 @@ public class RideQueries : ObjectType
                         startResult.Value.Longitude,
                         finishResult.Value.Latitude,
                         finishResult.Value.Longitude,
-                        userId
+                        userId,
+                        dateTimeOffsetProvider
                     )
                     .ToListAsync();
             });

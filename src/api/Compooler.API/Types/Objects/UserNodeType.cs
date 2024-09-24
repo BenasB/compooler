@@ -21,35 +21,49 @@ public class UserNodeType : ObjectType<User>
         descriptor.Field(x => x.LastName);
 
         descriptor
-            .Field("rides")
+            .Field("upcomingRides")
             .UsePaging()
             .Type<NonNullType<ListType<NonNullType<ObjectType<Ride>>>>>()
             .Resolve<Connection<Ride>>(async ctx =>
             {
-                var rideIdsByUserIdDataLoader =
-                    ctx.Services.GetRequiredService<IRideIdsByUserIdDataLoader>();
+                var upcomingRideIdsByUserIdDataLoader =
+                    ctx.Services.GetRequiredService<IUpcomingRideIdsByUserIdDataLoader>();
                 var rideDataLoaderById = ctx.Services.GetRequiredService<IRideByIdDataLoader>();
                 var user = ctx.Parent<User>();
                 var pagingArguments = ctx.GetPagingArguments();
 
-                var idsPage = await rideIdsByUserIdDataLoader
+                var idsPage = await upcomingRideIdsByUserIdDataLoader
                     .WithPagingArguments(pagingArguments)
                     .LoadAsync(user.Id, ctx.RequestAborted);
 
-                if (idsPage.Items == null)
-                    return Connection.Empty<Ride>();
-
-                var rides = await rideDataLoaderById.LoadRequiredAsync(
-                    idsPage.Items.Select(x => x.RideId).ToList(),
+                return await RideIdsPageToRideConnection(
+                    rideDataLoaderById,
+                    idsPage,
                     ctx.RequestAborted
                 );
+            });
 
-                return new Page<Ride>(
-                    items: [.. rides],
-                    hasNextPage: idsPage.HasNextPage,
-                    hasPreviousPage: idsPage.HasPreviousPage,
-                    createCursor: ride => idsPage.CreateCursor((ride.TimeOfDeparture, ride.Id))
-                ).ToConnection();
+        descriptor
+            .Field("historicalRides")
+            .UsePaging()
+            .Type<NonNullType<ListType<NonNullType<ObjectType<Ride>>>>>()
+            .Resolve<Connection<Ride>>(async ctx =>
+            {
+                var historicalRideIdsByUserIdDataLoader =
+                    ctx.Services.GetRequiredService<IHistoricalRideIdsByUserIdDataLoader>();
+                var rideDataLoaderById = ctx.Services.GetRequiredService<IRideByIdDataLoader>();
+                var user = ctx.Parent<User>();
+                var pagingArguments = ctx.GetPagingArguments();
+
+                var idsPage = await historicalRideIdsByUserIdDataLoader
+                    .WithPagingArguments(pagingArguments)
+                    .LoadAsync(user.Id, ctx.RequestAborted);
+
+                return await RideIdsPageToRideConnection(
+                    rideDataLoaderById,
+                    idsPage,
+                    ctx.RequestAborted
+                );
             });
 
         descriptor
@@ -62,5 +76,27 @@ public class UserNodeType : ObjectType<User>
                     return await dataLoader.LoadAsync(id, ctx.RequestAborted);
                 }
             );
+    }
+
+    private static async Task<Connection<Ride>> RideIdsPageToRideConnection(
+        IRideByIdDataLoader dataLoader,
+        Page<(DateTimeOffset timeOfDeparture, int RideId)> idsPage,
+        CancellationToken cancellationToken
+    )
+    {
+        if (idsPage.Items == null)
+            return Connection.Empty<Ride>();
+
+        var rides = await dataLoader.LoadRequiredAsync(
+            idsPage.Items.Select(x => x.RideId).ToList(),
+            cancellationToken
+        );
+
+        return new Page<Ride>(
+            items: [.. rides],
+            hasNextPage: idsPage.HasNextPage,
+            hasPreviousPage: idsPage.HasPreviousPage,
+            createCursor: ride => idsPage.CreateCursor((ride.TimeOfDeparture, ride.Id))
+        ).ToConnection();
     }
 }

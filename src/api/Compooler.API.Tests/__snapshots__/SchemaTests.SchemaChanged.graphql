@@ -28,6 +28,24 @@ type GeographicCoordinates {
   longitude: Float!
 }
 
+"A connection to a list of items."
+type HistoricalRidesConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [HistoricalRidesEdge!]
+  "A flattened list of the nodes."
+  nodes: [Ride!]
+}
+
+"An edge in a connection."
+type HistoricalRidesEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: Ride!
+}
+
 type InvalidLatitudeError implements Error {
   code: String!
   message: String!
@@ -172,11 +190,30 @@ type TimeOfDepartureIsNotInTheFutureError implements Error {
   message: String!
 }
 
+"A connection to a list of items."
+type UpcomingRidesConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [UpcomingRidesEdge!]
+  "A flattened list of the nodes."
+  nodes: [Ride!]
+}
+
+"An edge in a connection."
+type UpcomingRidesEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: Ride!
+}
+
 type User implements Node @authorize {
   id: ID!
   firstName: String!
   lastName: String!
-  rides("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): RidesConnection
+  upcomingRides("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): UpcomingRidesConnection
+  historicalRides("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): HistoricalRidesConnection
 }
 
 type UserAlreadyExistsError implements Error {
