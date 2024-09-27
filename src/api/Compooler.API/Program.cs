@@ -20,11 +20,12 @@ builder
 
 var app = builder.Build();
 
-await CompoolerDbContextSetUp.InitializeAsync(app.Services, app.Environment.IsDevelopment());
+if (!args.Contains("schema"))
+    await CompoolerDbContextSetUp.InitializeAsync(app.Services, app.Environment.IsDevelopment());
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapGraphQL();
 
-app.Run();
+await app.RunWithGraphQLCommandsAsync(args);

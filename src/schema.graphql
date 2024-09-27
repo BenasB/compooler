@@ -1,0 +1,322 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+}
+
+interface Error {
+  code: String!
+  message: String!
+}
+
+"The node interface is implemented by entities that have a global unique identifier."
+interface Node {
+  id: ID!
+}
+
+type CreateRidePayload {
+  ride: Ride
+  errors: [CreateRideError!] @cost(weight: "10")
+}
+
+type CreateUserPayload {
+  user: User
+  errors: [CreateUserError!] @cost(weight: "10")
+}
+
+type GeographicCoordinates {
+  latitude: Float!
+  longitude: Float!
+}
+
+"A connection to a list of items."
+type HistoricalRidesConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [HistoricalRidesEdge!]
+  "A flattened list of the nodes."
+  nodes: [Ride!]
+}
+
+"An edge in a connection."
+type HistoricalRidesEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: Ride!
+}
+
+type InvalidLatitudeError implements Error {
+  code: String!
+  message: String!
+}
+
+type InvalidLongitudeError implements Error {
+  code: String!
+  message: String!
+}
+
+type JoinRidePayload {
+  ride: Ride
+  errors: [JoinRideError!] @cost(weight: "10")
+}
+
+type LeaveRidePayload {
+  ride: Ride
+  errors: [LeaveRideError!] @cost(weight: "10")
+}
+
+type MaxPassengersBelowOneError implements Error {
+  maxPassengers: Int!
+  code: String!
+  message: String!
+}
+
+type Mutation {
+  createRide(input: CreateRideInput): CreateRidePayload! @authorize @cost(weight: "10")
+  removeRide(input: RemoveRideInput): RemoveRidePayload! @authorize @cost(weight: "10")
+  joinRide(input: JoinRideInput): JoinRidePayload! @authorize @cost(weight: "10")
+  leaveRide(input: LeaveRideInput): LeaveRidePayload! @authorize @cost(weight: "10")
+  createUser(input: CreateUserInput): CreateUserPayload! @authorize @cost(weight: "10")
+  removeUser: RemoveUserPayload! @authorize @cost(weight: "10")
+}
+
+"Information about pagination in a connection."
+type PageInfo {
+  "Indicates whether more edges exist following the set defined by the clients arguments."
+  hasNextPage: Boolean!
+  "Indicates whether more edges exist prior the set defined by the clients arguments."
+  hasPreviousPage: Boolean!
+  "When paginating backwards, the cursor to continue."
+  startCursor: String
+  "When paginating forwards, the cursor to continue."
+  endCursor: String
+}
+
+type PassengerAlreadyExistsError implements Error {
+  passengerId: ID!
+  joinedAt: DateTime!
+  code: String!
+  message: String!
+}
+
+type PassengerIsDriverError implements Error {
+  driverId: ID!
+  code: String!
+  message: String!
+}
+
+type PassengerLimitReachedError implements Error {
+  maxPassengers: Int!
+  code: String!
+  message: String!
+}
+
+type PassengerNotFoundError implements Error {
+  userId: ID!
+  code: String!
+  message: String!
+}
+
+type Query {
+  "Fetches an object given its ID."
+  node("ID of the object." id: ID!): Node @cost(weight: "10")
+  "Lookup nodes by a list of IDs."
+  nodes("The list of node IDs." ids: [ID!]!): [Node]! @cost(weight: "10")
+  rides("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): RidesConnection @listSize(assumedSize: 50, slicingArguments: [ "first" ], sizedFields: [ "edges", "nodes" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  "Returns rides relevant to given criteria (e.g. route location)"
+  relevantRides(input: RideRelevanceInput!): [Ride!]! @cost(weight: "10")
+  users("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): UsersConnection @listSize(assumedSize: 50, slicingArguments: [ "first" ], sizedFields: [ "edges", "nodes" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  me: User @cost(weight: "10")
+}
+
+type RemoveRidePayload {
+  ride: Ride
+  errors: [RemoveRideError!] @cost(weight: "10")
+}
+
+type RemoveUserPayload {
+  user: User
+  errors: [RemoveUserError!] @cost(weight: "10")
+}
+
+type Ride implements Node @authorize {
+  id: ID!
+  maxPassengers: Int!
+  route: Route!
+  passengers: [RidePassenger!]!
+  timeOfDeparture: DateTime!
+  driver: User! @cost(weight: "10")
+}
+
+type RideNotFoundError implements Error {
+  id: ID!
+  code: String!
+  message: String!
+}
+
+type RidePassenger {
+  joinedAt: DateTime!
+  user: User! @cost(weight: "10")
+}
+
+"A connection to a list of items."
+type RidesConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [RidesEdge!]
+  "A flattened list of the nodes."
+  nodes: [Ride!]
+}
+
+"An edge in a connection."
+type RidesEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: Ride!
+}
+
+type Route {
+  start: GeographicCoordinates!
+  finish: GeographicCoordinates!
+}
+
+type TimeOfDepartureIsNotInTheFutureError implements Error {
+  timeOfDeparture: DateTime!
+  now: DateTime!
+  code: String!
+  message: String!
+}
+
+"A connection to a list of items."
+type UpcomingRidesConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [UpcomingRidesEdge!]
+  "A flattened list of the nodes."
+  nodes: [Ride!]
+}
+
+"An edge in a connection."
+type UpcomingRidesEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: Ride!
+}
+
+type User implements Node @authorize {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  upcomingRides("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): UpcomingRidesConnection @listSize(assumedSize: 50, slicingArguments: [ "first" ], sizedFields: [ "edges", "nodes" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  historicalRides("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String): HistoricalRidesConnection @listSize(assumedSize: 50, slicingArguments: [ "first" ], sizedFields: [ "edges", "nodes" ], requireOneSlicingArgument: false) @cost(weight: "10")
+}
+
+type UserAlreadyExistsError implements Error {
+  id: ID!
+  code: String!
+  message: String!
+}
+
+type UserIsNotDriverError implements Error {
+  code: String!
+  message: String!
+}
+
+type UserNotFoundError implements Error {
+  id: ID!
+  code: String!
+  message: String!
+}
+
+"A connection to a list of items."
+type UsersConnection {
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "A list of edges."
+  edges: [UsersEdge!]
+  "A flattened list of the nodes."
+  nodes: [User!]
+}
+
+"An edge in a connection."
+type UsersEdge {
+  "A cursor for use in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: User!
+}
+
+union CreateRideError = InvalidLatitudeError | InvalidLongitudeError | UserNotFoundError | MaxPassengersBelowOneError | TimeOfDepartureIsNotInTheFutureError
+
+union CreateUserError = UserAlreadyExistsError
+
+union JoinRideError = RideNotFoundError | UserNotFoundError | PassengerLimitReachedError | PassengerIsDriverError | PassengerAlreadyExistsError
+
+union LeaveRideError = RideNotFoundError | UserNotFoundError | PassengerNotFoundError
+
+union RemoveRideError = RideNotFoundError | UserIsNotDriverError
+
+union RemoveUserError = UserNotFoundError
+
+input CreateRideInput {
+  maxPassengers: Int!
+  startLatitude: Float!
+  startLongitude: Float!
+  finishLatitude: Float!
+  finishLongitude: Float!
+  timeOfDeparture: DateTime!
+}
+
+input CreateUserInput {
+  firstName: String!
+  lastName: String!
+}
+
+input JoinRideInput {
+  rideId: ID!
+}
+
+input LeaveRideInput {
+  rideId: ID!
+}
+
+input RemoveRideInput {
+  id: ID!
+}
+
+input RideRelevanceInput {
+  startLatitude: Float!
+  startLongitude: Float!
+  finishLatitude: Float!
+  finishLongitude: Float!
+}
+
+"Defines when a policy shall be executed."
+enum ApplyPolicy {
+  "Before the resolver was executed."
+  BEFORE_RESOLVER
+  "After the resolver was executed."
+  AFTER_RESOLVER
+  "The policy is applied in the validation step before the execution."
+  VALIDATION
+}
+
+"The authorize directive."
+directive @authorize("The name of the authorization policy that determines access to the annotated resource." policy: String "Roles that are allowed to access the annotated resource." roles: [String!] "Defines when when the authorize directive shall be applied.By default the authorize directives are applied during the validation phase." apply: ApplyPolicy! = BEFORE_RESOLVER) repeatable on OBJECT | FIELD_DEFINITION
+
+"The purpose of the `cost` directive is to define a `weight` for GraphQL types, fields, and arguments. Static analysis can use these weights when calculating the overall cost of a query or response."
+directive @cost("The `weight` argument defines what value to add to the overall cost for every appearance, or possible appearance, of a type, field, argument, etc." weight: String!) on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | ENUM | INPUT_FIELD_DEFINITION
+
+"The purpose of the `@listSize` directive is to either inform the static analysis about the size of returned lists (if that information is statically available), or to point the analysis to where to find that information."
+directive @listSize("The `assumedSize` argument can be used to statically define the maximum length of a list returned by a field." assumedSize: Int "The `slicingArguments` argument can be used to define which of the field's arguments with numeric type are slicing arguments, so that their value determines the size of the list returned by that field. It may specify a list of multiple slicing arguments." slicingArguments: [String!] "The `sizedFields` argument can be used to define that the value of the `assumedSize` argument or of a slicing argument does not affect the size of a list returned by a field itself, but that of a list returned by one of its sub-fields." sizedFields: [String!] "The `requireOneSlicingArgument` argument can be used to inform the static analysis that it should expect that exactly one of the defined slicing arguments is present in a query. If that is not the case (i.e., if none or multiple slicing arguments are present), the static analysis may throw an error." requireOneSlicingArgument: Boolean! = true) on FIELD_DEFINITION
+
+"The `@specifiedBy` directive is used within the type system definition language to provide a URL for specifying the behavior of custom scalar definitions."
+directive @specifiedBy("The specifiedBy URL points to a human-readable specification. This field will only read a result for scalar types." url: String!) on SCALAR
+
+"The `DateTime` scalar represents an ISO-8601 compliant date time type."
+scalar DateTime @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time")
